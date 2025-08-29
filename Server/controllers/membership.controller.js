@@ -2,6 +2,49 @@ const membershipController = {};
 
 const mysqlConnection = require('../database');
 
+membershipController.getMembership = async (req, res, next) => {
+  const { id } = req.params;
+
+  const socioQuery = 'SELECT * FROM socio WHERE id = ?';
+  const actividadesQuery = `
+    SELECT a.nombre 
+    FROM socio_actividad sa
+    INNER JOIN actividad a ON sa.actividad_id = a.id
+    WHERE sa.socio_id = ?
+  `;
+
+  mysqlConnection.query(socioQuery, [id], (err, socioRows) => {
+    if (err) return res.status(500).json(err);
+
+    if (socioRows.length === 0) {
+      return res.status(404).json({ message: 'Socio no encontrado' });
+    }
+
+    const socio = socioRows[0];
+
+    mysqlConnection.query(actividadesQuery, [id], (err, actRows) => {
+      if (err) return res.status(500).json(err);
+
+      const actividades = {
+        futbol: false,
+        basquet: false,
+        paleta: false,
+      };
+
+      actRows.forEach(row => {
+        if (row.nombre.toLowerCase() === 'futbol') actividades.futbol = true;
+        if (row.nombre.toLowerCase() === 'basquet') actividades.basquet = true;
+        if (row.nombre.toLowerCase() === 'paleta') actividades.paleta = true;
+      });
+
+      res.json({
+        ...socio,
+        ...actividades
+      });
+    });
+  });
+};
+
 membershipController.getMemberships = async (req, res, next) => {
   const anio = 2025;
   const meses = [
@@ -48,62 +91,123 @@ membershipController.getMemberships = async (req, res, next) => {
   });
 };
 
+membershipController.createMembership = async (req, res) => {
+    try {
+        const {
+            nombre,
+            dni,
+            cuota_activa,
+            cuota_pasiva,
+            futbol,
+            paleta,
+            basquet
+        } = req.body;
 
+        const socioQuery = `
+            INSERT INTO socio (nombre, dni, cuota_activa, cuota_pasiva, activo, genero)
+            VALUES (?, ?, ?, ?, TRUE, 'F')`; // ajustar genero según tu necesidad
 
+        mysqlConnection.query(
+            socioQuery,
+            [nombre, dni || null, !!cuota_activa, !!cuota_pasiva],
+            (err, result) => {
+                if (err) {
+                    return res.status(500).json(err);
+                }
+                const socioId = result.insertId;
+                const actividades = [];
+                if (futbol) actividades.push(1);
+                if (paleta) actividades.push(2);
+                if (basquet) actividades.push(3);
 
-// goleadoresController.getEquipos = async (req, res, next) => {
-//     const { to: torneo, a: anio } = req.params;
-//     const query = `SELECT id, nombre, grupo FROM equipo WHERE torneo = ${torneo} AND anio = ${anio};`
-//     mysqlConnection.query(query, (err, rows, fields) => {
-//         if (!err) {
-//             res.json(rows);
-//         } else {
-//             res.json(err.errno);
-//         }
-//     })
-// };
+                if (actividades.length === 0) {
+                    return res.json({ status: 'created', socioId });
+                }
+                const values = actividades.map(actId => [socioId, actId]);
+                const actividadQuery = `
+                    INSERT INTO socio_actividad (socio_id, actividad_id)
+                    VALUES ?`;
 
-// goleadoresController.createGoleador = (req, res) => {
-//     const goleador = req.body;
-//     const {to, a} = req.params;
-//     const query = `INSERT INTO goleadores (nombre, apellido, goles, id_equipo, anio, torneo) VALUES ("${goleador.nombre}","${goleador.apellido}",${goleador.goles}, ${goleador.id_equipo},${a}, ${to});`;
-//     mysqlConnection.query(query, (err) => {
-//         if(!err) {
-//             res.json({
-//                 'status' : 'created'
-//             })
-//         } else {
-//             res.json(err.errno);
-//         }
-//     })
-// };
+                mysqlConnection.query(
+                    actividadQuery,
+                    [values],
+                    (err2) => {
+                        if (err2) {
+                            return res.status(500).json(err2);
+                        }
+                        res.json({ status: 'created', socioId });
+                    }
+                );
+            }
+        );
 
-// goleadoresController.updateGoleador = (req, res) => {
-//     const goleador = req.body;
-//     const query = `UPDATE goleadores SET nombre = '${goleador.nombre}', apellido = '${goleador.apellido}', goles = ${goleador.goles}, id_equipo = ${goleador.id_equipo} WHERE id = ${goleador.id};`
-//     mysqlConnection.query(query, (err) => {
-//         if (!err) {
-//             res.json({
-//                 'status': 'updated'
-//             });
-//         } else {
-//             res.json(err.errno);
-//         }
-//     })
-// }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
 
-// goleadoresController.deleteGoleador = (req, res) => {
-//     const id = req.params.id;
-//     const query = `DELETE FROM goleadores WHERE id = ${id};`
-//     mysqlConnection.query(query, (err) => {
-//         if (!err) {
-//             res.json({
-//                 'status': 'updated'
-//             });
-//         } else {
-//             res.json(err.errno);
-//         }
-//     })
-// }
- 
+membershipController.updateMembership = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      nombre,
+      dni,
+      cuota_activa,
+      cuota_pasiva,
+      futbol,
+      paleta,
+      basquet
+    } = req.body;
+
+    const socioQuery = `
+      UPDATE socio 
+      SET nombre = ?, dni = ?, cuota_activa = ?, cuota_pasiva = ?
+      WHERE id = ?
+    `;
+
+    mysqlConnection.query(
+      socioQuery,
+      [nombre, dni || null, !!cuota_activa, !!cuota_pasiva, id],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json(err);
+        }
+
+        // Borramos todas las actividades actuales del socio
+        const deleteQuery = `DELETE FROM socio_actividad WHERE socio_id = ?`;
+        mysqlConnection.query(deleteQuery, [id], (err2) => {
+          if (err2) {
+            return res.status(500).json(err2);
+          }
+
+          // Reinsertamos las actividades según lo recibido
+          const actividades = [];
+          if (futbol) actividades.push(1);
+          if (paleta) actividades.push(2);
+          if (basquet) actividades.push(3);
+
+          if (actividades.length === 0) {
+            return res.json({ status: 'updated', socioId: id });
+          }
+
+          const values = actividades.map(actId => [id, actId]);
+          const insertQuery = `
+            INSERT INTO socio_actividad (socio_id, actividad_id)
+            VALUES ?
+          `;
+
+          mysqlConnection.query(insertQuery, [values], (err3) => {
+            if (err3) {
+              return res.status(500).json(err3);
+            }
+            res.json({ status: 'updated', socioId: id });
+          });
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = membershipController;

@@ -3,8 +3,10 @@ const router = express.Router();
 
 const membership = require("../validations/membership.validation");
 
-router.get('/memberships/', membership.validar_getMemberships);
-// router.get('/membership-equipos/:to/:a', ensureToken, membership.validar_getEquipos);
+router.get('/memberships', membership.validar_getMemberships);
+router.get('/membership/:id', membership.validar_getMembership);
+router.post('/membership', membership.validar_createMembership);
+router.put('/membership/:id', membership.validar_updateMembership);
 // router.post('/membership/:to/:a', ensureToken, membership.validar_createGoleador);
 // router.put('/membership/:to/:a', ensureToken, membership.validar_updateGoleador);
 // router.delete('/membership/:id', ensureToken, membership.validar_deleteGoleador);
