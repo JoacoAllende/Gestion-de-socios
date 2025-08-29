@@ -21,6 +21,7 @@ app.use(cors({}))
 // Routes
 
 app.use(compression());
+app.use(require('./routes/membership.routes'));
 
 // Starting the server
 

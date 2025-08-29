@@ -16,7 +16,7 @@ export class MembershipService {
   }
 
   getMemberships() {
-    return this.http.get<any[]>(`${this.API_URI}/socios`, { headers: this.headers });
+    return this.http.get<any[]>(`${this.API_URI}/memberships`, { headers: this.headers });
   }
 
 }
