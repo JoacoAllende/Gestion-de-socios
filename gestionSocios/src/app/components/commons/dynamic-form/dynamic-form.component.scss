@@ -1,0 +1,26 @@
+@use '../../../../styles/variables' as *;
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px solid $secondary-color;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin: 0 auto; 
+  font-family: Arial, sans-serif;
+  color: $text-color;
+}
+
+.ng-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
