@@ -1,0 +1,8 @@
+::ng-deep .ag-cell-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 92, 60, 0.1);
+  }
+}
