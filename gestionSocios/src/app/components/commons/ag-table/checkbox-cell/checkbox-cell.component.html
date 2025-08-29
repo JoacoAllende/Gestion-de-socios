@@ -1,5 +1,6 @@
 <div>
     <span *ngIf="params.value === null || params.value === undefined">❌</span>
     <span *ngIf="params.value > 0">{{ params.value }}</span>
+    <span *ngIf="params.value < 0">0</span>
     <input *ngIf="params.value === 0" type="checkbox" [checked]="isSelected()" (change)="toggleSelection($event)">
 </div>
