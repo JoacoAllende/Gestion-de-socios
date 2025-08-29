@@ -1,0 +1,12 @@
+<form [formGroup]="form">
+  <ng-container *ngFor="let field of fields">
+    <ng-container [ngSwitch]="field.type">
+      <app-text-field *ngSwitchCase="'text'" [field]="field" [form]="form"></app-text-field>
+      <app-number-field *ngSwitchCase="'number'" [field]="field" [form]="form"></app-number-field>
+      <app-checkbox-field *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></app-checkbox-field>
+    </ng-container>
+  </ng-container>
+  <div class="buttons-wrapper">
+    <app-button text="Guardar" [onClick]="submit.bind(this)"></app-button>
+  </div>
+</form>
