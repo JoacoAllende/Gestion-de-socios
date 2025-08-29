@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, CellRendererSelectorResult, CellClickedEvent } from 'ag-grid-community';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
-import { CheckboxCellComponent } from '../commons/ag-table/components/checkbox-cell/checkbox-cell.component';
+import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbox-cell.component';
 import { ButtonComponent } from '../commons/button/button.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
@@ -110,9 +110,9 @@ export class MembershipPaymentsComponent implements OnInit {
         if (params.node?.rowPinned) {
           return {
             component: (p: any) => `$ ${p.value?.toLocaleString('es-AR') || 0}`,
-          }; // texto plano para totales
+          };
         }
-        return { component: CheckboxCellComponent }; // checkbox para filas normales
+        return { component: CheckboxCellComponent };
       },
       valueFormatter: (p) => (typeof p.value === 'number' ? p.value : p.value ?? '')
     }));
@@ -120,17 +120,20 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe(data => {
-      this.rowData = data.map(membership => {
-        membership._selectedMonths = {};
-        this.meses.forEach(mes => {
-          const valor = membership[mes];
-          membership._selectedMonths[mes] = valor && valor > 0 ? null : false;
-        });
-        return membership;
+  this.membershipService.getMemberships().subscribe(data => {
+    this.rowData = data.map(membership => {
+      membership._selectedMonths = {};
+      this.meses.forEach(mes => {
+        let valor = membership[mes];
+        if (valor === -1) valor = 0;
+        membership[mes] = valor;
+        membership._selectedMonths[mes] = valor && valor > 0 ? null : false;
       });
+      return membership;
     });
-  }
+  });
+}
+
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
