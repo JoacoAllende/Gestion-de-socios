@@ -1,19 +1,12 @@
 <div class="buttons-wrapper">
-  <app-button
-    [disabled]="!haySeleccion()"
-    [text]="'Cargar pagos efectivos'"
-    [onClick]="cargarPagos">
+  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos efectivos'" [onClick]="cargarPagos">
   </app-button>
-  <app-button
-    [disabled]="!haySeleccion()"
-    [text]="'Cargar pagos transferencia'"
-    [onClick]="cargarPagos">
+  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos transferencia'" [onClick]="cargarPagos">
   </app-button>
+  <app-button [text]="'Crear Socio'" [onClick]="createMembership">
+  </app-button>
+
 </div>
-<app-ag-table
-  [rowData]="rowData"
-  [colDefs]="colDefs"
-  [defaultColDef]="defaultColDef"
-  [pinnedBottomRowData]="pinnedBottomRowData"
-  (gridReadyEvent)="onGridReady($event)">
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef"
+  [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">
 </app-ag-table>
