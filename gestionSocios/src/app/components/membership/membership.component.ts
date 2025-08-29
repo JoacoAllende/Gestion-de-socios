@@ -15,14 +15,16 @@ export class MembershipComponent implements OnInit {
   form!: FormGroup;
   socioId: number | null = null;
   fields: FormField[] = [
-    { name: 'nombre', label: 'Nombre', type: 'text' },
+    { name: 'nombre', label: 'Nombre completo', type: 'text' },
     { name: 'dni', label: 'DNI', type: 'number' },
     { name: 'cuota_activa', label: 'Cuota Activa', type: 'checkbox' },
     { name: 'cuota_pasiva', label: 'Cuota Pasiva', type: 'checkbox' },
-    { name: 'beca', label: 'Becado', type: 'checkbox' },
+    { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
+    { name: 'becado', label: 'Becado', type: 'checkbox' },
     { name: 'futbol', label: 'Futbol', type: 'checkbox' },
     { name: 'paleta', label: 'Paleta', type: 'checkbox' },
     { name: 'basquet', label: 'Basquet', type: 'checkbox' },
+    { name: 'mes_alta', label: 'Mes alta', type: 'number' },
   ];
 
   constructor(
