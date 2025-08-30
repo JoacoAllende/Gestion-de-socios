@@ -3,7 +3,7 @@ import { MembershipPaymentsComponent } from './components/membership-payments/me
 import { MembershipComponent } from './components/membership/membership.component';
 
 export const routes: Routes = [
-    { path: '', component: MembershipPaymentsComponent },
+    { path: 'socios', component: MembershipPaymentsComponent },
     { path: 'socio', component: MembershipComponent },
     { path: 'socio/:id', component: MembershipComponent }
 ];

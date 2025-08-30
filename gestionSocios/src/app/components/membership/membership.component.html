@@ -1,2 +1,1 @@
-<h2>Formulario de Socio</h2>
-<app-dynamic-form [fields]="fields" [form]="form" (submitted)="submit($event)"></app-dynamic-form>
+<app-dynamic-form [formTitle]="'Socio'" [fields]="fields" [form]="form" (submitted)="submit($event)" (cancelled)="cancel()"></app-dynamic-form>

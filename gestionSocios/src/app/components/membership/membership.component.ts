@@ -132,14 +132,18 @@ export class MembershipComponent implements OnInit {
   submit(formValue: any) {
     if (this.socioId) {
       this.membershipService.updateMembership(this.socioId, formValue).subscribe({
-        next: () => this.router.navigate(['']),
+        next: () => this.router.navigate(['/socios']),
         error: err => console.error('Error al actualizar socio', err)
       });
     } else {
       this.membershipService.createMembership(formValue).subscribe({
-        next: () => { this.form.reset(); this.router.navigate(['']); },
+        next: () => { this.form.reset(); this.router.navigate(['/socios']); },
         error: err => console.error('Error al crear socio', err)
       });
     }
+  }
+
+  cancel() {
+    this.router.navigate(['/socios']);
   }
 }
