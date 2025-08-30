@@ -18,6 +18,7 @@ input[type="number"] {
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease-in-out;
+  width: calc(100% - 2rem);
 
   -moz-appearance: textfield;
   appearance: textfield;

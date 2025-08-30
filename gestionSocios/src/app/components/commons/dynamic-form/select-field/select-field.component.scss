@@ -12,13 +12,14 @@ label {
   font-size: 0.95rem;
 }
 
-input {
+input,
+select {
   padding: 1rem 0.8rem;
   border: 1px solid lighten($secondary-color, 20%);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease-in-out;
-  width: calc(100% - 2rem);
+  width: 100%;
 
   &:focus {
     border-color: $primary-color;
