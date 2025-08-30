@@ -99,6 +99,7 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   constructor(private membershipService: MembershipService, private router: Router) {
+    this.cargarPagos = this.cargarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -120,19 +121,18 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   ngOnInit() {
-  this.membershipService.getMemberships().subscribe(data => {
-    this.rowData = data.map(membership => {
-      membership._selectedMonths = {};
-      this.meses.forEach(mes => {
-        let valor = membership[mes];
-        if (valor === -1) valor = 0;
-        membership[mes] = valor;
-        membership._selectedMonths[mes] = valor && valor > 0 ? null : false;
+    this.membershipService.getMemberships().subscribe(data => {
+      this.rowData = data.map(membership => {
+        membership._selectedMonths = {};
+        this.meses.forEach(mes => {
+          let valor = membership[mes];
+          membership[mes] = valor;
+          membership._selectedMonths[mes] = valor && valor > 0 ? null : false;
+        });
+        return membership;
       });
-      return membership;
     });
-  });
-}
+  }
 
 
   onGridReady(event: GridReadyEvent) {
@@ -149,7 +149,8 @@ export class MembershipPaymentsComponent implements OnInit {
       if (!node.data) return;
       Object.keys(node.data).forEach(key => {
         if (['nombre', 'socioId', 'dni'].includes(key)) return;
-        const v = node.data[key];
+        let v = node.data[key];
+        if (v === -1) v = 0;
         if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
       });
     });

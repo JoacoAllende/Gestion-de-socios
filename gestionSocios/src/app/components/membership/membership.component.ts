@@ -21,6 +21,7 @@ export class MembershipComponent implements OnInit {
     { name: 'cuota_pasiva', label: 'Cuota Pasiva', type: 'checkbox' },
     { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
     { name: 'becado', label: 'Becado', type: 'checkbox' },
+    { name: 'secretaria', label: 'Ficha en secretaria', type: 'checkbox' },
     { name: 'futbol', label: 'Futbol', type: 'checkbox' },
     { name: 'paleta', label: 'Paleta', type: 'checkbox' },
     { name: 'basquet', label: 'Basquet', type: 'checkbox' },
