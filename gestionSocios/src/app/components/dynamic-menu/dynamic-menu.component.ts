@@ -28,11 +28,11 @@ export class DynamicMenuComponent {
     this.items = [
       { 
         label: 'Socios', 
-        action: () => this.router.navigate(['/socio'])
+        action: () => this.router.navigate(['/socios'])
       },
       { 
         label: 'Pagos', 
-        action: () => this.router.navigate(['/pagos'])
+        action: () => this.router.navigate(['/socio'])
       }
     ];
   }

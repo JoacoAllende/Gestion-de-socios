@@ -40,10 +40,12 @@ export interface FormField {
   styleUrls: ['./dynamic-form.component.scss']
 })
 export class DynamicFormComponent {
+  @Input() formTitle: string = '';
   @Input() fields: FormField[] = [];
   @Input() form!: FormGroup;
 
   @Output() submitted = new EventEmitter<any>();
+  @Output() cancelled = new EventEmitter<any>();
 
   submit() {
     if (this.form.invalid) {
@@ -51,6 +53,10 @@ export class DynamicFormComponent {
       return;
     }
     this.submitted.emit(this.form.value);
+  }
+
+  cancel() {
+    this.cancelled.emit();
   }
 
   getErrorKeys(fieldName: string): string[] {
