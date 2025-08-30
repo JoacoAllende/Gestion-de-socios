@@ -7,6 +7,10 @@ membershipValidator.validar_getMemberships = (req, res) => {
     membershipController.getMemberships(req, res);
 }
 
+membershipValidator.validar_getCategories = (req, res) => {
+    membershipController.getCategories(req, res);
+}
+
 membershipValidator.validar_getMembership = (req, res) => {
     membershipController.getMembership(req, res);
 }
