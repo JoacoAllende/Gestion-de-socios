@@ -5,6 +5,7 @@ import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbo
 import { ButtonComponent } from '../commons/button/button.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
+import { PaymentsService } from '../../services/payments.service';
 
 @Component({
   selector: 'app-membership-payments',
@@ -98,8 +99,9 @@ export class MembershipPaymentsComponent implements OnInit {
   ];
 
 
-  constructor(private membershipService: MembershipService, private router: Router) {
-    this.cargarPagos = this.cargarPagos.bind(this);
+  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private router: Router) {
+    this.cargarPagosTransferencia = this.cargarPagosTransferencia.bind(this);
+    this.cargarPagosEfectivo = this.cargarPagosEfectivo.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -167,7 +169,7 @@ export class MembershipPaymentsComponent implements OnInit {
   }
 
 
-  public cargarPagos() {
+  private procesarPagos(efectivo: boolean) {
     const seleccionados = this.rowData
       .map(row => {
         const meses = row._selectedMonths ?? {};
@@ -178,8 +180,20 @@ export class MembershipPaymentsComponent implements OnInit {
       })
       .filter(r => Object.keys(r.meses).length > 0);
 
-    console.log('Meses seleccionados por usuario:', seleccionados);
+    if (seleccionados.length === 0) return;
+
+    this.paymentsService.updatePayments(seleccionados, efectivo).subscribe(() => {
+      this.membershipService.getMemberships().subscribe(data => {
+        this.rowData = data;
+        this.gridApi?.refreshCells();
+        this.updateVisibleTotals();
+      });
+    });
   }
+
+  public cargarPagosEfectivo() { this.procesarPagos(true); }
+  public cargarPagosTransferencia() { this.procesarPagos(false); }
+
 
   public createMembership = () => {
     this.router.navigate(['/socio']);
