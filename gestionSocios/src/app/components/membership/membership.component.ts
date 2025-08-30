@@ -17,6 +17,21 @@ export class MembershipComponent implements OnInit {
   fields: FormField[] = [
     { name: 'nombre', label: 'Nombre completo', type: 'text' },
     { name: 'dni', label: 'DNI', type: 'number' },
+    {
+      name: 'genero',
+      label: 'Género',
+      type: 'select',
+      options: [
+        { label: 'Femenino', value: 'F' },
+        { label: 'Masculino', value: 'M' }
+      ]
+    },
+    {
+      name: 'categoria_id',
+      label: 'Categoría',
+      type: 'select',
+      options: []
+    },
     { name: 'cuota_activa', label: 'Cuota Activa', type: 'checkbox' },
     { name: 'cuota_pasiva', label: 'Cuota Pasiva', type: 'checkbox' },
     { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
@@ -33,7 +48,7 @@ export class MembershipComponent implements OnInit {
     private membershipService: MembershipService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     const controls: any = {};
@@ -41,6 +56,25 @@ export class MembershipComponent implements OnInit {
     this.form = this.fb.group(controls);
     const idParam = this.route.snapshot.paramMap.get('id');
     this.socioId = idParam ? Number(idParam) : null;
+    this.membershipService.getCategories().subscribe({
+      next: categories => {
+        const idx = this.fields.findIndex(f => f.name === 'categoria_id');
+        if (idx > -1) {
+          this.fields[idx] = {
+            ...this.fields[idx],
+            options: [
+              { label: '', value: '' },
+              ...categories.map((c: any) => ({
+                label: c.nombre,
+                value: c.id
+              }))
+            ]
+          };
+        }
+      },
+
+      error: err => console.error('Error al cargar categorías', err)
+    });
 
     if (this.socioId) {
       this.membershipService.getMembership(this.socioId).subscribe({
