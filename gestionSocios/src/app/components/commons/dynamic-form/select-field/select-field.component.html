@@ -1,0 +1,5 @@
+<div class="form-field" [formGroup]="form">
+  <select class="form-select" [formControlName]="name">
+    <option *ngFor="let opt of optionsList" [value]="opt.value">{{ opt.label }}</option>
+  </select>
+</div>
