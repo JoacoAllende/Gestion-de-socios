@@ -1,0 +1,18 @@
+<button mat-button [matMenuTriggerFor]="menu">Menu</button>
+
+<mat-menu #menu="matMenu">
+  <ng-container *ngFor="let item of items">
+    <ng-container *ngIf="!item.children?.length">
+      <button mat-menu-item (click)="onClick(item)">{{ item.label }}</button>
+    </ng-container>
+
+    <ng-container *ngIf="item.children?.length">
+      <button mat-menu-item [matMenuTriggerFor]="subMenu">{{ item.label }}</button>
+      <mat-menu #subMenu="matMenu">
+        <ng-container *ngFor="let child of getSubMenu(item)">
+          <button mat-menu-item (click)="onClick(child)">{{ child.label }}</button>
+        </ng-container>
+      </mat-menu>
+    </ng-container>
+  </ng-container>
+</mat-menu>
