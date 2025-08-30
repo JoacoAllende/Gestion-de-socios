@@ -45,6 +45,21 @@ membershipController.getMembership = async (req, res, next) => {
   });
 };
 
+membershipController.getCategories = async (req, res, next) => {
+  try {
+    const query = 'SELECT * FROM categoria';
+
+    mysqlConnection.query(query, (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error al obtener categorías' });
+      }
+      res.json(rows);
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error inesperado en el servidor' });
+  }
+};
+
 membershipController.getMemberships = async (req, res, next) => {
   const anio = 2025;
   const meses = [
@@ -80,6 +95,7 @@ membershipController.getMemberships = async (req, res, next) => {
     LEFT JOIN actividad a ON a.id = sa.actividad_id
     LEFT JOIN pago p ON p.socio_id = s.id AND p.anio = ?
     GROUP BY s.id, s.nombre, s.dni, s.activo, c.nombre
+    ORDER BY s.id DESC
   `;
 
   mysqlConnection.query(query, [anio], (err, rows) => {
@@ -105,15 +121,17 @@ membershipController.createMembership = async (req, res) => {
       basquet,
       mes_alta = 1,
       secretaria,
+      genero,
+      categoria_id,
     } = req.body;
 
     const socioQuery = `
-      INSERT INTO socio (nombre, dni, cuota_activa, cuota_pasiva, descuento_familiar, becado, secretaria, activo, genero)
-      VALUES (?, ?, ?, ?, ?, ?, ?, TRUE, 'F')`;
+      INSERT INTO socio (nombre, dni, cuota_activa, cuota_pasiva, descuento_familiar, becado, secretaria, activo, genero, categoria_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, TRUE, ?, ?)`;
 
     mysqlConnection.query(
       socioQuery,
-      [nombre, dni || null, !!cuota_activa, !!cuota_pasiva, !!descuento_familiar, !!becado, !!secretaria],
+      [nombre, dni || null, !!cuota_activa, !!cuota_pasiva, !!descuento_familiar, !!becado, !!secretaria, genero, categoria_id],
       (err, result) => {
         if (err) return res.status(500).json(err);
 
@@ -212,17 +230,19 @@ membershipController.updateMembership = (req, res) => {
       basquet,
       mes_alta = 1,
       secretaria,
+      genero,
+      categoria_id,
     } = req.body;
 
     const updateSocioQuery = `
       UPDATE socio
-      SET nombre = ?, dni = ?, cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, secretaria = ?
+      SET nombre = ?, dni = ?, cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, secretaria = ?, genero = ?, categoria_id = ?
       WHERE id = ?
     `;
 
     mysqlConnection.query(
       updateSocioQuery,
-      [nombre, dni || null, !!cuota_activa, !!cuota_pasiva, !!descuento_familiar, !!becado, !!secretaria, socioId],
+      [nombre, dni || null, !!cuota_activa, !!cuota_pasiva, !!descuento_familiar, !!becado, !!secretaria, genero, categoria_id || null, socioId],
       (err) => {
         if (err) return res.status(500).json(err);
 
