@@ -2,3 +2,8 @@
   <input type="checkbox" class="form-check-input" [formControlName]="field.name" />
   <label class="form-check-label">{{ field.label }}</label>
 </div>
+<div class="text-danger mt-1" *ngIf="form.get(field.name)?.touched && form.get(field.name)?.invalid">
+  <span *ngFor="let errorKey of getErrorKeys(field.name)">
+    {{ field.errorMessages?.[errorKey] || 'Campo inválido' }}
+  </span>
+</div>
