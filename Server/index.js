@@ -22,6 +22,7 @@ app.use(cors({}))
 
 app.use(compression());
 app.use(require('./routes/membership.routes'));
+app.use(require('./routes/payments.routes'));
 
 // Starting the server
 
