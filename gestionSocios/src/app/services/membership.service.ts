@@ -19,6 +19,10 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships`, { headers: this.headers });
   }
 
+  getCategories() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-categories`, { headers: this.headers });
+  }
+
   createMembership(membershipData: any) {
     return this.http.post(`${this.API_URI}/membership`, membershipData, { headers: this.headers });
   }
