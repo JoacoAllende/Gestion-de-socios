@@ -13,4 +13,11 @@ import { FormField } from '../dynamic-form.component';
 export class TextFieldComponent {
   @Input() field!: FormField;
   @Input() form!: FormGroup;
+
+  getErrorKeys(): string[] {
+    const control = this.form.controls[this.field.name];
+    return control && control.errors ? Object.keys(control.errors) : [];
+  }
 }
+
+

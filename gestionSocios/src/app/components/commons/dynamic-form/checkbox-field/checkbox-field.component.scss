@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 div {
@@ -22,4 +23,13 @@ label {
   color: $secondary-color;
   font-size: 0.95rem;
   cursor: pointer;
+}
+
+.text-danger {
+  color: $danger-color;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  width: 100%;
 }

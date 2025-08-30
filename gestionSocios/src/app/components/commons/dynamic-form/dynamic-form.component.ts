@@ -1,7 +1,7 @@
 // dynamic-form.component.ts
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TextFieldComponent } from './text-field/text-field.component';
 import { NumberFieldComponent } from './number-field/number-field.component';
 import { CheckboxFieldComponent } from './checkbox-field/checkbox-field.component';
@@ -10,7 +10,7 @@ import { SelectFieldComponent, SelectOption } from './select-field/select-field.
 import { Observable } from 'rxjs';
 // import { FormField } from './form-field.model';
 
-export type FieldType = 'text' | 'number' | 'checkbox' | 'select';
+export type FieldType = 'text' | 'number' | 'checkbox' | 'select' | 'groupValidator';
 
 export interface FormField {
   name: string;
@@ -19,6 +19,9 @@ export interface FormField {
   value?: any;
   options?: SelectOption[];
   options$?: Observable<SelectOption[]>;
+  validators?: ValidatorFn[];
+  errorMessages?: { [key: string]: string };
+  groupValidators?: any[];
 }
 
 @Component({
@@ -43,6 +46,24 @@ export class DynamicFormComponent {
   @Output() submitted = new EventEmitter<any>();
 
   submit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.submitted.emit(this.form.value);
   }
+
+  getErrorKeys(fieldName: string): string[] {
+    const control = this.form.get(fieldName);
+    const errors: any = {};
+    if (control?.errors) {
+      Object.assign(errors, control.errors);
+    }
+    if (this.form.errors) {
+      Object.assign(errors, this.form.errors);
+    }
+    return Object.keys(errors);
+  }
+
+
 }

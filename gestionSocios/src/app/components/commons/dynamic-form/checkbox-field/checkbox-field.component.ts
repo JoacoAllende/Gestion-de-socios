@@ -13,4 +13,10 @@ import { FormField } from '../dynamic-form.component';
 export class CheckboxFieldComponent {
   @Input() field!: FormField;
   @Input() form!: FormGroup;
+
+  getErrorKeys(fieldName: string): string[] {
+    const control = this.form.get(fieldName);
+    return control?.errors ? Object.keys(control.errors) : [];
+  }
+
 }
