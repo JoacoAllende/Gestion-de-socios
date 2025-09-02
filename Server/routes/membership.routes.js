@@ -4,7 +4,10 @@ const router = express.Router();
 const membership = require("../validations/membership.validation");
 
 router.get('/memberships', membership.validar_getMemberships);
-router.get('/memberships-categories', membership.validar_getCategories);
+router.get('/memberships-categories/futbol', membership.validar_getFutbolCategories);
+router.get('/memberships-categories/basquet', membership.validar_getBasquetCategories);
+router.get('/memberships-categories/paleta', membership.validar_getPaletaCategories);
+router.get('/memberships-card', membership.validar_getMembershipCard);
 router.get('/membership/:id', membership.validar_getMembership);
 router.post('/membership', membership.validar_createMembership);
 router.put('/membership/:id', membership.validar_updateMembership);

@@ -7,8 +7,20 @@ membershipValidator.validar_getMemberships = (req, res) => {
     membershipController.getMemberships(req, res);
 }
 
-membershipValidator.validar_getCategories = (req, res) => {
-    membershipController.getCategories(req, res);
+membershipValidator.validar_getFutbolCategories = (req, res) => {
+    membershipController.getFutbolCategories(req, res);
+}
+
+membershipValidator.validar_getBasquetCategories = (req, res) => {
+    membershipController.getBasquetCategories(req, res);
+}
+
+membershipValidator.validar_getPaletaCategories = (req, res) => {
+    membershipController.getPaletaCategories(req, res);
+}
+
+membershipValidator.validar_getMembershipCard = (req, res) => {
+    membershipController.getMembershipCard(req, res);
 }
 
 membershipValidator.validar_getMembership = (req, res) => {
