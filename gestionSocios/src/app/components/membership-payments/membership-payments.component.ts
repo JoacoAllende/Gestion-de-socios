@@ -30,7 +30,7 @@ export class MembershipPaymentsComponent implements OnInit {
       headerName: 'Socio',
       children: [
         {
-          field: 'socioId',
+          field: 'nro_socio',
           headerName: 'Nro Socio',
           pinned: 'left',
           width: 50,
@@ -46,6 +46,25 @@ export class MembershipPaymentsComponent implements OnInit {
           field: 'nombre',
           headerName: 'Nombre',
           pinned: 'left',
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true
+        },
+      ]
+    },
+    {
+      headerName: 'Datos',
+      children: [
+        {
+          field: 'direccion',
+          headerName: 'Dirección',
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true
+        },
+        {
+          field: 'dni',
+          headerName: 'DNI',
           sortable: true,
           filter: 'agTextColumnFilter',
           floatingFilter: true

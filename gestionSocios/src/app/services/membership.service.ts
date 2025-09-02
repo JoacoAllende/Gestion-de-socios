@@ -19,8 +19,21 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships`, { headers: this.headers });
   }
 
-  getCategories() {
-    return this.http.get<any[]>(`${this.API_URI}/memberships-categories`, { headers: this.headers });
+  getFutbolCategories() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-categories/futbol`, { headers: this.headers });
+  }
+
+  getBasquetCategories() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-categories/basquet`, { headers: this.headers });
+  }
+
+  getPaletaCategories() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-categories/paleta`, { headers: this.headers });
+  }
+
+
+  getMembershipCard() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-card`, { headers: this.headers });
   }
 
   createMembership(membershipData: any) {
