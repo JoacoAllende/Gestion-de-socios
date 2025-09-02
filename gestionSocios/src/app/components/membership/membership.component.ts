@@ -18,30 +18,19 @@ export class MembershipComponent implements OnInit {
   fields: FormField[] = [
     { name: 'nombre', label: 'Nombre completo', type: 'text', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
     { name: 'dni', label: 'DNI', type: 'number', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
-    {
-      name: 'genero',
-      label: 'Género',
-      type: 'select',
-      options: [
-        { label: 'Femenino', value: 'F' },
-        { label: 'Masculino', value: 'M' }
-      ],
-      validators: [Validators.required], errorMessages: { required: 'Obligatorio' }
-    },
+    { name: 'direccion', label: 'Direccion', type: 'text' },
+    { name: 'ficha_socio_id', label: 'Ficha', type: 'select', options: [] },
     { name: 'cuota_activa', label: 'Cuota Activa', type: 'checkbox' },
     { name: 'cuota_pasiva', label: 'Cuota Pasiva', type: 'checkbox', errorMessages: { cuotasExclusivas: 'Cuota activa y pasiva no pueden estar activas al mismo tiempo.' } },
     { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
     { name: 'becado', label: 'Becado', type: 'checkbox', errorMessages: { becadoValidator: 'Si es becado no puede tener cuota activa, cuota pasiva ni descuento familiar.' } },
     { name: 'secretaria', label: 'Ficha en secretaria', type: 'checkbox' },
     { name: 'futbol', label: 'Futbol', type: 'checkbox' },
-    {
-      name: 'categoria_id',
-      label: 'Categoría',
-      type: 'select',
-      options: []
-    },
+    { name: 'categoria_futbol_id', label: 'Categoría', type: 'select', options: [] },
     { name: 'paleta', label: 'Paleta', type: 'checkbox' },
+    { name: 'categoria_paleta_id', label: 'Categoría', type: 'select', options: [] },
     { name: 'basquet', label: 'Basquet', type: 'checkbox' },
+    { name: 'categoria_basquet_id', label: 'Categoría', type: 'select', options: [] },
     { name: 'mes_alta', label: 'Mes alta', type: 'number', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
   ];
 
@@ -69,9 +58,9 @@ export class MembershipComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     this.socioId = idParam ? Number(idParam) : null;
 
-    this.membershipService.getCategories().subscribe({
+    this.membershipService.getFutbolCategories().subscribe({
       next: categories => {
-        const idx = this.fields.findIndex(f => f.name === 'categoria_id');
+        const idx = this.fields.findIndex(f => f.name === 'categoria_futbol_id');
         if (idx > -1) {
           this.fields[idx] = {
             ...this.fields[idx],
@@ -82,7 +71,56 @@ export class MembershipComponent implements OnInit {
           };
         }
       },
-      error: err => console.error('Error al cargar categorías', err)
+      error: err => console.error('Error al cargar categorías de Futbol', err)
+    });
+
+    this.membershipService.getBasquetCategories().subscribe({
+      next: categories => {
+        const idx = this.fields.findIndex(f => f.name === 'categoria_basquet_id');
+        if (idx > -1) {
+          this.fields[idx] = {
+            ...this.fields[idx],
+            options: [
+              { label: '', value: '' },
+              ...categories.map((c: any) => ({ label: c.nombre, value: c.id }))
+            ]
+          };
+        }
+      },
+      error: err => console.error('Error al cargar categorías de Basquet', err)
+    });
+
+    this.membershipService.getPaletaCategories().subscribe({
+      next: categories => {
+        const idx = this.fields.findIndex(f => f.name === 'categoria_paleta_id');
+        if (idx > -1) {
+          this.fields[idx] = {
+            ...this.fields[idx],
+            options: [
+              { label: '', value: '' },
+              ...categories.map((c: any) => ({ label: c.nombre, value: c.id }))
+            ]
+          };
+        }
+      },
+      error: err => console.error('Error al cargar categorías de Paleta', err)
+    });
+
+
+    this.membershipService.getMembershipCard().subscribe({
+      next: card => {
+        const idx = this.fields.findIndex(f => f.name === 'ficha_socio_id');
+        if (idx > -1) {
+          this.fields[idx] = {
+            ...this.fields[idx],
+            options: [
+              { label: '', value: '' },
+              ...card.map((f: any) => ({ label: f.nombre, value: f.id }))
+            ]
+          };
+        }
+      },
+      error: err => console.error('Error al cargar fichas de socio', err)
     });
 
     if (this.socioId) {
