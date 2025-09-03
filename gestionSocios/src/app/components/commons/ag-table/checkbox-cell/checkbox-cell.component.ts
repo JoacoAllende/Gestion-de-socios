@@ -21,25 +21,32 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
     return true;
   }
 
-  isSelected(): boolean {
-    const mes = this.params.colDef?.field;
-    if (!mes) return false;
-    return this.params.data._selectedMonths?.[mes] ?? false;
+  isSelected(option: 'yes' | 'no'): boolean {
+    const row = this.params.data;
+    const monthKey = this.params.colDef?.field as string;
+    if (!monthKey) return false;
+
+    const meses = row._selectedMonths ?? {};
+    return meses[monthKey] === (option === 'yes');
   }
 
-  toggleSelection(event: Event): void {
-    const mes = this.params.colDef?.field;
-    if (!mes) return;
-
+  toggleSelection(event: any, option: 'yes' | 'no') {
     const row = this.params.data;
-    row._selectedMonths ??= {};
-    row._selectedMonths[mes] = (event.target as HTMLInputElement).checked;
+    const monthKey = this.params.colDef?.field as string;
+    if (!monthKey) return;
 
-    row._checkedByUser ??= {};
-    if (!this.params.value?.pagado) {
-      row._checkedByUser[mes] = (event.target as HTMLInputElement).checked;
+    if (!row._selectedMonths) row._selectedMonths = {};
+
+    if (event.target.checked) {
+      row._selectedMonths[monthKey] = option === 'yes';
+    } else {
+      delete row._selectedMonths[monthKey];
     }
 
-    this.params.api.refreshCells({ rowNodes: [this.params.node], columns: [mes] });
+    if (option === 'yes' && row._selectedMonths[monthKey] === true) {
+      row._selectedMonths[monthKey] = true;
+    } else if (option === 'no' && row._selectedMonths[monthKey] === false) {
+      row._selectedMonths[monthKey] = false;
+    }
   }
 }
