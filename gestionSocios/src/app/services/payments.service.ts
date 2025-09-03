@@ -15,11 +15,8 @@ export class PaymentsService {
     this.headers = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("ACCESS_TOKEN"));
   }
 
-  updatePayments(paymentsData: any, efectivo: boolean) {
-    const payload = {
-      efectivo,
-      pagos: paymentsData
-    };
+  updatePayments(paymentsData: any) {
+    const payload = { pagos: paymentsData };
     return this.http.put(`${this.API_URI}/payments`, payload, { headers: this.headers });
   }
 }

@@ -31,7 +31,6 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships-categories/paleta`, { headers: this.headers });
   }
 
-
   getMembershipCard() {
     return this.http.get<any[]>(`${this.API_URI}/memberships-card`, { headers: this.headers });
   }

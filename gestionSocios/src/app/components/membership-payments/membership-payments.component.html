@@ -1,7 +1,5 @@
 <div class="buttons-wrapper">
-  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos efectivos'" [onClick]="cargarPagosEfectivo">
-  </app-button>
-  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos transferencia'" [onClick]="cargarPagosTransferencia">
+  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos'" [onClick]="procesarPagos">
   </app-button>
   <app-button [text]="'Crear Socio'" [onClick]="createMembership">
   </app-button>

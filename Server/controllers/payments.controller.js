@@ -3,7 +3,8 @@ const mysqlConnection = require('../database');
 
 paymentsController.updatePayments = (req, res) => {
   try {
-    const { efectivo = false, pagos = [] } = req.body;
+    const { pagos = [] } = req.body;
+
     const mesesMap = {
       enero: 1, febrero: 2, marzo: 3, abril: 4,
       mayo: 5, junio: 6, julio: 7, agosto: 8,
@@ -14,12 +15,13 @@ paymentsController.updatePayments = (req, res) => {
     let errorOccurred = false;
 
     pagos.forEach(({ socioId, meses }) => {
-      Object.keys(meses).forEach(mesName => {
+      Object.entries(meses).forEach(([mesName, valor]) => {
         const mesNum = mesesMap[mesName];
         if (!mesNum) return;
 
-        const pagado = meses[mesName];
-        const fechaPago = pagado ? new Date() : null;
+        const pagado = true;
+        const efectivo = valor === true;
+        const fechaPago = new Date();
 
         pending++;
 
@@ -33,6 +35,7 @@ paymentsController.updatePayments = (req, res) => {
               errorOccurred = true;
               return res.status(500).json(err);
             }
+
             pending--;
             if (pending === 0 && !errorOccurred) {
               res.json({ status: 'updated' });

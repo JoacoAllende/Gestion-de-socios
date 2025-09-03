@@ -119,8 +119,7 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private router: Router) {
-    this.cargarPagosTransferencia = this.cargarPagosTransferencia.bind(this);
-    this.cargarPagosEfectivo = this.cargarPagosEfectivo.bind(this);
+    this.procesarPagos = this.procesarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -146,15 +145,12 @@ export class MembershipPaymentsComponent implements OnInit {
       this.rowData = data.map(membership => {
         membership._selectedMonths = {};
         this.meses.forEach(mes => {
-          let valor = membership[mes];
-          membership[mes] = valor;
-          membership._selectedMonths[mes] = valor && valor > 0 ? null : false;
+          membership[mes] = membership[mes];
         });
         return membership;
       });
     });
   }
-
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
@@ -183,25 +179,25 @@ export class MembershipPaymentsComponent implements OnInit {
     if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
   }
 
-  public haySeleccion() {
-    return this.rowData.some(r => Object.values(r._selectedMonths ?? {}).some(v => v));
+  public haySeleccion(): boolean {
+    return this.rowData.some(row =>
+      Object.values(row._selectedMonths ?? {}).some(v => v === true || v === false)
+    );
   }
 
-
-  private procesarPagos(efectivo: boolean) {
+  public procesarPagos() {
     const seleccionados = this.rowData
       .map(row => {
         const meses = row._selectedMonths ?? {};
         const mesesFiltrados = Object.fromEntries(
-          Object.entries(meses).filter(([_, value]) => value)
+          Object.entries(meses).filter(([_, value]) => value === true || value === false)
         );
         return { socioId: row.nro_socio, meses: mesesFiltrados };
       })
       .filter(r => Object.keys(r.meses).length > 0);
-
     if (seleccionados.length === 0) return;
 
-    this.paymentsService.updatePayments(seleccionados, efectivo).subscribe(() => {
+    this.paymentsService.updatePayments(seleccionados).subscribe(() => {
       this.membershipService.getMemberships().subscribe(data => {
         this.rowData = data;
         this.gridApi?.refreshCells();
@@ -209,9 +205,6 @@ export class MembershipPaymentsComponent implements OnInit {
       });
     });
   }
-
-  public cargarPagosEfectivo() { this.procesarPagos(true); }
-  public cargarPagosTransferencia() { this.procesarPagos(false); }
 
 
   public createMembership = () => {
