@@ -39,7 +39,7 @@ export class MembershipPaymentsComponent implements OnInit {
           floatingFilter: true,
           cellClass: 'ag-cell-clickable',
           onCellClicked: (event: CellClickedEvent) => {
-            this.router.navigate([`/socio/${event.data.socioId}`]);
+            this.router.navigate([`/socio/${event.data.nro_socio}`]);
           }
         },
         {
@@ -195,7 +195,7 @@ export class MembershipPaymentsComponent implements OnInit {
         const mesesFiltrados = Object.fromEntries(
           Object.entries(meses).filter(([_, value]) => value)
         );
-        return { socioId: row.socioId, meses: mesesFiltrados };
+        return { socioId: row.nro_socio, meses: mesesFiltrados };
       })
       .filter(r => Object.keys(r.meses).length > 0);
 
