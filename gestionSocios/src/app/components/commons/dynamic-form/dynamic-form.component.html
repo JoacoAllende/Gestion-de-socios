@@ -1,22 +1,24 @@
-<form [formGroup]="form">
-  <h2>{{ formTitle }}</h2>
-  <ng-container *ngFor="let row of groupByRow(fields)">
-    <div class="field-row">
-      <ng-container *ngFor="let field of row">
-        <ng-container [ngSwitch]="field.type">
-          <app-text-field *ngSwitchCase="'text'" [field]="field" [form]="form"></app-text-field>
-          <app-number-field *ngSwitchCase="'number'" [field]="field" [form]="form"></app-number-field>
-          <app-checkbox-field *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></app-checkbox-field>
-          <app-select-field *ngSwitchCase="'select'" [form]="form" [name]="field.name" [label]="field.label" [field]="field"
-            [options]="field.options || []" [options$]="field.options$">
-          </app-select-field>
-
+  <form [formGroup]="form" (ngSubmit)="submit($event)" novalidate>
+    <h2>{{ formTitle }}</h2>
+    <ng-container *ngFor="let row of groupByRow(fields)">
+      <div class="field-row">
+        <ng-container *ngFor="let field of row">
+          <ng-container *ngIf="isVisible(field)">
+            <ng-container [ngSwitch]="field.type">
+              <app-text-field *ngSwitchCase="'text'" [field]="field" [form]="form"></app-text-field>
+              <app-number-field *ngSwitchCase="'number'" [field]="field" [form]="form"></app-number-field>
+              <app-checkbox-field *ngSwitchCase="'checkbox'" [field]="field" [form]="form"></app-checkbox-field>
+              <app-select-field *ngSwitchCase="'select'" [form]="form" [name]="field.name" [label]="field.label" [field]="field"
+                [options]="field.options || []" [options$]="field.options$">
+              </app-select-field>
+    
+            </ng-container>
+          </ng-container>
         </ng-container>
-      </ng-container>
+      </div>
+    </ng-container>
+    <div class="buttons-wrapper">
+      <app-button text="Cancelar" [onClick]="cancel.bind(this)"></app-button>
+      <app-button type="submit" text="Guardar" [onClick]="submit.bind(this)"></app-button>
     </div>
-  </ng-container>
-  <div class="buttons-wrapper">
-    <app-button text="Cancelar" [onClick]="cancel.bind(this)"></app-button>
-    <app-button text="Guardar" [onClick]="submit.bind(this)"></app-button>
-  </div>
-</form>
+  </form>
