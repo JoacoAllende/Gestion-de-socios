@@ -8,7 +8,6 @@ import { CheckboxFieldComponent } from './checkbox-field/checkbox-field.componen
 import { ButtonComponent } from '../button/button.component';
 import { SelectFieldComponent, SelectOption } from './select-field/select-field.component';
 import { Observable } from 'rxjs';
-// import { FormField } from './form-field.model';
 
 export type FieldType = 'text' | 'number' | 'checkbox' | 'select' | 'groupValidator';
 
@@ -23,6 +22,7 @@ export interface FormField {
   errorMessages?: { [key: string]: string };
   groupValidators?: any[];
   row?: number;
+  dependsOn?: { field: string; value: any };
 }
 
 @Component({
@@ -35,7 +35,7 @@ export interface FormField {
     NumberFieldComponent,
     CheckboxFieldComponent,
     SelectFieldComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
@@ -66,7 +66,10 @@ export class DynamicFormComponent {
     return groups;
   }
 
-  submit() {
+  submit(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -88,6 +91,12 @@ export class DynamicFormComponent {
       Object.assign(errors, this.form.errors);
     }
     return Object.keys(errors);
+  }
+
+  isVisible(field: FormField): boolean {
+    if (!field.dependsOn) return true;
+    const control = this.form.get(field.dependsOn.field);
+    return control?.value === field.dependsOn.value;
   }
 
 

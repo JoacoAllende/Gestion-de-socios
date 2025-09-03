@@ -25,11 +25,11 @@ export class MembershipComponent implements OnInit {
     { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
     { name: 'becado', label: 'Becado', type: 'checkbox', errorMessages: { becadoValidator: 'Si es becado no puede tener cuota activa, cuota pasiva ni descuento familiar.' } },
     { name: 'futbol', label: 'Futbol', type: 'checkbox', row: 2 },
-    { name: 'categoria_futbol_id', label: 'Categoría', type: 'select', options: [], row: 2 },
+    { name: 'categoria_futbol_id', label: 'Categoría', type: 'select', options: [], row: 2, dependsOn: { field: 'futbol', value: true } },
     { name: 'paleta', label: 'Paleta', type: 'checkbox', row: 3 },
-    { name: 'categoria_paleta_id', label: 'Categoría', type: 'select', options: [], row: 3 },
+    { name: 'categoria_paleta_id', label: 'Categoría', type: 'select', options: [], row: 3, dependsOn: { field: 'paleta', value: true } },
     { name: 'basquet', label: 'Basquet', type: 'checkbox', row: 4 },
-    { name: 'categoria_basquet_id', label: 'Categoría', type: 'select', options: [], row: 4 },
+    { name: 'categoria_basquet_id', label: 'Categoría', type: 'select', options: [], row: 4, dependsOn: { field: 'basquet', value: true } },
     { name: 'mes_alta', label: 'Mes alta', type: 'number', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
   ];
 
@@ -104,7 +104,6 @@ export class MembershipComponent implements OnInit {
       },
       error: err => console.error('Error al cargar categorías de Paleta', err)
     });
-
 
     this.membershipService.getMembershipCard().subscribe({
       next: card => {
