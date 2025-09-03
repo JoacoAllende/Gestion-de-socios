@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { FormField } from '../dynamic-form.component';
 
 export interface SelectOption {
   label: string;
@@ -19,6 +20,7 @@ export class SelectFieldComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() name!: string;
   @Input() label!: string;
+  @Input() field!: FormField;
 
   @Input() options: SelectOption[] = [];
   @Input() options$?: Observable<SelectOption[]>;
@@ -31,5 +33,10 @@ export class SelectFieldComponent implements OnInit {
     } else {
       this.optionsList = this.options;
     }
+  }
+
+  getErrorKeys(): string[] {
+    const control = this.form.controls[this.field.name];
+    return control && control.errors ? Object.keys(control.errors) : [];
   }
 }

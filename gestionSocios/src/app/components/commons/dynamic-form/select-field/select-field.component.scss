@@ -27,3 +27,11 @@ select {
     outline: none;
   }
 }
+
+.text-danger {
+  color: $danger-color;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
