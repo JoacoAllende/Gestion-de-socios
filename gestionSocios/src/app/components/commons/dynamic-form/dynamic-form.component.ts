@@ -22,6 +22,7 @@ export interface FormField {
   validators?: ValidatorFn[];
   errorMessages?: { [key: string]: string };
   groupValidators?: any[];
+  row?: number;
 }
 
 @Component({
@@ -46,6 +47,24 @@ export class DynamicFormComponent {
 
   @Output() submitted = new EventEmitter<any>();
   @Output() cancelled = new EventEmitter<any>();
+
+  groupByRow(fields: FormField[]) {
+    const groups: FormField[][] = [];
+
+    fields.forEach(field => {
+      if (field.row) {
+        let group = groups.find(g => g.length && g[0].row === field.row);
+        if (!group) {
+          group = [];
+          groups.push(group);
+        }
+        group.push(field);
+      } else {
+        groups.push([field]);
+      }
+    });
+    return groups;
+  }
 
   submit() {
     if (this.form.invalid) {

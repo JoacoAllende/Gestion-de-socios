@@ -29,3 +29,13 @@ form {
 h2 {
   color: $primary-color;
 }
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  > * {
+    flex: 1;
+  }
+}
