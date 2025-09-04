@@ -99,5 +99,12 @@ export class DynamicFormComponent {
     return control?.value === field.dependsOn.value;
   }
 
+  trackByRow(index: number, row: any[]): number {
+    return row[0]?.name ? row[0].name.charCodeAt(0) : index;
+  }
+
+  trackByField(index: number, field: any): string {
+    return field.name;
+  }
 
 }
