@@ -1,8 +1,8 @@
   <form [formGroup]="form" (ngSubmit)="submit($event)" novalidate>
     <h2>{{ formTitle }}</h2>
-    <ng-container *ngFor="let row of groupByRow(fields)">
+    <ng-container *ngFor="let row of groupByRow(fields); trackBy: trackByRow">
       <div class="field-row">
-        <ng-container *ngFor="let field of row">
+        <ng-container *ngFor="let field of row; trackBy: trackByField">
           <ng-container *ngIf="isVisible(field)">
             <ng-container [ngSwitch]="field.type">
               <app-text-field *ngSwitchCase="'text'" [field]="field" [form]="form"></app-text-field>

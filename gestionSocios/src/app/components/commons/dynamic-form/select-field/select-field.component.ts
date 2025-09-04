@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FormField } from '../dynamic-form.component';
 
 export interface SelectOption {
@@ -16,23 +16,19 @@ export interface SelectOption {
   templateUrl: './select-field.component.html',
   styleUrls: ['./select-field.component.scss']
 })
-export class SelectFieldComponent implements OnInit {
+export class SelectFieldComponent {
   @Input() form!: FormGroup;
   @Input() name!: string;
   @Input() label!: string;
   @Input() field!: FormField;
 
+  // Puede ser un array estático o un Observable
   @Input() options: SelectOption[] = [];
   @Input() options$?: Observable<SelectOption[]>;
 
-  optionsList: SelectOption[] = [];
-
-  ngOnInit() {
-    if (this.options$) {
-      this.options$.subscribe(data => this.optionsList = data);
-    } else {
-      this.optionsList = this.options;
-    }
+  // Devuelve un observable que siempre funciona con async pipe
+  get optionsObservable(): Observable<SelectOption[]> {
+    return this.options$ ? this.options$ : of(this.options);
   }
 
   getErrorKeys(): string[] {
