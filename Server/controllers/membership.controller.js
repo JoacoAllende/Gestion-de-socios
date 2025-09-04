@@ -209,7 +209,7 @@ membershipController.createMembership = (req, res) => {
           categoria_basquet_id ? Number(categoria_basquet_id) : null,
           categoria_paleta_id ? Number(categoria_paleta_id) : null
         ],
-        (err, result) => {
+        (err) => {
           if (err) return res.status(500).json(err);
 
           const actividades = [];
@@ -259,7 +259,7 @@ membershipController.createMembership = (req, res) => {
                       const descuentoPasivaAplicado = !!cuota_pasiva ? dp : 0;
 
                       const montoFinal = !!becado ? -1 : montoBase + valorActividad - descuentoFamiliarAplicado - descuentoPasivaAplicado;
-                      pagoValues.push([finalNroSocio, mes, 2025, montoFinal, false]);
+                      pagoValues.push([finalNroSocio, mes, 2025, montoFinal, !!becado ? true : false]);
                     }
 
                     if (pagoValues.length === 0) return res.json({ status: 'created', finalNroSocio });
@@ -343,14 +343,14 @@ membershipController.updateMembership = (req, res) => {
             const values = actividades.map(actId => [nroSocio, actId]);
             mysqlConnection.query(`INSERT INTO socio_actividad (socio_id, actividad_id) VALUES ?`, [values], (err3) => {
               if (err3) return res.status(500).json(err3);
-              insertarPagos();
+              actualizarPagos();
             });
           } else {
-            insertarPagos();
+            actualizarPagos();
           }
         });
 
-        const insertarPagos = () => {
+        const actualizarPagos = () => {
           if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'updated', nroSocio });
 
           mysqlConnection.query(
@@ -376,38 +376,12 @@ membershipController.updateMembership = (req, res) => {
 
                   mysqlConnection.query(
                     `UPDATE pago
-                     SET monto = ?, pagado = FALSE
-                     WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = FALSE`,
-                    [montoFinal, nroSocio, mes_alta],
+                     SET monto = ?, pagado = ?
+                     WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
+                    [montoFinal, becado ? true : false, nroSocio, mes_alta],
                     (err6) => {
                       if (err6) return res.status(500).json(err6);
-
-                      mysqlConnection.query(
-                        `SELECT mes FROM pago WHERE socio_id = ? AND anio = 2025`,
-                        [nroSocio],
-                        (err7, existingPayments) => {
-                          if (err7) return res.status(500).json(err7);
-
-                          const existingMeses = new Set(existingPayments.map(p => p.mes));
-                          const pagoValues = [];
-                          for (let mes = mes_alta; mes <= 12; mes++) {
-                            if (!existingMeses.has(mes)) {
-                              pagoValues.push([nroSocio, mes, 2025, montoFinal, false]);
-                            }
-                          }
-
-                          if (pagoValues.length === 0) return res.json({ status: 'updated', nroSocio });
-
-                          mysqlConnection.query(
-                            `INSERT INTO pago (socio_id, mes, anio, monto, pagado) VALUES ?`,
-                            [pagoValues],
-                            (err8) => {
-                              if (err8) return res.status(500).json(err8);
-                              res.json({ status: 'updated', nroSocio });
-                            }
-                          );
-                        }
-                      );
+                      res.json({ status: 'updated', nroSocio });
                     }
                   );
                 }
@@ -422,5 +396,6 @@ membershipController.updateMembership = (req, res) => {
     res.status(500).json(error);
   }
 };
+
 
 module.exports = membershipController;
