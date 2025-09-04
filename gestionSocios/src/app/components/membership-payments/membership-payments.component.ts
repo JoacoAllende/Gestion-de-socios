@@ -165,7 +165,7 @@ export class MembershipPaymentsComponent implements OnInit {
     this.gridApi.forEachNodeAfterFilterAndSort(node => {
       if (!node.data) return;
       Object.keys(node.data).forEach(key => {
-        if (['nombre', 'socioId', 'dni'].includes(key)) return;
+        if (['nombre', 'nro_socio', 'dni'].includes(key)) return;
         let v = node.data[key];
         if (v === -1) v = 0;
         if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
