@@ -19,6 +19,10 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships`, { headers: this.headers });
   }
 
+  getDischargedMemberships() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-discharged`, { headers: this.headers });
+  }
+
   getFutbolCategories() {
     return this.http.get<any[]>(`${this.API_URI}/memberships-categories/futbol`, { headers: this.headers });
   }
