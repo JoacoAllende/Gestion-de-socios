@@ -5,20 +5,16 @@ import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-membership',
+  selector: 'app-discharged-membership',
   standalone: true,
   imports: [AgTableComponent],
-  templateUrl: './memberships.component.html',
-  styleUrls: ['./memberships.component.scss']
+  templateUrl: './discharged-memberships.component.html',
+  styleUrls: ['./discharged-memberships.component.scss']
 })
-export class MembershipsComponent implements OnInit {
+export class DischargedMembershipsComponent implements OnInit {
   public gridApi!: GridApi;
 
   rowData: any[] = [];
-  pinnedBottomRowData: any[] = [];
-
-  meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 
@@ -113,71 +109,14 @@ export class MembershipsComponent implements OnInit {
         { field: 'categoria_basquet', headerName: 'Basquet', filter: 'agTextColumnFilter', floatingFilter: true }
       ]
     },
-    { headerName: 'Pagos', children: [] }
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router) {
-    const pagosGroup = this.colDefs.find(
-      c => (c as ColGroupDef).headerName === 'Pagos'
-    ) as ColGroupDef;
-    pagosGroup.children = this.meses.map<ColDef>(mes => ({
-      field: mes,
-      headerName: mes.charAt(0).toUpperCase() + mes.slice(1),
-      sortable: true,
-      filter: 'agNumberColumnFilter',
-      floatingFilter: true,
-      cellRenderer: (params: ICellRendererParams) => {
-        if (params.node?.rowPinned) {
-          return `$ ${params.value?.toLocaleString('es-AR') || 0}`;
-        }
-        if (params.value == null) {
-          return '❌';
-        }
-        if (params.value === -1) {
-          return `$ ${(0).toLocaleString('es-AR')}`;
-        }
-        if (params.value > 0) {
-          return params.value;
-        }
-        return params.value;
-      }
-    }));
-
-  }
+  constructor(private membershipService: MembershipService, private router: Router) {}
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe(data => {
-      this.rowData = data.map(membership => {
-        membership._selectedMonths = {};
-        this.meses.forEach(mes => {
-          membership[mes] = membership[mes];
-        });
-        return membership;
-      });
+    this.membershipService.getDischargedMemberships().subscribe(data => {
+      this.rowData = data.map(membership => membership);
     });
-  }
-
-  onGridReady(event: GridReadyEvent) {
-    this.gridApi = event.api;
-    this.updateVisibleTotals();
-    this.gridApi.addEventListener('filterChanged', () => this.updateVisibleTotals());
-    this.gridApi.addEventListener('sortChanged', () => this.updateVisibleTotals());
-  }
-
-  updateVisibleTotals() {
-    if (!this.gridApi) return;
-    const totals: any = {};
-    this.gridApi.forEachNodeAfterFilterAndSort(node => {
-      if (!node.data) return;
-      Object.keys(node.data).forEach(key => {
-        if (['nombre', 'nro_socio', 'dni'].includes(key)) return;
-        let v = node.data[key];
-        if (v === -1) v = 0;
-        if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
-      });
-    });
-    totals['nombre'] = 'Totales';
-    this.pinnedBottomRowData = [totals];
   }
 
   exportCsv() {
