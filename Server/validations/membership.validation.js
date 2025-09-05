@@ -7,6 +7,10 @@ membershipValidator.validar_getMemberships = (req, res) => {
     membershipController.getMemberships(req, res);
 }
 
+membershipValidator.validar_getDischargedMemberships = (req, res) => {
+    membershipController.getDischargedMemberships(req, res);
+}
+
 membershipValidator.validar_getFutbolCategories = (req, res) => {
     membershipController.getFutbolCategories(req, res);
 }
