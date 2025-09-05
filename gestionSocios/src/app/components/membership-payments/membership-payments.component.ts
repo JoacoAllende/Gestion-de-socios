@@ -37,10 +37,6 @@ export class MembershipPaymentsComponent implements OnInit {
           sortable: true,
           filter: 'agNumberColumnFilter',
           floatingFilter: true,
-          cellClass: 'ag-cell-clickable',
-          onCellClicked: (event: CellClickedEvent) => {
-            this.router.navigate([`/socio/${event.data.nro_socio}`]);
-          }
         },
         {
           field: 'nombre',
@@ -50,68 +46,6 @@ export class MembershipPaymentsComponent implements OnInit {
           filter: 'agTextColumnFilter',
           floatingFilter: true
         },
-      ]
-    },
-    {
-      headerName: 'Datos',
-      children: [
-        {
-          field: 'direccion',
-          headerName: 'Dirección',
-          sortable: true,
-          filter: 'agTextColumnFilter',
-          floatingFilter: true
-        },
-        {
-          field: 'dni',
-          headerName: 'DNI',
-          sortable: true,
-          filter: 'agTextColumnFilter',
-          floatingFilter: true
-        },
-      ]
-    },
-    {
-      headerName: 'Activo',
-      children: [
-        {
-          field: 'descuento_familiar',
-          headerName: 'Familiar',
-          sortable: true,
-          filter: true,
-          floatingFilter: true,
-          cellRenderer: this.boolRenderer,
-        },
-        {
-          field: 'cuota_activa',
-          headerName: 'Activo',
-          sortable: true,
-          filter: true,
-          floatingFilter: true,
-          cellRenderer: this.boolRenderer,
-        },
-        {
-          field: 'cuota_pasiva',
-          headerName: 'Pasivo',
-          sortable: true,
-          filter: true,
-          floatingFilter: true,
-          cellRenderer: this.boolRenderer,
-        },
-      ]
-    },
-    {
-      headerName: 'Actividad',
-      children: [
-        { field: 'futbol', headerName: 'Fútbol', filter: true, floatingFilter: true, cellRenderer: this.boolRenderer },
-        { field: 'paleta', headerName: 'Paleta', filter: true, floatingFilter: true, cellRenderer: this.boolRenderer },
-        { field: 'basquet', headerName: 'Básquet', filter: true, floatingFilter: true, cellRenderer: this.boolRenderer },
-      ]
-    },
-    {
-      headerName: 'Categoria',
-      children: [
-        { field: 'categoria', headerName: 'Categoría', filter: 'agTextColumnFilter', floatingFilter: true }
       ]
     },
     { headerName: 'Pagos', children: [] }
@@ -204,16 +138,5 @@ export class MembershipPaymentsComponent implements OnInit {
         this.updateVisibleTotals();
       });
     });
-  }
-
-
-  public createMembership = () => {
-    this.router.navigate(['/socio']);
-  }
-
-
-  private boolRenderer(params: ICellRendererParams) {
-    if (params.node?.rowPinned) return params.value;
-    return params.value ? '✅' : '❌';
   }
 }
