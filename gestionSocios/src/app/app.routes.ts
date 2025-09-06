@@ -5,14 +5,16 @@ import { DischargedMembershipsComponent } from './components/discharged-membersh
 import { MembershipsComponent } from './components/memberships/memberships.component';
 import { FullStatisticsComponent } from './components/full-statistics/full-statistics.component';
 import { LoginComponent } from './components/login/login.component';
+import { AuthGuard } from './services/auth-guard.service';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'socios', pathMatch: 'full' },
-    { path: 'estadisticas', component: FullStatisticsComponent },
+    { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
-    { path: 'pagos', component: MembershipPaymentsComponent },
-    { path: 'socio', component: MembershipComponent },
-    { path: 'socio/:id', component: MembershipComponent },
-    { path: 'socios', component: MembershipsComponent },
-    { path: 'socios-bajas', component: DischargedMembershipsComponent },
+    { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
+    { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
+    { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
+    { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
+    { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
+    { path: '**', redirectTo: 'socios' }
 ];
