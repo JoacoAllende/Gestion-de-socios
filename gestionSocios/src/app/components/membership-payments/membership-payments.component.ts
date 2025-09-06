@@ -46,6 +46,13 @@ export class MembershipPaymentsComponent implements OnInit {
           filter: 'agTextColumnFilter',
           floatingFilter: true
         },
+        {
+          field: 'monto',
+          headerName: 'Monto',
+          pinned: 'left',
+          sortable: true,
+          width: 50,
+        },
       ]
     },
     { headerName: 'Pagos', children: [] }
