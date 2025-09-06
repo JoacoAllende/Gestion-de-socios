@@ -146,6 +146,8 @@ membershipController.getMemberships = async (req, res, next) => {
         s.descuento_familiar,
         s.becado,
         s.secretaria,
+        DATE_FORMAT(s.fecha_nacimiento, '%d/%m/%Y') AS fecha_nacimiento,
+        s.contacto,
         cf.nombre AS categoria_futbol,
         cp.nombre AS categoria_paleta,
         cb.nombre AS categoria_basquet,
