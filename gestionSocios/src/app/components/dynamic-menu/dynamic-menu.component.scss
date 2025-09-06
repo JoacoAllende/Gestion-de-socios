@@ -1,7 +1,6 @@
 @use '../../../styles/variables' as *;
 
 button[mat-button] {
-    margin-top: 1rem;
     background-color: $primary-color;
     color: $white;
 }
