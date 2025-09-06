@@ -1,0 +1,11 @@
+<div [formGroup]="form" class="mb-2">
+    <label [for]="field.name">{{ field.label }}</label>
+    <input type="date" class="form-control" [id]="field.name" [formControlName]="field.name" 
+        placeholder="{{ field.label }}" />
+
+    <div class="text-danger mt-1" *ngIf="form.controls[field.name].touched && form.controls[field.name].invalid">
+        <span *ngFor="let errorKey of getErrorKeys()">
+            {{ field.errorMessages?.[errorKey] || 'Campo inválido' }}
+        </span>
+    </div>
+</div>

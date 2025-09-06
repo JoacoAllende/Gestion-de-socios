@@ -1,4 +1,3 @@
-// dynamic-form.component.ts
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
@@ -8,8 +7,9 @@ import { CheckboxFieldComponent } from './checkbox-field/checkbox-field.componen
 import { ButtonComponent } from '../button/button.component';
 import { SelectFieldComponent, SelectOption } from './select-field/select-field.component';
 import { Observable } from 'rxjs';
+import { DateFieldComponent } from './date-field/date-field.component';
 
-export type FieldType = 'text' | 'number' | 'checkbox' | 'select' | 'groupValidator';
+export type FieldType = 'text' | 'number' | 'checkbox' | 'select' | 'date' | 'groupValidator';
 
 export interface FormField {
   name: string;
@@ -35,6 +35,7 @@ export interface FormField {
     NumberFieldComponent,
     CheckboxFieldComponent,
     SelectFieldComponent,
+    DateFieldComponent,
     ButtonComponent,
   ],
   templateUrl: './dynamic-form.component.html',
