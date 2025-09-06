@@ -1,3 +1,7 @@
+<div class="buttons-wrapper">
+  <app-button [text]="'Crear Socio'" [onClick]="createMembership">
+  </app-button>
+</div>
 <app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef"
   [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">
 </app-ag-table>

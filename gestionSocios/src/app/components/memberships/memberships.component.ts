@@ -3,11 +3,12 @@ import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, Cell
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
+import { ButtonComponent } from '../commons/button/button.component';
 
 @Component({
   selector: 'app-membership',
   standalone: true,
-  imports: [AgTableComponent],
+  imports: [AgTableComponent, ButtonComponent],
   templateUrl: './memberships.component.html',
   styleUrls: ['./memberships.component.scss']
 })
@@ -182,6 +183,10 @@ export class MembershipsComponent implements OnInit {
 
   exportCsv() {
     if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+  }
+
+  public createMembership = () => {
+    this.router.navigate(['/socio']);
   }
 
   private boolRenderer(params: ICellRendererParams) {

@@ -5,6 +5,7 @@ import { DischargedMembershipsComponent } from './components/discharged-membersh
 import { MembershipsComponent } from './components/memberships/memberships.component';
 
 export const routes: Routes = [
+    { path: '', redirectTo: 'socios', pathMatch: 'full' },
     { path: 'socios', component: MembershipsComponent },
     { path: 'socios-bajas', component: DischargedMembershipsComponent },
     { path: 'pagos', component: MembershipPaymentsComponent },
