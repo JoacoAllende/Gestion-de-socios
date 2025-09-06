@@ -42,6 +42,10 @@ export class DynamicMenuComponent {
       { 
         label: 'Pagos', 
         action: () => this.router.navigate(['/pagos'])
+      },
+      { 
+        label: 'Estadísticas', 
+        action: () => this.router.navigate(['/estadisticas'])
       }
     ];
   }
