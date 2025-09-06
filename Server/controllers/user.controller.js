@@ -1,6 +1,6 @@
 const userCtrl = {};
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'TheSecretKey';
+const SECRET_KEY = process.env.JWT_SECRET || 'TheSecretKey';
 const bcrypt = require('bcryptjs');
 
 const mysqlConnection = require('../database');
