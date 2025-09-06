@@ -5,7 +5,26 @@ const mysqlConnection = require('../database');
 membershipController.getMembership = async (req, res, next) => {
   const { nro_socio } = req.params;
 
-  const socioQuery = 'SELECT * FROM socio WHERE nro_socio = ?';
+  const socioQuery = `
+    SELECT 
+      nro_socio,
+      nombre,
+      dni,
+      direccion,
+      contacto,
+      DATE_FORMAT(fecha_nacimiento, '%Y-%m-%d') AS fecha_nacimiento,
+      cuota_activa,
+      cuota_pasiva,
+      descuento_familiar,
+      becado,
+      ficha_socio_id,
+      activo,
+      categoria_futbol_id,
+      categoria_basquet_id,
+      categoria_paleta_id
+    FROM socio
+    WHERE nro_socio = ?
+  `;
   const actividadesQuery = `
     SELECT a.nombre 
     FROM socio_actividad sa
@@ -199,12 +218,14 @@ membershipController.getDischargedMemberships = async (req, res, next) => {
   });
 };
 
-
 membershipController.createMembership = (req, res) => {
   try {
     const {
       nombre,
       dni,
+      direccion,
+      fecha_nacimiento,
+      contacto,
       cuota_activa,
       cuota_pasiva,
       descuento_familiar,
@@ -228,8 +249,8 @@ membershipController.createMembership = (req, res) => {
 
       const socioQuery = `
         INSERT INTO socio 
-        (nro_socio, nombre, dni, direccion, cuota_activa, cuota_pasiva, descuento_familiar, becado, ficha_socio_id, activo, categoria_futbol_id, categoria_basquet_id, categoria_paleta_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE, ?, ?, ?)`;
+        (nro_socio, nombre, dni, direccion, fecha_nacimiento, contacto, cuota_activa, cuota_pasiva, descuento_familiar, becado, ficha_socio_id, activo, categoria_futbol_id, categoria_basquet_id, categoria_paleta_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE, ?, ?, ?)`;
 
       mysqlConnection.query(
         socioQuery,
@@ -237,7 +258,9 @@ membershipController.createMembership = (req, res) => {
           finalNroSocio,
           nombre,
           dni || null,
-          req.body.direccion || null,
+          direccion,
+          fecha_nacimiento,
+          contacto,
           !!cuota_activa,
           !!cuota_pasiva,
           !!descuento_familiar,
@@ -331,6 +354,9 @@ membershipController.updateMembership = (req, res) => {
     const {
       nombre,
       dni,
+      direccion,
+      fecha_nacimiento,
+      contacto,
       cuota_activa,
       cuota_pasiva,
       descuento_familiar,
@@ -347,7 +373,7 @@ membershipController.updateMembership = (req, res) => {
 
     const updateSocioQuery = `
       UPDATE socio
-      SET nombre = ?, dni = ?, cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, 
+      SET nombre = ?, dni = ?, direccion = ?, fecha_nacimiento = ?, contacto = ?, cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, 
           ficha_socio_id = ?, categoria_futbol_id = ?, categoria_basquet_id = ?, categoria_paleta_id = ?
       WHERE nro_socio = ?`;
 
@@ -356,6 +382,9 @@ membershipController.updateMembership = (req, res) => {
       [
         nombre,
         dni || null,
+        direccion,
+        fecha_nacimiento,
+        contacto,
         !!cuota_activa,
         !!cuota_pasiva,
         !!descuento_familiar,
