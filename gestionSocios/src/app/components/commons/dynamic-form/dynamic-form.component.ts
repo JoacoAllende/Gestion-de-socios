@@ -15,6 +15,7 @@ export interface FormField {
   name: string;
   label: string;
   type: FieldType;
+  isPassword?: boolean,
   value?: any;
   options?: SelectOption[];
   options$?: Observable<SelectOption[]>;

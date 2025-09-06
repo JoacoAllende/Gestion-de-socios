@@ -13,6 +13,7 @@ import { FormField } from '../dynamic-form.component';
 export class TextFieldComponent {
   @Input() field!: FormField;
   @Input() form!: FormGroup;
+  @Input() isPassword!: boolean;
 
   getErrorKeys(): string[] {
     const control = this.form.controls[this.field.name];
