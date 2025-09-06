@@ -53,7 +53,8 @@ export class DischargedMembershipsComponent implements OnInit {
           headerName: 'Dirección',
           sortable: true,
           filter: 'agTextColumnFilter',
-          floatingFilter: true
+          floatingFilter: true,
+          minWidth: 300,
         },
         {
           field: 'dni',
@@ -62,19 +63,23 @@ export class DischargedMembershipsComponent implements OnInit {
           filter: 'agTextColumnFilter',
           floatingFilter: true
         },
+        {
+          field: 'fecha_nacimiento',
+          headerName: 'Nacimiento',
+          sortable: true,
+        },
+        {
+          field: 'contacto',
+          headerName: 'Contacto',
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true
+        },
       ]
     },
     {
-      headerName: 'Activo',
+      headerName: 'Condición',
       children: [
-        {
-          field: 'descuento_familiar',
-          headerName: 'Familiar',
-          sortable: true,
-          filter: true,
-          floatingFilter: true,
-          cellRenderer: this.boolRenderer,
-        },
         {
           field: 'cuota_activa',
           headerName: 'Activo',
@@ -86,6 +91,22 @@ export class DischargedMembershipsComponent implements OnInit {
         {
           field: 'cuota_pasiva',
           headerName: 'Pasivo',
+          sortable: true,
+          filter: true,
+          floatingFilter: true,
+          cellRenderer: this.boolRenderer,
+        },
+        {
+          field: 'descuento_familiar',
+          headerName: 'Familiar',
+          sortable: true,
+          filter: true,
+          floatingFilter: true,
+          cellRenderer: this.boolRenderer,
+        },
+        {
+          field: 'becado',
+          headerName: 'Becado',
           sortable: true,
           filter: true,
           floatingFilter: true,
@@ -106,7 +127,7 @@ export class DischargedMembershipsComponent implements OnInit {
       children: [
         { field: 'categoria_futbol', headerName: 'Fútbol', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'categoria_paleta', headerName: 'Paleta', filter: 'agTextColumnFilter', floatingFilter: true },
-        { field: 'categoria_basquet', headerName: 'Basquet', filter: 'agTextColumnFilter', floatingFilter: true }
+        { field: 'categoria_basquet', headerName: 'Básquet', filter: 'agTextColumnFilter', floatingFilter: true }
       ]
     },
   ];
