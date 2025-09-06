@@ -16,14 +16,16 @@ export class MembershipComponent implements OnInit {
   socioId: number | null = null;
 
   fields: FormField[] = [
-    { name: 'nombre', label: 'Nombre completo', type: 'text', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
-    { name: 'dni', label: 'DNI', type: 'number', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
-    { name: 'direccion', label: 'Direccion', type: 'text' },
-    { name: 'ficha_socio_id', label: 'Ficha', type: 'select', options: [], validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
+    { name: 'nombre', label: 'Nombre completo', type: 'text', validators: [Validators.required], errorMessages: { required: 'Obligatorio' }, row: 5 },
+    { name: 'dni', label: 'DNI', type: 'number', validators: [Validators.required], errorMessages: { required: 'Obligatorio' }, row: 5 },
+    { name: 'direccion', label: 'Direccion', type: 'text', row: 8 },
+    { name: 'contacto', label: 'Contacto', type: 'text', row: 8 },
+    { name: 'fecha_nacimiento', label: 'Fecha de nacimiento', type: 'date', row: 6 },
+    { name: 'ficha_socio_id', label: 'Ficha', type: 'select', options: [], validators: [Validators.required], errorMessages: { required: 'Obligatorio' }, row: 6 },
     { name: 'cuota_activa', label: 'Cuota Activa', type: 'checkbox', row: 1 },
     { name: 'cuota_pasiva', label: 'Cuota Pasiva', type: 'checkbox', errorMessages: { cuotasExclusivas: 'Cuota activa y pasiva no pueden estar activas al mismo tiempo.' }, row: 1 },
-    { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox' },
-    { name: 'becado', label: 'Becado', type: 'checkbox', errorMessages: { becadoValidator: 'Si es becado no puede tener cuota activa, cuota pasiva ni descuento familiar.' } },
+    { name: 'descuento_familiar', label: 'Descuento familiar', type: 'checkbox', row: 7 },
+    { name: 'becado', label: 'Becado', type: 'checkbox', errorMessages: { becadoValidator: 'Si es becado no puede tener cuota activa, cuota pasiva ni descuento familiar.' }, row: 7 },
     { name: 'futbol', label: 'Futbol', type: 'checkbox', row: 2 },
     { name: 'categoria_futbol_id', label: 'Categoría', type: 'select', options: [], row: 2, dependsOn: { field: 'futbol', value: true } },
     { name: 'paleta', label: 'Paleta', type: 'checkbox', row: 3 },
