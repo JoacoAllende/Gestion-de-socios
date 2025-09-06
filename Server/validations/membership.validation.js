@@ -3,35 +3,35 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'TheSecretKey';
 const membershipController = require('../controllers/membership.controller');
 
-membershipValidator.validar_getMemberships = (req, res) => {
+membershipValidator.validate_getMemberships = (req, res) => {
     membershipController.getMemberships(req, res);
 }
 
-membershipValidator.validar_getDischargedMemberships = (req, res) => {
+membershipValidator.validate_getDischargedMemberships = (req, res) => {
     membershipController.getDischargedMemberships(req, res);
 }
 
-membershipValidator.validar_getFutbolCategories = (req, res) => {
+membershipValidator.validate_getFutbolCategories = (req, res) => {
     membershipController.getFutbolCategories(req, res);
 }
 
-membershipValidator.validar_getBasquetCategories = (req, res) => {
+membershipValidator.validate_getBasquetCategories = (req, res) => {
     membershipController.getBasquetCategories(req, res);
 }
 
-membershipValidator.validar_getPaletaCategories = (req, res) => {
+membershipValidator.validate_getPaletaCategories = (req, res) => {
     membershipController.getPaletaCategories(req, res);
 }
 
-membershipValidator.validar_getMembershipCard = (req, res) => {
+membershipValidator.validate_getMembershipCard = (req, res) => {
     membershipController.getMembershipCard(req, res);
 }
 
-membershipValidator.validar_getMembership = (req, res) => {
+membershipValidator.validate_getMembership = (req, res) => {
     membershipController.getMembership(req, res);
 }
 
-membershipValidator.validar_createMembership = (req, res) => {
+membershipValidator.validate_createMembership = (req, res) => {
     membershipController.createMembership(req, res);
     // jwt.verify(req.token, SECRET_KEY, (err) => {
     //     if (!err) {
@@ -42,7 +42,7 @@ membershipValidator.validar_createMembership = (req, res) => {
     // })
 }
 
-membershipValidator.validar_updateMembership = (req, res) => {
+membershipValidator.validate_updateMembership = (req, res) => {
     membershipController.updateMembership(req, res);
     // jwt.verify(req.token, SECRET_KEY, (err) => {
     //     if (!err) {
@@ -53,7 +53,7 @@ membershipValidator.validar_updateMembership = (req, res) => {
     // })
 }
 
-// goleadorValidator.validar_getEquipos = (req, res) => {
+// goleadorValidator.validate_getEquipos = (req, res) => {
 //     jwt.verify(req.token, SECRET_KEY, (err) => {
 //         if (!err) {
 //             goleadorController.getEquipos(req, res);
@@ -63,7 +63,7 @@ membershipValidator.validar_updateMembership = (req, res) => {
 //     })
 // }
 
-// goleadorValidator.validar_updateGoleador = (req, res) => {
+// goleadorValidator.validate_updateGoleador = (req, res) => {
 //     jwt.verify(req.token, SECRET_KEY, (err) => {
 //         if (!err) {
 //             goleadorController.updateGoleador(req, res);
@@ -73,7 +73,7 @@ membershipValidator.validar_updateMembership = (req, res) => {
 //     })
 // }
 
-// goleadorValidator.validar_deleteGoleador = (req, res) => {
+// goleadorValidator.validate_deleteGoleador = (req, res) => {
 //     jwt.verify(req.token, SECRET_KEY, (err) => {
 //         if (!err) {
 //             goleadorController.deleteGoleador(req, res);

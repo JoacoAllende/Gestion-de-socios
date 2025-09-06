@@ -3,6 +3,6 @@ const router = express.Router();
 
 const payments = require("../validations/payments.validation");
 
-router.put('/payments', payments.validar_updatePayments);
+router.put('/payments', payments.validate_updatePayments);
 
 module.exports = router;
