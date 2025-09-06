@@ -158,6 +158,7 @@ membershipController.getMemberships = async (req, res, next) => {
         MAX(CASE WHEN a.nombre = 'Futbol'  THEN 1 ELSE 0 END) AS futbol,
         MAX(CASE WHEN a.nombre = 'Paleta'  THEN 1 ELSE 0 END) AS paleta,
         MAX(CASE WHEN a.nombre = 'Basquet' THEN 1 ELSE 0 END) AS basquet,
+        MAX(CASE WHEN p.mes = 12 THEN p.monto ELSE 0 END) AS monto,
         ${cases}
     FROM socio s
     LEFT JOIN categoria_futbol cf ON s.categoria_futbol_id = cf.id
