@@ -1,5 +1,5 @@
 <div [formGroup]="form" class="mb-2">
-  <input type="text" class="form-control" placeholder="{{ field.label }}" [formControlName]="field.name" />
+  <input [type]="field.isPassword ? 'password' : 'text'" class="form-control" placeholder="{{ field.label }}" [formControlName]="field.name" />
   <div class="text-danger mt-1" *ngIf="form.controls[field.name].touched && form.controls[field.name].invalid">
     <span *ngFor="let errorKey of getErrorKeys()">
       {{ field.errorMessages?.[errorKey] || 'Campo inválido' }}
