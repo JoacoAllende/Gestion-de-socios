@@ -19,6 +19,10 @@ export class MembershipPaymentsComponent implements OnInit {
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 50px)'
+  };
 
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];

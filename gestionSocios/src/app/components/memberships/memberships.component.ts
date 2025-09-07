@@ -17,6 +17,10 @@ export class MembershipsComponent implements OnInit {
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 50px)'
+  };
 
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 

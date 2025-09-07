@@ -2,6 +2,6 @@
   <app-button [text]="'Crear Socio'" [onClick]="createMembership">
   </app-button>
 </div>
-<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef"
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"
   [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">
 </app-ag-table>
