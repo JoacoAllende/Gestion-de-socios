@@ -21,6 +21,10 @@ export class AgTableComponent {
   @Input() colDefs: (ColDef | ColGroupDef)[] = [];
   @Input() defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
   @Input() pinnedBottomRowData: any[] = [];
+  @Input() gridStyle: { [klass: string]: any } = {
+    width: '100%',
+    height: 'calc(100% - 2rem)'
+  };
 
   @Output() gridReadyEvent = new EventEmitter<GridReadyEvent>();
 
