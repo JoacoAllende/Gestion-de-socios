@@ -55,7 +55,15 @@ export class MembershipPaymentsComponent implements OnInit {
           headerName: 'Monto',
           pinned: 'left',
           sortable: true,
-          width: 50,
+          width: 120,
+          cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
+            if (params.node?.rowPinned) {
+              return {
+                component: (p: any) => `$ ${p.value?.toLocaleString('es-AR') || 0}`,
+              };
+            }
+            return params.value;
+          },
         },
       ]
     },
@@ -99,7 +107,7 @@ export class MembershipPaymentsComponent implements OnInit {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.updateVisibleTotals();
+    this.gridApi.addEventListener('firstDataRendered', () => this.updateVisibleTotals());
     this.gridApi.addEventListener('filterChanged', () => this.updateVisibleTotals());
     this.gridApi.addEventListener('sortChanged', () => this.updateVisibleTotals());
   }
@@ -146,7 +154,9 @@ export class MembershipPaymentsComponent implements OnInit {
       this.membershipService.getMemberships().subscribe(data => {
         this.rowData = data;
         this.gridApi?.refreshCells();
-        this.updateVisibleTotals();
+        setTimeout(() => {
+          this.updateVisibleTotals();
+        });
       });
     });
   }

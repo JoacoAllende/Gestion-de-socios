@@ -144,7 +144,7 @@ export class FullStatisticsComponent implements OnInit {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.updateVisibleTotals();
+    this.gridApi.addEventListener('firstDataRendered', () => this.updateVisibleTotals());
     this.gridApi.addEventListener('filterChanged', () => this.updateVisibleTotals());
     this.gridApi.addEventListener('sortChanged', () => this.updateVisibleTotals());
   }
