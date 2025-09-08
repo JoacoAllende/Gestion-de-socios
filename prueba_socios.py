@@ -72,15 +72,41 @@ for idx, row in df.iterrows():
     else:
         ficha_socio_id = None
 
-    # Columna 8 -> índice 7 -> descuento familiar
-    descuento_familiar = True if str(row[7]).strip().upper() == "DTO. FAMILIAR" else False
+    # Columna 8 -> índice 7
+    col8_val = str(row[7]).strip().upper() if not pd.isna(row[7]) else ""
+
+    # Inicializamos los flags
+    descuento_familiar = False
+    becado = False
+    cuota_pasiva = False
+    cuota_activa_flag = cuota_activa  # lo que venía del "X" en la columna 3
+
+    # Revisamos los posibles valores
+    if col8_val == "DTO. FAMILIAR":
+        descuento_familiar = True
+    elif col8_val == "BECA":
+        becado = True
+        cuota_activa_flag = False
+    elif col8_val == "SOCIO PASIVO":
+        cuota_pasiva = True
+        cuota_activa_flag = False
+
 
     # Insert en socio
     sql_socio = """
-        INSERT IGNORE INTO socio (nro_socio, nombre, cuota_activa, ficha_socio_id, descuento_familiar)
-        VALUES (%s, %s, %s, %s, %s)
+    INSERT IGNORE INTO socio (nro_socio, nombre, cuota_activa, cuota_pasiva, becado, ficha_socio_id, descuento_familiar)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
-    cursor.execute(sql_socio, (nro_socio, nombre, cuota_activa, ficha_socio_id, descuento_familiar))
+    cursor.execute(sql_socio, (
+        nro_socio,
+        nombre,
+        cuota_activa_flag,
+        cuota_pasiva,
+        becado,
+        ficha_socio_id,
+        descuento_familiar
+    ))
+
     print(f"✅ Insert socio: nro_socio={nro_socio}, nombre='{nombre}', cuota_activa={cuota_activa}, ficha_socio_id={ficha_socio_id}, descuento_familiar={descuento_familiar}")
 
     # Insert en socio_actividad según columnas 4, 5, 6
