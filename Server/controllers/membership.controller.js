@@ -106,7 +106,7 @@ membershipController.getMembershipCard = async (req, res, next) => {
 
     mysqlConnection.query(query, (err, rows) => {
       if (err) {
-        return res.status(500).json({ error: 'Error al obtener ficha de socio' });
+        return res.status(500).json({ error: 'Error al obtener fichas de socio' });
       }
       res.json(rows);
     });
@@ -296,7 +296,7 @@ membershipController.createMembership = (req, res) => {
           };
 
           const insertarPagos = () => {
-            if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'created', finalNroSocio });
+            if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio creado', finalNroSocio });
 
             const cantidadActividades = actividades.length;
 
@@ -326,7 +326,7 @@ membershipController.createMembership = (req, res) => {
                       pagoValues.push([finalNroSocio, mes, 2025, montoFinal, !!becado ? true : false]);
                     }
 
-                    if (pagoValues.length === 0) return res.json({ status: 'created', finalNroSocio });
+                    if (pagoValues.length === 0) return res.json({ status: 'Socio creado', finalNroSocio });
 
                     const pagoQuery = `
                       INSERT INTO pago (socio_id, mes, anio, monto, pagado)
@@ -334,7 +334,7 @@ membershipController.createMembership = (req, res) => {
 
                     mysqlConnection.query(pagoQuery, [pagoValues], (err5) => {
                       if (err5) return res.status(500).json(err5);
-                      res.json({ status: 'created', finalNroSocio });
+                      res.json({ status: 'Socio creado', finalNroSocio });
                     });
                   }
                 );
@@ -421,7 +421,7 @@ membershipController.updateMembership = (req, res) => {
         });
 
         const actualizarPagos = () => {
-          if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'updated', nroSocio });
+          if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nroSocio });
 
           mysqlConnection.query(
             'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
@@ -451,7 +451,7 @@ membershipController.updateMembership = (req, res) => {
                     [montoFinal, becado ? true : false, nroSocio, mes_alta],
                     (err6) => {
                       if (err6) return res.status(500).json(err6);
-                      res.json({ status: 'updated', nroSocio });
+                      res.json({ status: 'Socio actualizado', nroSocio });
                     }
                   );
                 }

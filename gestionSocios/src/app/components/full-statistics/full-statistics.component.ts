@@ -3,6 +3,7 @@ import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams } fro
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-full-statistics',
@@ -101,7 +102,7 @@ export class FullStatisticsComponent implements OnInit {
     { headerName: 'Pagos', children: [] }
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router) {
+  constructor(private membershipService: MembershipService, private router: Router, private toast: ToastService) {
     const pagosGroup = this.colDefs.find(
       c => (c as ColGroupDef).headerName === 'Pagos'
     ) as ColGroupDef;
@@ -131,14 +132,19 @@ export class FullStatisticsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe(data => {
-      this.rowData = data.map(membership => {
-        membership._selectedMonths = {};
-        this.meses.forEach(mes => {
-          membership[mes] = membership[mes];
+    this.membershipService.getMemberships().subscribe({
+      next: (data) => {
+        this.rowData = data.map(membership => {
+          membership._selectedMonths = {};
+          this.meses.forEach(mes => {
+            membership[mes] = membership[mes];
+          });
+          return membership;
         });
-        return membership;
-      });
+      },
+      error: (err) => {
+        this.toast.show(err.error?.message, 'error');
+      }
     });
   }
 

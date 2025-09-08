@@ -3,6 +3,7 @@ import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, Cell
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-discharged-membership',
@@ -132,12 +133,18 @@ export class DischargedMembershipsComponent implements OnInit {
     },
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router) {}
+  constructor(private membershipService: MembershipService, private router: Router, private toast: ToastService) { }
 
   ngOnInit() {
-    this.membershipService.getDischargedMemberships().subscribe(data => {
-      this.rowData = data.map(membership => membership);
+    this.membershipService.getDischargedMemberships().subscribe({
+      next: (data) => {
+        this.rowData = data.map(membership => membership);
+      },
+      error: (err) => {
+        this.toast.show(err.error?.message, 'error');
+      }
     });
+
   }
 
   exportCsv() {

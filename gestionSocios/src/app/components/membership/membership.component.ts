@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validato
 import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../commons/dynamic-form/dynamic-form.component';
 import { MembershipService } from '../../services/membership.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-membership',
@@ -39,7 +40,8 @@ export class MembershipComponent implements OnInit {
     private fb: FormBuilder,
     private membershipService: MembershipService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toast: ToastService,
   ) { }
 
   ngOnInit() {
@@ -72,7 +74,7 @@ export class MembershipComponent implements OnInit {
           };
         }
       },
-      error: err => console.error('Error al cargar categorías de Futbol', err)
+      error: err => this.toast.show(err.error.message, 'error')
     });
 
     this.membershipService.getBasquetCategories().subscribe({
@@ -88,7 +90,7 @@ export class MembershipComponent implements OnInit {
           };
         }
       },
-      error: err => console.error('Error al cargar categorías de Basquet', err)
+      error: err => this.toast.show(err.error.message, 'error')
     });
 
     this.membershipService.getPaletaCategories().subscribe({
@@ -104,7 +106,7 @@ export class MembershipComponent implements OnInit {
           };
         }
       },
-      error: err => console.error('Error al cargar categorías de Paleta', err)
+      error: err => this.toast.show(err.error.message, 'error')
     });
 
     this.membershipService.getMembershipCard().subscribe({
@@ -120,13 +122,13 @@ export class MembershipComponent implements OnInit {
           };
         }
       },
-      error: err => console.error('Error al cargar fichas de socio', err)
+      error: err => this.toast.show(err.error.message, 'error')
     });
 
     if (this.socioId) {
       this.membershipService.getMembership(this.socioId).subscribe({
         next: socio => this.form.patchValue(socio),
-        error: err => console.error('Error al cargar socio', err)
+        error: err => this.toast.show(err.error.message, 'error')
       });
     }
   }
@@ -170,13 +172,21 @@ export class MembershipComponent implements OnInit {
   submit(formValue: any) {
     if (this.socioId) {
       this.membershipService.updateMembership(this.socioId, formValue).subscribe({
-        next: () => this.router.navigate(['/socios']),
-        error: err => console.error('Error al actualizar socio', err)
+        next: (res) => {
+          this.form.reset();
+          this.router.navigate(['/socios']);
+          this.toast.show(res.status, 'success');
+        },
+        error: err => this.toast.show(err.error.sqlMessage, 'error')
       });
     } else {
       this.membershipService.createMembership(formValue).subscribe({
-        next: () => { this.form.reset(); this.router.navigate(['/socios']); },
-        error: err => console.error('Error al crear socio', err)
+        next: (res) => {
+          this.form.reset();
+          this.router.navigate(['/socios']);
+          this.toast.show(res.status, 'success');
+        },
+        error: err => this.toast.show(err.error.sqlMessage, 'error')
       });
     }
   }

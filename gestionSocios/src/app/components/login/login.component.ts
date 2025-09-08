@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../commons/dynamic-form/dynamic-form.component';
 import { LoginService } from '../../services/login.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private loginService: LoginService,
+    private toast: ToastService,
   ) { }
 
   ngOnInit() {
@@ -35,8 +37,14 @@ export class LoginComponent implements OnInit {
 
   submit(formValue: any) {
     this.loginService.loginUser(formValue).subscribe({
-      next: () => { this.form.reset(); this.router.navigate(['/socios']); },
-      error: err => console.error('Error en login', err)
+      next: (res) => {
+        this.form.reset();
+        this.router.navigate(['/socios']);
+        this.toast.show(res.message, 'success');
+      },
+      error: (err) => {
+        this.toast.show(err.error.status, 'error');
+      }
     });
   }
 

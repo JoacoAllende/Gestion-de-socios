@@ -40,7 +40,7 @@ export class MembershipService {
   }
 
   createMembership(membershipData: any) {
-    return this.http.post(`${this.API_URI}/membership`, membershipData, { headers: this.headers });
+    return this.http.post<any>(`${this.API_URI}/membership`, membershipData, { headers: this.headers });
   }
 
   getMembership(nro_socio: number) {
@@ -48,7 +48,7 @@ export class MembershipService {
   }
 
   updateMembership(nro_socio: number, membershipData: any) {
-    return this.http.put(`${this.API_URI}/membership/${nro_socio}`, membershipData, { headers: this.headers });
+    return this.http.put<any>(`${this.API_URI}/membership/${nro_socio}`, membershipData, { headers: this.headers });
   }
 
 }

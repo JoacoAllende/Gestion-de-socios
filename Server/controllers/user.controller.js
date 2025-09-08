@@ -48,7 +48,8 @@ userCtrl.loginUser = (req, res) => {
 
         res.json({
             accessToken,
-            expiresIn
+            expiresIn,
+            message: 'Login exitoso',
         });
     });
 };
