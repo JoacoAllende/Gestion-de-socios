@@ -38,7 +38,7 @@ paymentsController.updatePayments = (req, res) => {
 
             pending--;
             if (pending === 0 && !errorOccurred) {
-              res.json({ status: 'updated' });
+              res.json({ status: 'Pagos actualizados' });
             }
           }
         );
@@ -46,7 +46,7 @@ paymentsController.updatePayments = (req, res) => {
     });
 
     if (pending === 0 && !errorOccurred) {
-      res.json({ status: 'updated' });
+      res.json({ status: 'Pagos actualizados' });
     }
 
   } catch (error) {

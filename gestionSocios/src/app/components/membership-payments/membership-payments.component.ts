@@ -4,8 +4,8 @@ import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbox-cell.component';
 import { ButtonComponent } from '../commons/button/button.component';
 import { MembershipService } from '../../services/membership.service';
-import { Router } from '@angular/router';
 import { PaymentsService } from '../../services/payments.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-membership-payments',
@@ -71,7 +71,7 @@ export class MembershipPaymentsComponent implements OnInit {
   ];
 
 
-  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private router: Router) {
+  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private toast: ToastService) {
     this.procesarPagos = this.procesarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
@@ -94,15 +94,21 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe(data => {
-      this.rowData = data.map(membership => {
-        membership._selectedMonths = {};
-        this.meses.forEach(mes => {
-          membership[mes] = membership[mes];
+    this.membershipService.getMemberships().subscribe({
+      next: (data) => {
+        this.rowData = data.map(membership => {
+          membership._selectedMonths = {};
+          this.meses.forEach(mes => {
+            membership[mes] = membership[mes];
+          });
+          return membership;
         });
-        return membership;
-      });
+      },
+      error: (err) => {
+        this.toast.show(err.error?.message, 'error');
+      }
     });
+
   }
 
   onGridReady(event: GridReadyEvent) {
@@ -150,14 +156,21 @@ export class MembershipPaymentsComponent implements OnInit {
       .filter(r => Object.keys(r.meses).length > 0);
     if (seleccionados.length === 0) return;
 
-    this.paymentsService.updatePayments(seleccionados).subscribe(() => {
-      this.membershipService.getMemberships().subscribe(data => {
-        this.rowData = data;
-        this.gridApi?.refreshCells();
-        setTimeout(() => {
-          this.updateVisibleTotals();
-        });
+    this.paymentsService.updatePayments(seleccionados).subscribe((res: any) => {
+      this.toast.show(res.status, 'success')
+      this.membershipService.getMemberships().subscribe({
+        next: (data) => {
+          this.rowData = data;
+          this.gridApi?.refreshCells();
+          setTimeout(() => {
+            this.updateVisibleTotals();
+          });
+        },
+        error: (err) => {
+          this.toast.show(err.error?.message, 'error');
+        }
       });
+
     });
   }
 }

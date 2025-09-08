@@ -4,6 +4,7 @@ import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../commons/button/button.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-membership',
@@ -138,12 +139,18 @@ export class MembershipsComponent implements OnInit {
     },
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router) { }
+  constructor(private membershipService: MembershipService, private router: Router, private toast: ToastService) { }
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe(data => {
-      this.rowData = data.map(membership => membership);
+    this.membershipService.getMemberships().subscribe({
+      next: (data) => {
+        this.rowData = data.map(membership => membership);
+      },
+      error: (err) => {
+        this.toast.show(err.error?.message, 'error');
+      }
     });
+
   }
 
   onGridReady(event: GridReadyEvent) {
