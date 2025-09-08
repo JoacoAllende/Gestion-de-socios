@@ -1,0 +1,32 @@
+@use '../../../../styles/variables' as *;
+
+.toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: 500;
+    z-index: 9999;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: max-content;
+
+    &.success {
+        background: $success-color;
+    }
+
+    &.error {
+        background: $danger-color;
+    }
+
+    &.info {
+        background: $info-color;
+    }
+
+    &.warning {
+        background: $warning-color;
+        color: $text-color;
+    }
+}
