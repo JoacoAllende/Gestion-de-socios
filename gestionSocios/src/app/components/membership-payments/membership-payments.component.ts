@@ -6,6 +6,7 @@ import { ButtonComponent } from '../commons/button/button.component';
 import { MembershipService } from '../../services/membership.service';
 import { PaymentsService } from '../../services/payments.service';
 import { ToastService } from '../../services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-membership-payments',
@@ -41,6 +42,10 @@ export class MembershipPaymentsComponent implements OnInit {
           sortable: true,
           filter: 'agNumberColumnFilter',
           floatingFilter: true,
+          cellClass: 'ag-cell-clickable',
+          onCellClicked: (event: CellClickedEvent) => {
+            this.router.navigate([`/socio/${event.data.nro_socio}`]);
+          }
         },
         {
           field: 'nombre',
@@ -71,7 +76,7 @@ export class MembershipPaymentsComponent implements OnInit {
   ];
 
 
-  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private toast: ToastService) {
+  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private toast: ToastService, private router: Router) {
     this.procesarPagos = this.procesarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({

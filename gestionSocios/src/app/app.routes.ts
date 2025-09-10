@@ -8,7 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './services/auth-guard.service';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'socios', pathMatch: 'full' },
+    { path: '', redirectTo: 'pagos', pathMatch: 'full' },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
@@ -16,5 +16,5 @@ export const routes: Routes = [
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
-    { path: '**', redirectTo: 'socios' }
+    { path: '**', redirectTo: 'pagos' }
 ];

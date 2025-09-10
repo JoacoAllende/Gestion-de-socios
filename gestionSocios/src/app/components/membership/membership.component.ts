@@ -174,7 +174,7 @@ export class MembershipComponent implements OnInit {
       this.membershipService.updateMembership(this.socioId, formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/socios']);
+          this.router.navigate(['/pagos']);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
@@ -183,7 +183,7 @@ export class MembershipComponent implements OnInit {
       this.membershipService.createMembership(formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/socios']);
+          this.router.navigate(['/pagos']);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
@@ -192,6 +192,6 @@ export class MembershipComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/socios']);
+    this.router.navigate(['/pagos']);
   }
 }
