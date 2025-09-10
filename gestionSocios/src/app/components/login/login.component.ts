@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
     this.loginService.loginUser(formValue).subscribe({
       next: (res) => {
         this.form.reset();
-        this.router.navigate(['/socios']);
+        this.router.navigate(['/pagos']);
         this.toast.show(res.message, 'success');
       },
       error: (err) => {
