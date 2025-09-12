@@ -15,6 +15,7 @@ import { ToastService } from '../../services/toast.service';
 export class MembershipComponent implements OnInit {
   form!: FormGroup;
   socioId: number | null = null;
+  isAlta: boolean = false;
 
   fields: FormField[] = [
     { name: 'nombre', label: 'Nombre completo', type: 'text', validators: [Validators.required], errorMessages: { required: 'Obligatorio' }, row: 5 },
@@ -45,9 +46,15 @@ export class MembershipComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.socioId = idParam ? Number(idParam) : null;
+    this.isAlta = this.router.url.startsWith('/socio-alta');
+    if (!this.isAlta && this.socioId) {
+      this.fields.push({ name: 'baja', label: 'Dar de baja', type: 'checkbox' });
+    }
+
     const controls: any = {};
     this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
-
     this.form = this.fb.group(controls);
 
     ['cuota_activa', 'cuota_pasiva'].forEach(name => {
@@ -56,10 +63,6 @@ export class MembershipComponent implements OnInit {
     ['becado', 'cuota_activa', 'cuota_pasiva', 'descuento_familiar'].forEach(name => {
       this.form.get(name)?.valueChanges.subscribe(() => this.becadoValidator(this.form));
     });
-
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    this.socioId = idParam ? Number(idParam) : null;
 
     this.membershipService.getFutbolCategories().subscribe({
       next: categories => {
@@ -171,6 +174,9 @@ export class MembershipComponent implements OnInit {
 
   submit(formValue: any) {
     if (this.socioId) {
+      if (this.isAlta) {
+        formValue = { ...formValue, alta: true };
+      }
       this.membershipService.updateMembership(this.socioId, formValue).subscribe({
         next: (res) => {
           this.form.reset();
