@@ -4,6 +4,7 @@ import {
   ColDef, ColGroupDef, GridApi, GridReadyEvent, ModuleRegistry
 } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
+import { AG_GRID_LOCALE_ES } from './ag-grid-locale.es';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,6 +17,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class AgTableComponent {
   public gridApi!: GridApi;
+  localeText: any = AG_GRID_LOCALE_ES;
 
   @Input() rowData: any[] = [];
   @Input() colDefs: (ColDef | ColGroupDef)[] = [];
