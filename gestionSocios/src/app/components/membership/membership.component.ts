@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../commons/dynamic-form/dynamic-form.component';
 import { MembershipService } from '../../services/membership.service';
 import { ToastService } from '../../services/toast.service';
+import { loadOptionsForField } from '../../utils/select-field.utils';
 
 @Component({
   selector: 'app-membership',
@@ -64,69 +65,10 @@ export class MembershipComponent implements OnInit {
       this.form.get(name)?.valueChanges.subscribe(() => this.becadoValidator(this.form));
     });
 
-    this.membershipService.getFutbolCategories().subscribe({
-      next: categories => {
-        const idx = this.fields.findIndex(f => f.name === 'categoria_futbol_id');
-        if (idx > -1) {
-          this.fields[idx] = {
-            ...this.fields[idx],
-            options: [
-              { label: '', value: '' },
-              ...categories.map((c: any) => ({ label: c.nombre, value: c.id }))
-            ]
-          };
-        }
-      },
-      error: err => this.toast.show(err.error.message, 'error')
-    });
-
-    this.membershipService.getBasquetCategories().subscribe({
-      next: categories => {
-        const idx = this.fields.findIndex(f => f.name === 'categoria_basquet_id');
-        if (idx > -1) {
-          this.fields[idx] = {
-            ...this.fields[idx],
-            options: [
-              { label: '', value: '' },
-              ...categories.map((c: any) => ({ label: c.nombre, value: c.id }))
-            ]
-          };
-        }
-      },
-      error: err => this.toast.show(err.error.message, 'error')
-    });
-
-    this.membershipService.getPaletaCategories().subscribe({
-      next: categories => {
-        const idx = this.fields.findIndex(f => f.name === 'categoria_paleta_id');
-        if (idx > -1) {
-          this.fields[idx] = {
-            ...this.fields[idx],
-            options: [
-              { label: '', value: '' },
-              ...categories.map((c: any) => ({ label: c.nombre, value: c.id }))
-            ]
-          };
-        }
-      },
-      error: err => this.toast.show(err.error.message, 'error')
-    });
-
-    this.membershipService.getMembershipCard().subscribe({
-      next: card => {
-        const idx = this.fields.findIndex(f => f.name === 'ficha_socio_id');
-        if (idx > -1) {
-          this.fields[idx] = {
-            ...this.fields[idx],
-            options: [
-              { label: '', value: '' },
-              ...card.map((f: any) => ({ label: f.nombre, value: f.id }))
-            ]
-          };
-        }
-      },
-      error: err => this.toast.show(err.error.message, 'error')
-    });
+    loadOptionsForField(this.membershipService.getFutbolCategories(), this.fields, 'categoria_futbol_id', this.toast);
+    loadOptionsForField(this.membershipService.getBasquetCategories(), this.fields, 'categoria_basquet_id', this.toast);
+    loadOptionsForField(this.membershipService.getPaletaCategories(), this.fields, 'categoria_paleta_id', this.toast);
+    loadOptionsForField(this.membershipService.getMembershipCard(), this.fields, 'ficha_socio_id', this.toast);
 
     if (this.socioId) {
       this.membershipService.getMembership(this.socioId).subscribe({
