@@ -371,101 +371,162 @@ membershipController.updateMembership = (req, res) => {
       ficha_socio_id,
       categoria_futbol_id,
       categoria_basquet_id,
-      categoria_paleta_id
+      categoria_paleta_id,
+      alta = false,
+      baja = false
     } = req.body;
 
-    const updateSocioQuery = `
+    let actividades;
+    let updateSocioQuery = `
       UPDATE socio
-      SET nombre = ?, dni = ?, direccion = ?, fecha_nacimiento = ?, contacto = ?, cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, 
-          ficha_socio_id = ?, categoria_futbol_id = ?, categoria_basquet_id = ?, categoria_paleta_id = ?
-      WHERE nro_socio = ?`;
+      SET nombre = ?, dni = ?, direccion = ?, fecha_nacimiento = ?, contacto = ?, 
+          cuota_activa = ?, cuota_pasiva = ?, descuento_familiar = ?, becado = ?, 
+          ficha_socio_id = ?, categoria_futbol_id = ?, categoria_basquet_id = ?, 
+          categoria_paleta_id = ?`;
 
-    mysqlConnection.query(
-      updateSocioQuery,
-      [
-        nombre,
-        dni || null,
-        direccion,
-        fecha_nacimiento || null,
-        contacto,
-        !!cuota_activa,
-        !!cuota_pasiva,
-        !!descuento_familiar,
-        !!becado,
-        ficha_socio_id,
-        categoria_futbol_id || null,
-        categoria_basquet_id || null,
-        categoria_paleta_id || null,
-        nroSocio
-      ],
-      (err) => {
-        if (err) return res.status(500).json(err);
+    const queryParams = [
+      nombre,
+      dni || null,
+      direccion,
+      fecha_nacimiento || null,
+      contacto,
+      !!cuota_activa,
+      !!cuota_pasiva,
+      !!descuento_familiar,
+      !!becado,
+      ficha_socio_id,
+      categoria_futbol_id || null,
+      categoria_basquet_id || null,
+      categoria_paleta_id || null
+    ];
 
-        const actividades = [];
-        if (futbol) actividades.push(1);
-        if (paleta) actividades.push(2);
-        if (basquet) actividades.push(3);
+    if (alta) {
+      updateSocioQuery += `, activo = true`;
+    } else if (baja) {
+      updateSocioQuery += `, activo = false`;
+    }
 
-        mysqlConnection.query(`DELETE FROM socio_actividad WHERE socio_id = ?`, [nroSocio], (err2) => {
-          if (err2) return res.status(500).json(err2);
+    updateSocioQuery += ` WHERE nro_socio = ?`;
+    queryParams.push(nroSocio);
 
+    mysqlConnection.query(updateSocioQuery, queryParams, (err) => {
+      if (err) return res.status(500).json(err);
+
+      actividades = [];
+      if (futbol) actividades.push(1);
+      if (paleta) actividades.push(2);
+      if (basquet) actividades.push(3);
+
+      mysqlConnection.query(`DELETE FROM socio_actividad WHERE socio_id = ?`, [nroSocio], (err2) => {
+        if (err2) return res.status(500).json(err2);
+
+        const insertarActividades = (callback) => {
           if (actividades.length > 0) {
             const values = actividades.map(actId => [nroSocio, actId]);
-            mysqlConnection.query(`INSERT INTO socio_actividad (socio_id, actividad_id) VALUES ?`, [values], (err3) => {
-              if (err3) return res.status(500).json(err3);
-              actualizarPagos();
-            });
+            mysqlConnection.query(
+              `INSERT INTO socio_actividad (socio_id, actividad_id) VALUES ?`,
+              [values],
+              callback
+            );
           } else {
-            actualizarPagos();
+            callback(null);
           }
-        });
+        };
 
-        const actualizarPagos = () => {
-          if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nroSocio });
+        insertarActividades((err3) => {
+          if (err3) return res.status(500).json(err3);
+
+          if (baja) {
+            mysqlConnection.query(
+              `DELETE FROM pago WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
+              [nroSocio, mes_alta],
+              (err4) => {
+                if (err4) return res.status(500).json(err4);
+                return res.json({ status: 'Socio dado de baja', nroSocio });
+              }
+            );
+            return;
+          }
+
+          if (alta) {
+            insertarPagosDesdeAlta(() => actualizarPagos());
+            return;
+          }
+
+          actualizarPagos();
+        });
+      });
+    });
+
+    const insertarPagosDesdeAlta = (callback) => {
+      const anio = 2025;
+      const meses = Array.from({ length: 12 - (mes_alta - 1) }, (_, i) => mes_alta + i);
+
+      const inserts = meses.map(mes => {
+        return new Promise((resolve, reject) => {
+          mysqlConnection.query(
+            `INSERT INTO pago (socio_id, mes, anio, monto, pagado)
+              SELECT ?, ?, ?, 0, false
+              WHERE NOT EXISTS (
+                SELECT 1 FROM pago WHERE socio_id = ? AND mes = ? AND anio = ?
+              )`,
+            [nroSocio, mes, anio, nroSocio, mes, anio],
+            (err) => {
+              if (err) return reject(err);
+              resolve();
+            }
+          );
+        });
+      });
+
+      Promise.all(inserts)
+        .then(() => callback())
+        .catch(err => res.status(500).json(err));
+    };
+
+    const actualizarPagos = () => {
+      if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nroSocio });
+
+      mysqlConnection.query(
+        'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
+        [actividades.length],
+        (err4, valorRows) => {
+          if (err4) return res.status(500).json(err4);
+
+          const valorActividad = valorRows[0]?.valor || 0;
 
           mysqlConnection.query(
-            'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
-            [actividades.length],
-            (err4, valorRows) => {
-              if (err4) return res.status(500).json(err4);
+            `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
+            (err5, descuentoRows) => {
+              if (err5) return res.status(500).json(err5);
 
-              const valorActividad = valorRows[0]?.valor || 0;
+              const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
+              const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
+
+              const montoBase = 8500;
+              const montoFinal = becado
+                ? -1
+                : montoBase + valorActividad - (descuento_familiar ? df : 0) - (cuota_pasiva ? dp : 0);
 
               mysqlConnection.query(
-                `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
-                (err5, descuentoRows) => {
-                  if (err5) return res.status(500).json(err5);
-
-                  const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
-                  const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
-
-                  const montoBase = 8500;
-                  const montoFinal = becado
-                    ? -1
-                    : montoBase + valorActividad - (descuento_familiar ? df : 0) - (cuota_pasiva ? dp : 0);
-
-                  mysqlConnection.query(
-                    `UPDATE pago
-                     SET monto = ?, pagado = ?
-                     WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
-                    [montoFinal, becado ? true : false, nroSocio, mes_alta],
-                    (err6) => {
-                      if (err6) return res.status(500).json(err6);
-                      res.json({ status: 'Socio actualizado', nroSocio });
-                    }
-                  );
+                `UPDATE pago
+                 SET monto = ?, pagado = ?
+                 WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
+                [montoFinal, becado ? true : false, nroSocio, mes_alta],
+                (err6) => {
+                  if (err6) return res.status(500).json(err6);
+                  res.json({ status: alta ? 'Socio dado de alta' : 'Socio actualizado', nroSocio });
                 }
               );
             }
           );
-        };
-      }
-    );
+        }
+      );
+    };
 
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
 
 module.exports = membershipController;

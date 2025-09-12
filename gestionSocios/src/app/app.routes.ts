@@ -14,6 +14,7 @@ export const routes: Routes = [
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
+    { path: 'socio-alta/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: 'pagos' }
