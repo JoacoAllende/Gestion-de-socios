@@ -15,6 +15,7 @@ export const routes: Routes = [
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'movimiento-caja', component: DailyBoxMovementComponent },
+    { path: 'movimiento-caja/:id', component: DailyBoxMovementComponent },
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },

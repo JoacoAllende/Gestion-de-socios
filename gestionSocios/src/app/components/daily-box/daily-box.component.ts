@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import { CellClickedEvent, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { DailyBoxService } from '../../services/daily-box.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
@@ -36,7 +36,12 @@ export class DailyBoxComponent {
       headerName: 'Concepto',
       sortable: true,
       filter: 'agTextColumnFilter',
-      floatingFilter: true
+      floatingFilter: true,
+      cellClass: 'ag-cell-clickable',
+      onCellClicked: (event: CellClickedEvent) => {
+        console.log(event.data, `/movimiento-caja/${event.data.id}`)
+        this.router.navigate([`/movimiento-caja/${event.data.id}`]);
+      }
     },
     {
       field: 'monto_ingreso',
