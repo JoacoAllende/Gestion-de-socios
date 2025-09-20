@@ -18,12 +18,13 @@ dailyBoxController.getDailyBox = (req, res) => {
           THEN monto ELSE 0 
         END AS monto_egreso,
         CASE 
-          WHEN tipo = 'INGRESO' AND medio_pago = 'TRANSFERENCIA' 
-          THEN monto ELSE 0 
-        END AS monto_transferencia,
-        CASE 
-          WHEN tipo = 'EGRESO' AND medio_pago = 'TRANSFERENCIA' 
-          THEN -monto ELSE 0 
+          WHEN medio_pago = 'TRANSFERENCIA' 
+          THEN CASE 
+                WHEN tipo = 'INGRESO' THEN monto
+                WHEN tipo = 'EGRESO' THEN -monto
+                ELSE 0
+              END
+          ELSE 0
         END AS monto_transferencia
       FROM caja_diaria
       WHERE YEAR(fecha) = 2025
