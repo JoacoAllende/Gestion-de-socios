@@ -18,4 +18,8 @@ export class DailyBoxService {
   getDailyBox() {
     return this.http.get<any[]>(`${this.API_URI}/daily-box`, { headers: this.headers });
   }
+
+  createMovement(movement: any) {
+    return this.http.post<any>(`${this.API_URI}/daily-box`, movement, { headers: this.headers });
+  }
 }

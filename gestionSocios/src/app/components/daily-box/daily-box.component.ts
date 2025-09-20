@@ -4,10 +4,11 @@ import { DailyBoxService } from '../../services/daily-box.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
+import { ButtonComponent } from '../commons/button/button.component';
 
 @Component({
   selector: 'app-daily-box',
-  imports: [AgTableComponent],
+  imports: [AgTableComponent, ButtonComponent],
   templateUrl: './daily-box.component.html',
   styleUrl: './daily-box.component.scss'
 })
@@ -15,6 +16,10 @@ export class DailyBoxComponent {
   public gridApi!: GridApi;
 
   rowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 50px)'
+  };
 
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 
@@ -79,6 +84,10 @@ export class DailyBoxComponent {
       }
     });
 
+  }
+
+  public createMovement = () => {
+    this.router.navigate(['/movimiento-caja']);
   }
 
 }
