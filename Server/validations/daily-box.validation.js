@@ -7,6 +7,10 @@ dailyBoxValidator.validate_getDailyBox = (req, res) => {
     verifyTokenAndExecute(req, res, dailyBoxController.getDailyBox);
 }
 
+dailyBoxValidator.validate_addMovement = (req, res) => {
+    verifyTokenAndExecute(req, res, dailyBoxController.addMovement);
+}
+
 function verifyTokenAndExecute(req, res, nextFn) {
     jwt.verify(req.token, SECRET_KEY, (err) => {
         if (err) {

@@ -43,4 +43,45 @@ dailyBoxController.getDailyBox = (req, res) => {
   }
 };
 
+dailyBoxController.addMovement = (req, res) => {
+  try {
+    const { tipo, concepto, monto, medio_pago } = req.body;
+
+    const sqlSaldo = "SELECT saldo FROM caja_diaria ORDER BY id DESC LIMIT 1";
+
+    mysqlConnection.query(sqlSaldo, (err, rows) => {
+      if (err) return res.status(500).json(err);
+
+      let saldoAnterior = rows.length > 0 ? rows[0].saldo : 0;
+      let nuevoSaldo = saldoAnterior;
+
+      if (medio_pago === "EFECTIVO") {
+        if (tipo === "INGRESO") {
+          nuevoSaldo += parseFloat(monto);
+        } else if (tipo === "EGRESO") {
+          nuevoSaldo -= parseFloat(monto);
+        }
+      }
+
+      const fecha = new Date().toISOString().split('T')[0];
+
+      const insertSql = `
+        INSERT INTO caja_diaria (fecha, tipo, concepto, monto, medio_pago, saldo)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+      mysqlConnection.query(
+        insertSql,
+        [fecha, tipo, concepto, monto, medio_pago, nuevoSaldo],
+        (err, result) => {
+          if (err) return res.status(500).json(err);
+          res.json({ id: result.insertId, saldo: nuevoSaldo });
+        }
+      );
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = dailyBoxController;
