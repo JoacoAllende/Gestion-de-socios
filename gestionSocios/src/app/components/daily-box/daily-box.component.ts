@@ -21,7 +21,7 @@ export class DailyBoxComponent {
     height: 'calc(100% - 2rem - 50px)'
   };
 
-  defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
+  defaultColDef: ColDef = { flex: 1, resizable: true };
 
   colDefs: (ColDef | ColGroupDef)[] = [
     {
@@ -29,7 +29,8 @@ export class DailyBoxComponent {
       headerName: 'Fecha',
       sortable: true,
       filter: 'agTextColumnFilter',
-      floatingFilter: true
+      floatingFilter: true,
+      minWidth: 50
     },
     {
       field: 'concepto',
@@ -38,6 +39,7 @@ export class DailyBoxComponent {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       cellClass: 'ag-cell-clickable',
+      minWidth: 800,
       onCellClicked: (event: CellClickedEvent) => {
         console.log(event.data, `/movimiento-caja/${event.data.id}`)
         this.router.navigate([`/movimiento-caja/${event.data.id}`]);
