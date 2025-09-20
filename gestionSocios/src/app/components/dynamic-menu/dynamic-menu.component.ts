@@ -48,6 +48,10 @@ export class DynamicMenuComponent {
         action: () => this.router.navigate(['/caja'])
       },
       { 
+        label: 'Sueldos', 
+        action: () => this.router.navigate(['/sueldos'])
+      },
+      { 
         label: 'Estadísticas', 
         action: () => this.router.navigate(['/estadisticas'])
       }
