@@ -38,24 +38,23 @@ export class DailyBoxMovementComponent {
     this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
     this.form = this.fb.group(controls);
 
-    // if (this.socioId) {
-    //   this.membershipService.getMembership(this.socioId).subscribe({
-    //     next: socio => this.form.patchValue(socio),
-    //     error: err => this.toast.show(err.error.message, 'error')
-    //   });
-    // }
+    if (this.movementId) {
+      this.dailyBoxService.getMovementById(this.movementId).subscribe({
+        next: movement => this.form.patchValue(movement),
+        error: err => this.toast.show(err.error?.message, 'error')
+      });
+    }
   }
 
   submit(formValue: any) {
     if (this.movementId) {
-      // this.dailyBoxService.updateMembership(this.socioId, formValue).subscribe({
-      //   next: (res) => {
-      //     this.form.reset();
-      //     this.router.navigate(['/pagos']);
-      //     this.toast.show(res.status, 'success');
-      //   },
-      //   error: err => this.toast.show(err.error.sqlMessage, 'error')
-      // });
+      this.dailyBoxService.updateMovement(this.movementId, formValue).subscribe({
+      next: (res) => {
+        this.toast.show(res.status, 'success');
+        this.router.navigate(['/caja']);
+      },
+      error: err => this.toast.show(err.error?.sqlMessage, 'error')
+    });
     } else {
       this.dailyBoxService.createMovement(formValue).subscribe({
         next: (res) => {

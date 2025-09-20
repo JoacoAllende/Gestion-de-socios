@@ -19,7 +19,15 @@ export class DailyBoxService {
     return this.http.get<any[]>(`${this.API_URI}/daily-box`, { headers: this.headers });
   }
 
+  getMovementById(id: number) {
+    return this.http.get<any>(`${this.API_URI}/daily-box/${id}`, { headers: this.headers });
+  }
+
   createMovement(movement: any) {
     return this.http.post<any>(`${this.API_URI}/daily-box`, movement, { headers: this.headers });
+  }
+
+  updateMovement(id: number, movement: any) {
+    return this.http.put<any>(`${this.API_URI}/daily-box/${id}`, movement, { headers: this.headers });
   }
 }
