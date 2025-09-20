@@ -1,0 +1,7 @@
+<div class="buttons-wrapper">
+  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos'" [onClick]="procesarPagos">
+  </app-button>
+</div>
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"
+  [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">
+</app-ag-table>
