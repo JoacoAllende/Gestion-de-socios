@@ -4,6 +4,7 @@ const router = express.Router();
 const dailyBox = require("../validations/daily-box.validation");
 
 router.get('/daily-box', ensureToken, dailyBox.validate_getDailyBox);
+router.post('/daily-box', ensureToken, dailyBox.validate_addMovement);
 
 function ensureToken(req, res, next) {
     const bearerHeader = req.headers['authorization'];
