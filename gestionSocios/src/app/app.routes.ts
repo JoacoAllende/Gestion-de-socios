@@ -7,12 +7,14 @@ import { FullStatisticsComponent } from './components/full-statistics/full-stati
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './services/auth-guard.service';
 import { DailyBoxComponent } from './components/daily-box/daily-box.component';
+import { DailyBoxMovementComponent } from './components/daily-box-movement/daily-box-movement.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
+    { path: 'movimiento-caja', component: DailyBoxMovementComponent },
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
