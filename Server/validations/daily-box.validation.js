@@ -7,8 +7,16 @@ dailyBoxValidator.validate_getDailyBox = (req, res) => {
     verifyTokenAndExecute(req, res, dailyBoxController.getDailyBox);
 }
 
+dailyBoxValidator.validate_getMovementById = (req, res) => {
+  verifyTokenAndExecute(req, res, dailyBoxController.getMovementById);
+}
+
 dailyBoxValidator.validate_addMovement = (req, res) => {
     verifyTokenAndExecute(req, res, dailyBoxController.addMovement);
+}
+
+dailyBoxValidator.validate_updateMovement = (req, res) => {
+    verifyTokenAndExecute(req, res, dailyBoxController.updateMovement);
 }
 
 function verifyTokenAndExecute(req, res, nextFn) {
