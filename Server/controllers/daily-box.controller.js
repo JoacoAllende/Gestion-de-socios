@@ -4,11 +4,32 @@ const mysqlConnection = require('../database');
 dailyBoxController.getDailyBox = (req, res) => {
   try {
     const sql = `
-      SELECT *
+      SELECT 
+        id,
+        DATE_FORMAT(fecha, '%d-%m-%Y') AS fecha,
+        concepto,
+        saldo,
+        CASE 
+          WHEN tipo = 'INGRESO' AND medio_pago = 'EFECTIVO' 
+          THEN monto ELSE 0 
+        END AS monto_ingreso,
+        CASE 
+          WHEN tipo = 'EGRESO' AND medio_pago = 'EFECTIVO' 
+          THEN monto ELSE 0 
+        END AS monto_egreso,
+        CASE 
+          WHEN tipo = 'INGRESO' AND medio_pago = 'TRANSFERENCIA' 
+          THEN monto ELSE 0 
+        END AS monto_transferencia,
+        CASE 
+          WHEN tipo = 'EGRESO' AND medio_pago = 'TRANSFERENCIA' 
+          THEN -monto ELSE 0 
+        END AS monto_transferencia
       FROM caja_diaria
       WHERE YEAR(fecha) = 2025
-      ORDER BY fecha DESC, id DESC
+      ORDER BY id DESC
     `;
+
 
     mysqlConnection.query(sql, (err, results) => {
       if (err) {

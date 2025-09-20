@@ -44,6 +44,10 @@ export class DynamicMenuComponent {
         action: () => this.router.navigate(['/pagos'])
       },
       { 
+        label: 'Caja diaria', 
+        action: () => this.router.navigate(['/caja'])
+      },
+      { 
         label: 'Estadísticas', 
         action: () => this.router.navigate(['/estadisticas'])
       }
