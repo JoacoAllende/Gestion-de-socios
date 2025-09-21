@@ -151,26 +151,26 @@ export class EmployeesComponent {
         const mesesFiltrados = Object.fromEntries(
           Object.entries(meses).filter(([_, value]) => value === true || value === false)
         );
-        return { socioId: row.nro_socio, meses: mesesFiltrados };
+        return { employeeId: row.id, meses: mesesFiltrados };
       })
       .filter(r => Object.keys(r.meses).length > 0);
     if (seleccionados.length === 0) return;
 
-    // this.paymentsService.updatePayments(seleccionados).subscribe((res: any) => {
-    //   this.toast.show(res.status, 'success')
-    //   this.membershipService.getMemberships().subscribe({
-    //     next: (data) => {
-    //       this.rowData = data;
-    //       this.gridApi?.refreshCells();
-    //       setTimeout(() => {
-    //         this.updateVisibleTotals();
-    //       });
-    //     },
-    //     error: (err) => {
-    //       this.toast.show(err.error?.message, 'error');
-    //     }
-    //   });
+    this.employeesService.updatePayments(seleccionados).subscribe((res: any) => {
+      this.toast.show(res.status, 'success')
+      this.employeesService.getEmployees().subscribe({
+        next: (data) => {
+          this.rowData = data;
+          this.gridApi?.refreshCells();
+          setTimeout(() => {
+            this.updateVisibleTotals();
+          });
+        },
+        error: (err) => {
+          this.toast.show(err.error?.message, 'error');
+        }
+      });
 
-    // });
+    });
   }
 }

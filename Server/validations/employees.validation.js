@@ -19,6 +19,10 @@ employeesValidator.validate_updateEmployee = (req, res) => {
     verifyTokenAndExecute(req, res, employeesController.updateEmployee);
 }
 
+employeesValidator.validate_loadSalary = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.loadSalary);
+}
+
 function verifyTokenAndExecute(req, res, nextFn) {
     jwt.verify(req.token, SECRET_KEY, (err, decoded) => {
         if (err) {
