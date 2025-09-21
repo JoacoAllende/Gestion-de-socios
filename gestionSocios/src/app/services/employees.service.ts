@@ -19,7 +19,15 @@ export class EmployeesService {
     return this.http.get<any[]>(`${this.API_URI}/employees`, { headers: this.headers });
   }
 
+  getEmployeeById(id: number) {
+    return this.http.get<any[]>(`${this.API_URI}/employee/${id}`, { headers: this.headers });
+  }
+
   createEmployee(employeeData: any) {
     return this.http.post<any>(`${this.API_URI}/employee`, employeeData, { headers: this.headers });
+  }
+
+  updateEmployee(id: number, employeeData: any) {
+    return this.http.post<any>(`${this.API_URI}/employee/${id}`, employeeData, { headers: this.headers });
   }
 }

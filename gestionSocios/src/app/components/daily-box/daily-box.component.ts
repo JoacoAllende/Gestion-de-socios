@@ -41,7 +41,6 @@ export class DailyBoxComponent {
       cellClass: 'ag-cell-clickable',
       minWidth: 800,
       onCellClicked: (event: CellClickedEvent) => {
-        console.log(event.data, `/movimiento-caja/${event.data.id}`)
         this.router.navigate([`/movimiento-caja/${event.data.id}`]);
       }
     },
