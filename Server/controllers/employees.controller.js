@@ -27,9 +27,9 @@ employeeController.getEmployees = async (req, res) => {
         e.activo,
         ${cases}
       FROM empleado e
-      LEFT JOIN sueldo s ON s.empleado_id = e.id AND s.anio = ?
-      GROUP BY e.id, e.nombre
-      ORDER BY e.nombre ASC
+      INNER JOIN sueldo s ON s.empleado_id = e.id AND s.anio = ?
+      GROUP BY e.id, e.nombre, e.monto_base, e.activo
+      ORDER BY e.activo DESC, e.nombre ASC
     `;
 
     mysqlConnection.query(query, [anio], (err, rows) => {
