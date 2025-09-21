@@ -1,9 +1,20 @@
 <div>
-    <span *ngIf="params.value === null || params.value === undefined">❌</span>
-    <span *ngIf="params.value > 0">{{ params.value }}</span>
-    <span *ngIf="params.value < 0">0</span>
-    <input *ngIf="params.value === 0" type="checkbox" [checked]="isSelected('yes')"
-        (change)="toggleSelection($event, 'yes')" />
-    <input *ngIf="params.value === 0" type="checkbox" [checked]="isSelected('no')"
-        (change)="toggleSelection($event, 'no')" />
+  <span *ngIf="params.value === null || params.value === undefined">❌</span>
+  <span *ngIf="params.value > 0">{{ params.value }}</span>
+  <span *ngIf="params.value < 0">0</span>
+
+  <ng-container *ngIf="params.value === 0 && mode === 'dual'">
+    <input type="checkbox"
+           [checked]="isSelected('yes')"
+           (change)="toggleSelection($event, 'yes')" />
+    <input type="checkbox"
+           [checked]="isSelected('no')"
+           (change)="toggleSelection($event, 'no')" />
+  </ng-container>
+
+  <ng-container *ngIf="params.value === 0 && mode === 'single'">
+    <input type="checkbox"
+           [checked]="isSelected('yes')"
+           (change)="toggleSingleSelection($event)" />
+  </ng-container>
 </div>
