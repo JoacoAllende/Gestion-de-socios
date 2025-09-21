@@ -30,4 +30,9 @@ export class EmployeesService {
   updateEmployee(id: number, employeeData: any) {
     return this.http.put<any>(`${this.API_URI}/employee/${id}`, employeeData, { headers: this.headers });
   }
+
+  updatePayments(paymentsData: any) {
+    const payload = { salaries: paymentsData };
+    return this.http.put(`${this.API_URI}/employee-salary`, payload, { headers: this.headers });
+  }
 }

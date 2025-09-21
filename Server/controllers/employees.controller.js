@@ -191,7 +191,7 @@ employeeController.updateEmployee = (req, res) => {
           const updateSueldosQuery = `
             UPDATE sueldo
             SET monto_mes = ?
-            WHERE empleado_id = ? AND anio = ? AND mes >= ?
+            WHERE empleado_id = ? AND anio = ? AND mes >= ? AND pagado = false
           `;
           mysqlConnection.query(updateSueldosQuery, [monto, id, anio, mes_alta], (err4) => {
             if (err4) return res.status(500).json(err4);
@@ -204,5 +204,63 @@ employeeController.updateEmployee = (req, res) => {
     res.status(500).json(error);
   }
 };
+
+employeeController.loadSalary = (req, res) => {
+  try {
+    const { salaries } = req.body;
+    const anio = 2025;
+
+    if (!Array.isArray(salaries) || salaries.length === 0) {
+      return res.status(400).json({ error: 'No se recibieron datos para actualizar' });
+    }
+
+    const mesesMap = {
+      'enero': 1,
+      'febrero': 2,
+      'marzo': 3,
+      'abril': 4,
+      'mayo': 5,
+      'junio': 6,
+      'julio': 7,
+      'agosto': 8,
+      'septiembre': 9,
+      'octubre': 10,
+      'noviembre': 11,
+      'diciembre': 12
+    };
+
+    const queries = [];
+
+    salaries.forEach(emp => {
+      const { employeeId, meses } = emp;
+      if (!employeeId || !meses) return;
+
+      Object.keys(meses).forEach(mesName => {
+        const mesNum = mesesMap[mesName.toLowerCase()];
+        if (mesNum) {
+          queries.push(new Promise((resolve, reject) => {
+            const query = `
+              UPDATE sueldo
+              SET pagado = TRUE
+              WHERE empleado_id = ? AND anio = ? AND mes = ?
+            `;
+            mysqlConnection.query(query, [employeeId, anio, mesNum], (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          }));
+        }
+      });
+    });
+
+    Promise.all(queries)
+      .then(() => res.json({ status: 'Sueldos cargados' }))
+      .catch(err => res.status(500).json(err));
+
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 
 module.exports = employeeController;

@@ -7,6 +7,7 @@ router.get('/employees', ensureToken, employees.validate_getEmployees);
 router.get('/employee/:id', ensureToken, employees.validate_getEmployeeById);
 router.post('/employee', ensureToken, employees.validate_createEmployee);
 router.put('/employee/:id', ensureToken, employees.validate_updateEmployee);
+router.put('/employee-salary', ensureToken, employees.validate_loadSalary);
 
 function ensureToken(req, res, next) {
     const bearerHeader = req.headers['authorization'];
