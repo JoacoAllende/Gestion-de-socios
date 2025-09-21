@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 
+interface CustomRendererParams extends ICellRendererParams {
+  cellRendererParams?: {
+    mode?: 'dual' | 'single';
+  };
+  mode?: 'dual' | 'single';
+}
+
 @Component({
   selector: 'app-checkbox-cell',
   standalone: true,
@@ -10,14 +17,17 @@ import { ICellRendererParams } from 'ag-grid-community';
   templateUrl: './checkbox-cell.component.html'
 })
 export class CheckboxCellComponent implements ICellRendererAngularComp {
-  public params!: ICellRendererParams;
+  public params!: CustomRendererParams;
+  public mode: 'dual' | 'single' = 'dual';
 
-  agInit(params: ICellRendererParams): void {
+  agInit(params: CustomRendererParams): void {
     this.params = params;
+    this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
   }
 
-  refresh(params: ICellRendererParams): boolean {
+  refresh(params: CustomRendererParams): boolean {
     this.params = params;
+    this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
     return true;
   }
 
@@ -31,6 +41,7 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
   }
 
   toggleSelection(event: any, option: 'yes' | 'no') {
+    if (this.mode === 'single') return;
     const row = this.params.data;
     const monthKey = this.params.colDef?.field as string;
     if (!monthKey) return;
@@ -42,11 +53,21 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
     } else {
       delete row._selectedMonths[monthKey];
     }
+  }
 
-    if (option === 'yes' && row._selectedMonths[monthKey] === true) {
+  toggleSingleSelection(event: any) {
+    if (this.mode !== 'single') return;
+
+    const row = this.params.data;
+    const monthKey = this.params.colDef?.field as string;
+    if (!monthKey) return;
+
+    if (!row._selectedMonths) row._selectedMonths = {};
+
+    if (event.target.checked) {
       row._selectedMonths[monthKey] = true;
-    } else if (option === 'no' && row._selectedMonths[monthKey] === false) {
-      row._selectedMonths[monthKey] = false;
+    } else {
+      delete row._selectedMonths[monthKey];
     }
   }
 }
