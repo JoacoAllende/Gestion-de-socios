@@ -43,12 +43,12 @@ export class EmployeeComponent {
     this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
     this.form = this.fb.group(controls);
 
-    // if (this.socioId) {
-    //   this.membershipService.getMembership(this.socioId).subscribe({
-    //     next: socio => this.form.patchValue(socio),
-    //     error: err => this.toast.show(err.error.message, 'error')
-    //   });
-    // }
+    if (this.employeeId) {
+      this.employeesService.getEmployeeById(this.employeeId).subscribe({
+        next: employee => this.form.patchValue(employee),
+        error: err => this.toast.show(err.error.message, 'error')
+      });
+    }
   }
 
   submit(formValue: any) {

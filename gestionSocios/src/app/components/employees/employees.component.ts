@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CellRendererSelectorResult, ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { CellClickedEvent, CellRendererSelectorResult, ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { EmployeesService } from '../../services/employees.service';
 import { ToastService } from '../../services/toast.service';
 import { Router } from '@angular/router';
@@ -38,7 +38,11 @@ export class EmployeesComponent {
           pinned: 'left',
           sortable: true,
           filter: 'agTextColumnFilter',
-          floatingFilter: true
+          floatingFilter: true,
+          cellClass: 'ag-cell-clickable',
+          onCellClicked: (event: CellClickedEvent) => {
+            this.router.navigate([`/empleado/${event.data.id}`]);
+          }
         },
         {
           field: 'monto',
