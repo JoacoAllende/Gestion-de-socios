@@ -7,6 +7,10 @@ employeesValidator.validate_getEmployees = (req, res) => {
     verifyTokenAndExecute(req, res, employeesController.getEmployees);
 }
 
+employeesValidator.validate_createEmployee = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.createEmployee);
+}
+
 function verifyTokenAndExecute(req, res, nextFn) {
     jwt.verify(req.token, SECRET_KEY, (err, decoded) => {
         if (err) {

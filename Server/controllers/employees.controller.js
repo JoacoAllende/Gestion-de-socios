@@ -44,4 +44,51 @@ employeeController.getEmployees = async (req, res) => {
   }
 };
 
+employeeController.createEmployee = (req, res) => {
+  try {
+    const { nombre, monto, detalles, mes_alta } = req.body;
+    const anio = 2025;
+
+    if (!nombre || !monto || !mes_alta) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+    }
+
+    const empleadoQuery = `
+      INSERT INTO empleado (nombre, monto_base, detalles, activo)
+      VALUES (?, ?, ?, TRUE)
+    `;
+
+    mysqlConnection.query(
+      empleadoQuery,
+      [nombre, monto, detalles || null],
+      (err, result) => {
+        if (err) return res.status(500).json(err);
+
+        const empleadoId = result.insertId;
+
+        const sueldoValues = [];
+        for (let mes = mes_alta; mes <= 12; mes++) {
+          sueldoValues.push([empleadoId, anio, mes, false]);
+        }
+
+        if (sueldoValues.length === 0) {
+          return res.json({ status: 'Empleado creado', empleadoId });
+        }
+
+        const sueldoQuery = `
+          INSERT INTO sueldo (empleado_id, anio, mes, pagado)
+          VALUES ?
+        `;
+
+        mysqlConnection.query(sueldoQuery, [sueldoValues], (err2) => {
+          if (err2) return res.status(500).json(err2);
+          res.json({ status: 'Empleado creado', empleadoId });
+        });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = employeeController;
