@@ -1,5 +1,7 @@
 <div class="buttons-wrapper">
-  <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos'" [onClick]="procesarPagos">
+  <app-button [disabled]="!haySeleccion()" [text]="'Cargar sueldos'" [onClick]="procesarPagos">
+  </app-button>
+  <app-button [text]="'Nuevo empleado'" [onClick]="createEmployee">
   </app-button>
 </div>
 <app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"

@@ -9,10 +9,12 @@ import { AuthGuard } from './services/auth-guard.service';
 import { DailyBoxComponent } from './components/daily-box/daily-box.component';
 import { DailyBoxMovementComponent } from './components/daily-box-movement/daily-box-movement.component';
 import { EmployeesComponent } from './components/employees/employees.component';
+import { EmployeeComponent } from './components/employee/employee.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
+    { path: 'empleado', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'movimiento-caja', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
