@@ -37,6 +37,10 @@ export const AG_GRID_LOCALE_ES = {
   blank: 'Vacío',
   notBlank: 'No vacío',
 
+  // Condiciones
+  andCondition: 'Y',
+  orCondition: 'O',
+
   // Paneles
   noRowsToShow: 'No hay registros para mostrar',
   pinColumn: 'Fijar columna',
