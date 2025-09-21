@@ -25,6 +25,7 @@ employeeController.getEmployees = async (req, res) => {
         e.nombre,
         CASE WHEN e.activo = FALSE THEN 0 ELSE e.monto_base END AS monto,
         e.activo,
+        e.detalles,
         ${cases}
       FROM empleado e
       INNER JOIN sueldo s ON s.empleado_id = e.id AND s.anio = ?

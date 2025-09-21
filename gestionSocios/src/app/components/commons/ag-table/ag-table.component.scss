@@ -6,3 +6,17 @@
     background-color: rgba(0, 92, 60, 0.1);
   }
 }
+
+::ng-deep .has-tooltip {
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+::ng-deep .has-tooltip::after {
+  content: "ℹ️";
+  margin-left: 4px;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
