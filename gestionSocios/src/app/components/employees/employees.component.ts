@@ -70,6 +70,7 @@ export class EmployeesComponent {
       sortable: true,
       filter: 'agNumberColumnFilter',
       floatingFilter: true,
+      cellRendererParams: { mode: 'single' },
       cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
         if (params.node?.rowPinned) {
           return {
@@ -132,6 +133,10 @@ export class EmployeesComponent {
     return this.rowData.some(row =>
       Object.values(row._selectedMonths ?? {}).some(v => v === true || v === false)
     );
+  }
+
+  public createEmployee = () => {
+    this.router.navigate(['/empleado']);
   }
 
   public procesarPagos() {

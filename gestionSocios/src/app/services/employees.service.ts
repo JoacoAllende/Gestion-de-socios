@@ -18,4 +18,8 @@ export class EmployeesService {
   getEmployees() {
     return this.http.get<any[]>(`${this.API_URI}/employees`, { headers: this.headers });
   }
+
+  createEmployee(employeeData: any) {
+    return this.http.post<any>(`${this.API_URI}/employee`, employeeData, { headers: this.headers });
+  }
 }
