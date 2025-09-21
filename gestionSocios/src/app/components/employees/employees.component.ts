@@ -51,6 +51,10 @@ export class EmployeesComponent {
           pinned: 'left',
           sortable: true,
           width: 120,
+          tooltipValueGetter: (params) => {
+            return params.data.detalles
+          },
+          cellClass: (params) => params.data?.detalles ? 'has-tooltip' : '',
           cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
             if (params.node?.rowPinned) {
               return {
