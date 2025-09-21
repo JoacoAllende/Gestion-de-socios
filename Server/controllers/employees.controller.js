@@ -44,6 +44,31 @@ employeeController.getEmployees = async (req, res) => {
   }
 };
 
+employeeController.getEmployeeById = (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const query = `
+      SELECT 
+        e.id,
+        e.nombre,
+        e.monto_base AS monto,
+        e.detalles,
+        e.activo
+      FROM empleado e
+      WHERE e.id = ?
+    `;
+
+    mysqlConnection.query(query, [id], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      if (rows.length === 0) return res.status(404).json({ error: 'Empleado no encontrado' });
+      res.json(rows[0]);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 employeeController.createEmployee = (req, res) => {
   try {
     const { nombre, monto, detalles, mes_alta } = req.body;
@@ -84,6 +109,49 @@ employeeController.createEmployee = (req, res) => {
           if (err2) return res.status(500).json(err2);
           res.json({ status: 'Empleado creado', empleadoId });
         });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+employeeController.updateEmployee = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, monto, detalles, mes_alta } = req.body;
+    const anio = 2025;
+
+    if (!id || !nombre || !monto || !mes_alta) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+    }
+
+    const updateEmpleadoQuery = `
+      UPDATE empleado
+      SET nombre = ?, monto_base = ?, detalles = ?
+      WHERE id = ?
+    `;
+
+    mysqlConnection.query(
+      updateEmpleadoQuery,
+      [nombre, monto, detalles || null, id],
+      (err) => {
+        if (err) return res.status(500).json(err);
+
+        const updateSueldosQuery = `
+          UPDATE sueldo
+          SET monto_mes = ?
+          WHERE empleado_id = ? AND anio = ? AND mes >= ?
+        `;
+
+        mysqlConnection.query(
+          updateSueldosQuery,
+          [monto, id, anio, mes_alta],
+          (err2) => {
+            if (err2) return res.status(500).json(err2);
+            res.json({ status: 'Empleado actualizado', empleadoId: id });
+          }
+        );
       }
     );
   } catch (error) {

@@ -7,8 +7,16 @@ employeesValidator.validate_getEmployees = (req, res) => {
     verifyTokenAndExecute(req, res, employeesController.getEmployees);
 }
 
+employeesValidator.validate_getEmployeeById = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.getEmployeeById);
+}
+
 employeesValidator.validate_createEmployee = (req, res) => {
     verifyTokenAndExecute(req, res, employeesController.createEmployee);
+}
+
+employeesValidator.validate_updateEmployee = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.updateEmployee);
 }
 
 function verifyTokenAndExecute(req, res, nextFn) {
