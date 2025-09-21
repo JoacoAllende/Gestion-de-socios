@@ -23,7 +23,7 @@ employeeController.getEmployees = async (req, res) => {
       SELECT 
         e.id,
         e.nombre,
-        e.monto_base AS monto,
+        CASE WHEN e.activo = FALSE THEN 0 ELSE e.monto_base END AS monto,
         e.activo,
         ${cases}
       FROM empleado e
