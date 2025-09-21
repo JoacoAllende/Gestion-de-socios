@@ -14,7 +14,7 @@ import { ToastService } from '../../services/toast.service';
 export class EmployeeComponent {
   form!: FormGroup;
   employeeId: number | null = null;
-  // isAlta: boolean = false;
+  isAlta: boolean = false;
 
   fields: FormField[] = [
     { name: 'nombre', label: 'Nombre completo', type: 'text', validators: [Validators.required], errorMessages: { required: 'Obligatorio' } },
@@ -34,10 +34,10 @@ export class EmployeeComponent {
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
     this.employeeId = idParam ? Number(idParam) : null;
-    // this.isAlta = this.router.url.startsWith('/socio-alta');
-    // if (!this.isAlta && this.socioId) {
-    //   this.fields.push({ name: 'baja', label: 'Dar de baja', type: 'checkbox' });
-    // }
+    this.isAlta = this.router.url.startsWith('/empleado-alta');
+    if (!this.isAlta && this.employeeId) {
+      this.fields.push({ name: 'baja', label: 'Dar de baja', type: 'checkbox' });
+    }
 
     const controls: any = {};
     this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
@@ -53,17 +53,17 @@ export class EmployeeComponent {
 
   submit(formValue: any) {
     if (this.employeeId) {
-      // if (this.isAlta) {
-      //   formValue = { ...formValue, alta: true };
-      // }
-      // this.membershipService.updateMembership(this.socioId, formValue).subscribe({
-      //   next: (res) => {
-      //     this.form.reset();
-      //     this.router.navigate(['/pagos']);
-      //     this.toast.show(res.status, 'success');
-      //   },
-      //   error: err => this.toast.show(err.error.sqlMessage, 'error')
-      // });
+      if (this.isAlta) {
+        formValue = { ...formValue, alta: true };
+      }
+      this.employeesService.updateEmployee(this.employeeId, formValue).subscribe({
+        next: (res) => {
+          this.form.reset();
+          this.router.navigate(['/sueldos']);
+          this.toast.show(res.status, 'success');
+        },
+        error: err => this.toast.show(err.error.sqlMessage, 'error')
+      });
     } else {
       this.employeesService.createEmployee(formValue).subscribe({
         next: (res) => {

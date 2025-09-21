@@ -24,6 +24,7 @@ employeeController.getEmployees = async (req, res) => {
         e.id,
         e.nombre,
         e.monto_base AS monto,
+        e.activo,
         ${cases}
       FROM empleado e
       LEFT JOIN sueldo s ON s.empleado_id = e.id AND s.anio = ?
@@ -119,7 +120,7 @@ employeeController.createEmployee = (req, res) => {
 employeeController.updateEmployee = (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, monto, detalles, mes_alta } = req.body;
+    const { nombre, monto, detalles, mes_alta, baja, alta } = req.body;
     const anio = 2025;
 
     if (!id || !nombre || !monto || !mes_alta) {
@@ -138,20 +139,65 @@ employeeController.updateEmployee = (req, res) => {
       (err) => {
         if (err) return res.status(500).json(err);
 
-        const updateSueldosQuery = `
-          UPDATE sueldo
-          SET monto_mes = ?
-          WHERE empleado_id = ? AND anio = ? AND mes >= ?
-        `;
-
-        mysqlConnection.query(
-          updateSueldosQuery,
-          [monto, id, anio, mes_alta],
-          (err2) => {
+        if (baja) {
+          const deleteSueldosQuery = `
+            DELETE FROM sueldo
+            WHERE empleado_id = ? AND anio = ? AND mes >= ? AND pagado = FALSE
+          `;
+          mysqlConnection.query(deleteSueldosQuery, [id, anio, mes_alta], (err2) => {
             if (err2) return res.status(500).json(err2);
-            res.json({ status: 'Empleado actualizado', empleadoId: id });
+
+            const setActivoFalseQuery = `
+              UPDATE empleado
+              SET activo = FALSE
+              WHERE id = ?
+            `;
+            mysqlConnection.query(setActivoFalseQuery, [id], (err3) => {
+              if (err3) return res.status(500).json(err3);
+              return res.json({ status: 'Empleado dado de baja', empleadoId: id });
+            });
+          });
+        } else if (alta) {
+          const sueldoValues = [];
+          for (let mes = mes_alta; mes <= 12; mes++) {
+            sueldoValues.push([id, anio, mes, monto, false]);
           }
-        );
+
+          const insertAndActivate = () => {
+            const setActivoTrueQuery = `
+              UPDATE empleado
+              SET activo = TRUE
+              WHERE id = ?
+            `;
+            mysqlConnection.query(setActivoTrueQuery, [id], (err3) => {
+              if (err3) return res.status(500).json(err3);
+              return res.json({ status: 'Empleado dado de alta', empleadoId: id });
+            });
+          };
+
+          if (sueldoValues.length > 0) {
+            const insertSueldosQuery = `
+              INSERT INTO sueldo (empleado_id, anio, mes, monto_mes, pagado)
+              VALUES ?
+            `;
+            mysqlConnection.query(insertSueldosQuery, [sueldoValues], (err2) => {
+              if (err2) return res.status(500).json(err2);
+              insertAndActivate();
+            });
+          } else {
+            insertAndActivate();
+          }
+        } else {
+          const updateSueldosQuery = `
+            UPDATE sueldo
+            SET monto_mes = ?
+            WHERE empleado_id = ? AND anio = ? AND mes >= ?
+          `;
+          mysqlConnection.query(updateSueldosQuery, [monto, id, anio, mes_alta], (err4) => {
+            if (err4) return res.status(500).json(err4);
+            res.json({ status: 'Empleado actualizado', empleadoId: id });
+          });
+        }
       }
     );
   } catch (error) {
