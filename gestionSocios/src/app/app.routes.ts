@@ -16,6 +16,7 @@ export const routes: Routes = [
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
     { path: 'empleado', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
+    { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'movimiento-caja', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },

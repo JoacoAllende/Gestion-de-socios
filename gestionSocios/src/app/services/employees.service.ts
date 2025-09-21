@@ -28,6 +28,6 @@ export class EmployeesService {
   }
 
   updateEmployee(id: number, employeeData: any) {
-    return this.http.post<any>(`${this.API_URI}/employee/${id}`, employeeData, { headers: this.headers });
+    return this.http.put<any>(`${this.API_URI}/employee/${id}`, employeeData, { headers: this.headers });
   }
 }

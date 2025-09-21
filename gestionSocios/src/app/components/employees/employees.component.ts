@@ -41,7 +41,8 @@ export class EmployeesComponent {
           floatingFilter: true,
           cellClass: 'ag-cell-clickable',
           onCellClicked: (event: CellClickedEvent) => {
-            this.router.navigate([`/empleado/${event.data.id}`]);
+            const baseRoute = event.data.activo ? 'empleado' : 'empleado-alta';
+            this.router.navigate([`/${baseRoute}/${event.data.id}`]);
           }
         },
         {
