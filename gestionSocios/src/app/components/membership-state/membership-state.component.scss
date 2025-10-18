@@ -1,0 +1,162 @@
+@use '../../../styles/variables' as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding: $spacing * 2;
+}
+
+.loading,
+.error-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing * 4;
+  border-radius: $border-radius;
+  font-size: $font-size-base * 1.1;
+  font-weight: 500;
+}
+
+.loading {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.error-card {
+  background: $status-error-light;
+  color: $danger-color;
+  border: 1px solid $status-error-border;
+  border-radius: $border-radius;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing * 3;
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing * 5;
+  border-radius: 12px;
+  background: $white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &.al-día {
+    border-top: 4px solid $status-success;
+    
+    .card-icon {
+      background: $status-success;
+    }
+
+    .estado-badge {
+      background: $status-success-light;
+      color: $status-success-dark;
+    }
+  }
+
+  &.atrasado {
+    border-top: 4px solid $status-warning;
+    
+    .card-icon {
+      background: $status-warning;
+    }
+
+    .estado-badge {
+      background: $status-warning-light;
+      color: $status-warning-dark;
+    }
+  }
+
+  &.inactivo {
+    border-top: 4px solid $status-disabled;
+    
+    .card-icon {
+      background: $status-disabled;
+    }
+
+    .estado-badge {
+      background: $status-disabled-light;
+      color: $status-disabled-dark;
+    }
+  }
+}
+
+.card-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  color: $white;
+  font-size: $font-size-base * 1.8;
+  font-weight: bold;
+}
+
+.card-content {
+  text-align: center;
+  width: 100%;
+}
+
+.card-nombre {
+  margin: 0 0 $half-spacing 0;
+  font-size: $font-size-base * 1.5;
+  font-weight: 600;
+  color: $text-color;
+}
+
+.card-dni,
+.card-numero {
+  margin: $half-spacing 0;
+  font-size: $font-size-base * 0.95;
+  color: #666;
+}
+
+.card-estado {
+  width: 100%;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: $spacing $spacing * 3;
+  border-radius: 20px;
+  font-size: $font-size-base * 0.95;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Mobile responsive
+@media (max-width: 480px) {
+  .container {
+    padding: $spacing;
+  }
+
+  .card {
+    padding: $spacing * 3;
+    max-width: 100%;
+  }
+
+  .card-nombre {
+    font-size: $font-size-base * 1.2;
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    font-size: $font-size-base * 1.5;
+  }
+
+  .card-dni,
+  .card-numero {
+    font-size: $font-size-base * 0.85;
+  }
+
+  .estado-badge {
+    padding: $spacing * 0.8 $spacing * 2;
+    font-size: $font-size-base * 0.85;
+  }
+}

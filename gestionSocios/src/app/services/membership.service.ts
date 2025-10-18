@@ -51,4 +51,8 @@ export class MembershipService {
     return this.http.put<any>(`${this.API_URI}/membership/${nro_socio}`, membershipData, { headers: this.headers });
   }
 
+  getMembershipStateByDni(dni: number) {
+    return this.http.get<any[]>(`${this.API_URI}/membership-state/${dni}`, { headers: this.headers });
+  }
+
 }

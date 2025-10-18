@@ -10,6 +10,7 @@ import { DailyBoxComponent } from './components/daily-box/daily-box.component';
 import { DailyBoxMovementComponent } from './components/daily-box-movement/daily-box-movement.component';
 import { EmployeesComponent } from './components/employees/employees.component';
 import { EmployeeComponent } from './components/employee/employee.component';
+import { MembershipStateComponent } from './components/membership-state/membership-state.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
@@ -23,6 +24,8 @@ export const routes: Routes = [
     { path: 'movimiento-caja/:id', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
+    { path: 'socio-estado', component: MembershipStateComponent},
+    { path: 'socio-estado/:dni', component: MembershipStateComponent},
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio-alta/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },

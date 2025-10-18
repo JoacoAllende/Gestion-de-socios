@@ -1,0 +1,15 @@
+<div class="container">
+  <div *ngIf="socio" class="card" [ngClass]="getEstadoClass()">
+    <div class="card-icon">
+      {{ getEstadoIcon() }}
+    </div>
+    <div class="card-content">
+      <h2 class="card-nombre">{{ socio.nombre }}</h2>
+      <p class="card-dni">DNI: {{ socio.dni }}</p>
+      <p class="card-numero">N° Socio: {{ socio.nro_socio }}</p>
+    </div>
+    <div class="card-estado">
+      <span class="estado-badge">{{ socio.estado_pago }}</span>
+    </div>
+  </div>
+</div>
