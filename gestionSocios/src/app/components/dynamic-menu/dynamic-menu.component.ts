@@ -67,4 +67,8 @@ export class DynamicMenuComponent {
       item.action();
     }
   }
+
+  shouldHideMenu(): boolean {
+    return this.router.url.includes('socio-estado');
+  }
 }
