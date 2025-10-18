@@ -39,6 +39,10 @@ membershipValidator.validate_updateMembership = (req, res) => {
     verifyTokenAndExecute(req, res, membershipController.updateMembership);
 };
 
+membershipValidator.validate_getMembershipStateByDni = (req, res) => {
+    membershipController.getMembershipStateByDni(req, res);
+};
+
 function verifyTokenAndExecute(req, res, nextFn) {
     jwt.verify(req.token, SECRET_KEY, (err, decoded) => {
         if (err) {
