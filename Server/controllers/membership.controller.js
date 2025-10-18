@@ -529,4 +529,46 @@ membershipController.updateMembership = (req, res) => {
   }
 };
 
+membershipController.getMembershipStateByDni = async (req, res, next) => {
+  try {
+    const { dni } = req.params;
+
+    const query = `
+      SELECT 
+        s.nro_socio,
+        s.nombre,
+        s.dni,
+        s.activo,
+        CASE 
+          WHEN s.activo = FALSE THEN 'Inactivo'
+          WHEN EXISTS (
+            SELECT 1 FROM pago p
+            WHERE p.socio_id = s.nro_socio
+              AND p.pagado = TRUE
+              AND (
+                (p.anio = YEAR(CURDATE()) AND p.mes = MONTH(CURDATE()))
+                OR (p.anio = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND p.mes = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+                OR (p.anio = YEAR(DATE_SUB(CURDATE(), INTERVAL 2 MONTH)) AND p.mes = MONTH(DATE_SUB(CURDATE(), INTERVAL 2 MONTH)))
+              )
+          ) THEN 'Al día'
+          ELSE 'Atrasado'
+        END AS estado_pago
+      FROM socio s
+      WHERE s.dni = ?
+    `;
+
+    mysqlConnection.query(query, [dni], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'Socio no encontrado' });
+      }
+
+      res.json(rows[0]);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = membershipController;

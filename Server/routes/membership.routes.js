@@ -10,6 +10,7 @@ router.get('/memberships-categories/basquet', membership.validate_getBasquetCate
 router.get('/memberships-categories/paleta', membership.validate_getPaletaCategories);
 router.get('/memberships-card', membership.validate_getMembershipCard);
 router.get('/membership/:nro_socio', ensureToken, membership.validate_getMembership);
+router.get('/membership-state/:dni', membership.validate_getMembershipStateByDni);
 router.post('/membership', ensureToken, membership.validate_createMembership);
 router.put('/membership/:nro_socio', ensureToken, membership.validate_updateMembership);
 
