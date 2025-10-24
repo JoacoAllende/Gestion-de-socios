@@ -318,7 +318,7 @@ membershipController.createMembership = (req, res) => {
 
                     const pagoValues = [];
                     for (let mes = mes_alta; mes <= 12; mes++) {
-                      const montoBase = 8500;
+                      const montoBase = (!!cuota_activa || !!cuota_pasiva) ? 8500 : 0;
                       const descuentoFamiliarAplicado = !!descuento_familiar ? df : 0;
                       const descuentoPasivaAplicado = !!cuota_pasiva ? dp : 0;
 
@@ -503,7 +503,7 @@ membershipController.updateMembership = (req, res) => {
               const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
               const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
 
-              const montoBase = 8500;
+              const montoBase = (!!cuota_activa || !!cuota_pasiva) ? 8500 : 0;
               const montoFinal = becado
                 ? -1
                 : montoBase + valorActividad - (descuento_familiar ? df : 0) - (cuota_pasiva ? dp : 0);
