@@ -121,8 +121,10 @@ export class EmployeesComponent {
   updateVisibleTotals() {
     if (!this.gridApi) return;
     const totals: any = {};
+    let rowCount = 0;
     this.gridApi.forEachNodeAfterFilterAndSort(node => {
       if (!node.data) return;
+      rowCount++;
       Object.keys(node.data).forEach(key => {
         if (['nombre', 'nro_socio', 'dni'].includes(key)) return;
         let v = node.data[key];
@@ -130,7 +132,7 @@ export class EmployeesComponent {
         if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
       });
     });
-    totals['nombre'] = 'Totales';
+    totals['nombre'] = `Totales (${rowCount})`;
     this.pinnedBottomRowData = [totals];
   }
 
