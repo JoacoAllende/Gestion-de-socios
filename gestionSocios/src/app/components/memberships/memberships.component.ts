@@ -119,6 +119,13 @@ export class MembershipsComponent implements OnInit {
           floatingFilter: true,
           cellRenderer: this.boolRenderer,
         },
+        {
+          field: 'ficha_socio',
+          headerName: 'Ficha',
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true
+        },
       ]
     },
     {
