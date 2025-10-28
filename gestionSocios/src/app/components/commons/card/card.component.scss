@@ -1,0 +1,39 @@
+@use '../../../../styles/variables' as *;
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing * 5;
+  border-radius: 12px;
+  background: $white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card-title {
+  margin: 0 0 $spacing 0;
+  font-size: $font-size-base * 1.5;
+  font-weight: 600;
+  color: $text-color;
+  text-align: center;
+}
+
+.card-content {
+  font-size: $font-size-base * 0.95;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: $spacing * 3;
+    max-width: 100%;
+  }
+
+  .card-title {
+    font-size: $font-size-base * 1.2;
+  }
+
+  .card-content {
+    font-size: $font-size-base * 0.85;
+  }
+}
