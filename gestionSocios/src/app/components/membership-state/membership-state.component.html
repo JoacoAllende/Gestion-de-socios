@@ -1,15 +1,21 @@
 <div class="container">
-  <div *ngIf="socio" class="card" [ngClass]="getEstadoClass()">
-    <div class="card-icon">
-      {{ getEstadoIcon() }}
+  <app-card 
+    *ngIf="socio"
+    [title]="socio.nombre"
+    [cardClass]="getCardClass()">
+    
+    <div class="membership-info">
+      <div class="icon" [ngClass]="getIconClass()">
+        {{ getEstadoIcon() }}
+      </div>
+      <div class="info">
+        <p><strong>DNI:</strong> {{ socio.dni }}</p>
+        <p><strong>N° Socio:</strong> {{ socio.nro_socio }}</p>
+      </div>
+      <div class="badge" [ngClass]="getBadgeClass()">
+        {{ socio.estado_pago }}
+      </div>
     </div>
-    <div class="card-content">
-      <h2 class="card-nombre">{{ socio.nombre }}</h2>
-      <p class="card-dni">DNI: {{ socio.dni }}</p>
-      <p class="card-numero">N° Socio: {{ socio.nro_socio }}</p>
-    </div>
-    <div class="card-estado">
-      <span class="estado-badge">{{ socio.estado_pago }}</span>
-    </div>
-  </div>
+    
+  </app-card>
 </div>
