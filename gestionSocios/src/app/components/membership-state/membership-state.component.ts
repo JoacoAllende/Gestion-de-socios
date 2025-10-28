@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { MembershipService } from '../../services/membership.service';
-
+import { CardComponent } from '../commons/card/card.component';
 
 @Component({
   selector: 'app-membership-state',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CardComponent],
   templateUrl: './membership-state.component.html',
   styleUrl: './membership-state.component.scss'
 })
@@ -39,9 +39,10 @@ export class MembershipStateComponent implements OnInit {
     });
   }
 
-  getEstadoClass(): string {
+  getCardClass(): string {
     if (!this.socio) return '';
-    return this.socio.estado_pago.toLowerCase().replace(' ', '-');
+    const estado = this.socio.estado_pago.toLowerCase().replace(' ', '-');
+    return `estado-${estado}`;
   }
 
   getEstadoIcon(): string {
@@ -56,5 +57,17 @@ export class MembershipStateComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  getIconClass(): string {
+    if (!this.socio) return '';
+    const estado = this.socio.estado_pago.toLowerCase().replace(' ', '-');
+    return `icon-${estado}`;
+  }
+
+  getBadgeClass(): string {
+    if (!this.socio) return '';
+    const estado = this.socio.estado_pago.toLowerCase().replace(' ', '-');
+    return `badge-${estado}`;
   }
 }
