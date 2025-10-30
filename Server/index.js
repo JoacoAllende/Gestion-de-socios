@@ -25,6 +25,7 @@ app.use(require('./routes/daily-box.routes'));
 app.use(require('./routes/employees.routes'));
 app.use(require('./routes/membership.routes'));
 app.use(require('./routes/payments.routes'));
+app.use(require('./routes/statistics.routes'));
 app.use(require('./routes/user.routes'));
 
 // Starting the server
