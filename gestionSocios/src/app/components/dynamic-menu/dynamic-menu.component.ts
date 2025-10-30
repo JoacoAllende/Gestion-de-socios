@@ -53,7 +53,16 @@ export class DynamicMenuComponent {
       },
       { 
         label: 'Estadísticas', 
-        action: () => this.router.navigate(['/estadisticas'])
+        children: [
+          {
+            label: 'Generales',
+            action: () => this.router.navigate(['/estadisticas']),
+          },
+          {
+            label: 'Resúmenes',
+            action: () => this.router.navigate(['/resumenes/10/2025']),
+          }
+        ],
       }
     ];
   }
