@@ -1,0 +1,92 @@
+<div class="container" *ngIf="summary">
+  <!-- Card de Resumen General -->
+  <app-card 
+    [title]="'Resumen ' + getMonthName(summary.mes) + ' ' + summary.anio"
+    [cardClass]="'card-general'">
+    
+    <div class="summary-info">
+      <div class="summary-header">
+        <div class="icon icon-general">💰</div>
+      </div>
+      
+      <div class="summary-totals">
+        <div class="total-item">
+          <span class="label">Total General:</span>
+          <span class="value highlight">{{ formatCurrency(summary.total_general) }}</span>
+        </div>
+        <div class="total-item">
+          <span class="label">Total Efectivo:</span>
+          <span class="value">{{ formatCurrency(summary.total_efectivo) }}</span>
+        </div>
+        <div class="total-item">
+          <span class="label">Total Transferencia:</span>
+          <span class="value">{{ formatCurrency(summary.total_transferencia) }}</span>
+        </div>
+        <div class="total-item" *ngIf="summary.total_salida_efectivo > 0 || summary.total_salida_transferencia > 0">
+          <span class="label">Salida Efectivo:</span>
+          <span class="value salida">-{{ formatCurrency(summary.total_salida_efectivo) }}</span>
+        </div>
+        <div class="total-item" *ngIf="summary.total_salida_efectivo > 0 || summary.total_salida_transferencia > 0">
+          <span class="label">Salida Transferencia:</span>
+          <span class="value salida">-{{ formatCurrency(summary.total_salida_transferencia) }}</span>
+        </div>
+        <div class="total-item">
+          <span class="label">Total Socios:</span>
+          <span class="value">{{ summary.total_socios }}</span>
+        </div>
+        <div class="total-item" *ngIf="summary.porcentaje_aplicado">
+          <span class="label">Porcentaje Aplicado:</span>
+          <span class="value">{{ summary.porcentaje_aplicado }}%</span>
+        </div>
+      </div>
+    </div>
+    
+  </app-card>
+
+  <!-- Cards por Ficha de Socio -->
+  <app-card 
+    *ngFor="let detalle of summary.detalle"
+    [title]="detalle.ficha_socio"
+    [cardClass]="'card-ficha'">
+    
+    <div class="ficha-info">
+      <div class="icon icon-ficha">📋</div>
+      
+      <div class="ficha-details">
+        <div class="detail-row">
+          <span class="label">Cantidad de Socios:</span>
+          <span class="value">{{ detalle.cantidad_socios }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Cantidad de Pagos:</span>
+          <span class="value">{{ detalle.cantidad_pagos }}</span>
+        </div>
+        <div class="separator"></div>
+        <div class="detail-row">
+          <span class="label">Total Ingresado:</span>
+          <span class="value highlight">{{ formatCurrency(detalle.total_ingresado) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Efectivo:</span>
+          <span class="value">{{ formatCurrency(detalle.total_efectivo) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Transferencia:</span>
+          <span class="value">{{ formatCurrency(detalle.total_transferencia) }}</span>
+        </div>
+        <div *ngIf="detalle.salida_efectivo > 0 || detalle.salida_transferencia > 0">
+          <div class="separator"></div>
+          <div class="detail-row">
+            <span class="label">Salida Efectivo:</span>
+            <span class="value salida">-{{ formatCurrency(detalle.salida_efectivo) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Salida Transferencia:</span>
+            <span class="value salida">-{{ formatCurrency(detalle.salida_transferencia) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </app-card>
+</div>
