@@ -6,22 +6,31 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
-  selector: 'app-event',
+  selector: 'app-event-movement',
   imports: [DynamicFormComponent],
-  templateUrl: './event.component.html',
-  styleUrl: './event.component.scss'
+  templateUrl: './event-movement.component.html',
+  styleUrl: './event-movement.component.scss'
 })
-export class EventComponent {
+export class EventMovementComponent {
   form!: FormGroup;
-  eventId: number | null = null;
+  eventId!: number;
+  movementId: number | null = null;
 
   fields: FormField[] = [
     { 
-      name: 'descripcion', 
-      label: 'Descripción', 
+      name: 'concepto', 
+      label: 'Concepto', 
       type: 'text', 
       validators: [Validators.required], 
       errorMessages: { required: 'Obligatorio' } 
+    },
+    { 
+      name: 'monto', 
+      label: 'Monto', 
+      type: 'number', 
+      validators: [Validators.required], 
+      errorMessages: { required: 'Obligatorio' },
+      row: 1
     },
     { 
       name: 'fecha', 
@@ -29,17 +38,6 @@ export class EventComponent {
       type: 'date', 
       validators: [Validators.required], 
       errorMessages: { required: 'Obligatorio' },
-      row: 1
-    },
-    { 
-      name: 'finalizado', 
-      label: 'Finalizado', 
-      type: 'select', 
-      options: [
-        { value: 0, label: 'No' }, 
-        { value: 1, label: 'Sí' }
-      ], 
-      value: 0,
       row: 1
     },
     { 
@@ -58,20 +56,25 @@ export class EventComponent {
   ) { }
 
   ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    this.eventId = idParam ? Number(idParam) : null;
+    this.eventId = Number(this.route.snapshot.paramMap.get('id'));
+    const movementIdParam = this.route.snapshot.paramMap.get('movementId');
+    this.movementId = movementIdParam ? Number(movementIdParam) : null;
 
     const controls: any = {};
     this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
     this.form = this.fb.group(controls);
 
-    if (this.eventId) {
-      this.eventsService.getEventById(this.eventId).subscribe({
-        next: event => {
-          if (event.fecha) {
-            event.fecha = event.fecha.split('T')[0];
+    if (this.movementId) {
+      this.eventsService.getMovementsByEvent(this.eventId).subscribe({
+        next: movements => {
+          const movement = movements.find(m => m.id === this.movementId);
+          if (movement) {
+            if (movement.fecha) {
+              const [day, month, year] = movement.fecha.split('-');
+              movement.fecha = `${year}-${month}-${day}`;
+            }
+            this.form.patchValue(movement);
           }
-          this.form.patchValue(event);
         },
         error: err => this.toast.show(err.error?.message, 'error')
       });
@@ -79,20 +82,19 @@ export class EventComponent {
   }
 
   submit(formValue: any) {
-    if (this.eventId) {
-      this.eventsService.updateEvent(this.eventId, formValue).subscribe({
+    if (this.movementId) {
+      this.eventsService.updateMovement(this.movementId, formValue).subscribe({
         next: (res) => {
           this.toast.show(res.status, 'success');
-          this.router.navigate(['/eventos']);
+          this.router.navigate([`/evento/${this.eventId}/movimientos`]);
         },
         error: err => this.toast.show(err.error?.sqlMessage, 'error')
       });
     } else {
-      this.eventsService.createEvent(formValue).subscribe({
+      this.eventsService.createMovement(this.eventId, formValue).subscribe({
         next: (res) => {
-          this.form.reset();
-          this.router.navigate(['/eventos']);
           this.toast.show(res.status, 'success');
+          this.router.navigate([`/evento/${this.eventId}/movimientos`]);
         },
         error: err => this.toast.show(err.error?.sqlMessage, 'error')
       });
@@ -100,6 +102,6 @@ export class EventComponent {
   }
 
   cancel() {
-    this.router.navigate(['/eventos']);
+    this.router.navigate([`/evento/${this.eventId}/movimientos`]);
   }
 }
