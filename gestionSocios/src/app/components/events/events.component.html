@@ -1,0 +1,12 @@
+<div class="buttons-wrapper">
+    <app-button 
+      [text]="'Nuevo Evento'" 
+      [onClick]="createEvent">
+    </app-button>
+</div>
+<app-ag-table 
+  [rowData]="rowData" 
+  [colDefs]="colDefs" 
+  [defaultColDef]="defaultColDef"
+  [gridStyle]="gridStyle">
+</app-ag-table>

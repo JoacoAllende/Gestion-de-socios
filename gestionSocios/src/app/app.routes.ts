@@ -12,6 +12,8 @@ import { EmployeesComponent } from './components/employees/employees.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { MembershipStateComponent } from './components/membership-state/membership-state.component';
 import { SummaryComponent } from './components/summary/summary.component';
+import { EventsComponent } from './components/events/events.component';
+import { EventComponent } from './components/event/event.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
@@ -20,6 +22,9 @@ export const routes: Routes = [
     { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
+    { path: 'evento', component: EventComponent, canActivate: [AuthGuard] },
+    { path: 'evento/:id', component: EventComponent, canActivate: [AuthGuard] },
+    { path: 'eventos', component: EventsComponent, canActivate: [AuthGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'movimiento-caja', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
     { path: 'movimiento-caja/:id', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
