@@ -1,0 +1,10 @@
+<div class="header">
+    <h2>Movimientos de: {{ eventDescription }}</h2>
+    <div class="buttons-wrapper">
+        <app-button [text]="'← Volver'" [onClick]="goBack"></app-button>
+        <app-button [text]="'Nuevo Movimiento'" [onClick]="createMovement">
+        </app-button>
+    </div>
+</div>
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle">
+</app-ag-table>

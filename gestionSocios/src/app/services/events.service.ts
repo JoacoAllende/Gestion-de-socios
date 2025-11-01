@@ -30,4 +30,36 @@ export class EventsService {
   updateEvent(id: number, event: any) {
     return this.http.put<any>(`${this.API_URI}/events/${id}`, event, { headers: this.headers });
   }
+
+  getMovementsByEvent(eventId: number) {
+    return this.http.get<any[]>(`${this.API_URI}/events/${eventId}/movements`, { headers: this.headers });
+  }
+
+  createMovement(eventId: number, movement: any) {
+    return this.http.post<any>(`${this.API_URI}/events/${eventId}/movements`, movement, { headers: this.headers });
+  }
+
+  updateMovement(movementId: number, movement: any) {
+    return this.http.put<any>(`${this.API_URI}/movements/${movementId}`, movement, { headers: this.headers });
+  }
+
+  deleteMovement(movementId: number) {
+    return this.http.delete<any>(`${this.API_URI}/movements/${movementId}`, { headers: this.headers });
+  }
+
+  getDetailsByMovement(movementId: number) {
+    return this.http.get<any[]>(`${this.API_URI}/movements/${movementId}/details`, { headers: this.headers });
+  }
+
+  createDetail(movementId: number, detail: any) {
+    return this.http.post<any>(`${this.API_URI}/movements/${movementId}/details`, detail, { headers: this.headers });
+  }
+
+  updateDetail(detailId: number, detail: any) {
+    return this.http.put<any>(`${this.API_URI}/details/${detailId}`, detail, { headers: this.headers });
+  }
+
+  deleteDetail(detailId: number) {
+    return this.http.delete<any>(`${this.API_URI}/details/${detailId}`, { headers: this.headers });
+  }
 }

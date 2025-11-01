@@ -33,7 +33,8 @@ export class EventsComponent {
       cellClass: 'ag-cell-clickable',
       minWidth: 400,
       onCellClicked: (event: CellClickedEvent) => {
-        this.router.navigate([`/event/${event.data.id}`]);
+        // Click en descripción → ir a movimientos del evento
+        this.router.navigate([`/evento/${event.data.id}/movimientos`]);
       }
     },
     {
@@ -50,9 +51,14 @@ export class EventsComponent {
       sortable: true,
       filter: 'agNumberColumnFilter',
       floatingFilter: true,
+      cellClass: 'ag-cell-clickable',
       valueFormatter: (params) =>
         `$ ${params.value?.toLocaleString('es-AR') || 0}`,
-      minWidth: 150
+      minWidth: 150,
+      onCellClicked: (event: CellClickedEvent) => {
+        // Click en total → editar el evento
+        this.router.navigate([`/evento/${event.data.id}`]);
+      }
     },
     {
       field: 'cantidad_movimientos',
@@ -69,7 +75,7 @@ export class EventsComponent {
       filter: 'agSetColumnFilter',
       floatingFilter: true,
       valueFormatter: (params) => params.value ? 'Finalizado' : 'Activo',
-      cellStyle: (params) => {
+      cellStyle: (params): any => {
         return params.value 
           ? { color: 'gray', fontWeight: 'normal' } 
           : { color: 'green', fontWeight: 'bold' };
