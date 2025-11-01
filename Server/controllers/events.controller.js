@@ -1,7 +1,8 @@
-const eventosController = {};
+const eventsController = {};
 const mysqlConnection = require('../database');
 
-eventosController.getEvents = (req, res) => {
+
+eventsController.getEvents = (req, res) => {
   try {
     const sql = `
       SELECT 
@@ -29,7 +30,7 @@ eventosController.getEvents = (req, res) => {
   }
 };
 
-eventosController.getEventById = (req, res) => {
+eventsController.getEventById = (req, res) => {
   try {
     const { id } = req.params;
     const sql = `
@@ -45,7 +46,7 @@ eventosController.getEventById = (req, res) => {
 
     mysqlConnection.query(sql, [id], (err, rows) => {
       if (err) return res.status(500).json(err);
-      if (rows.length === 0) return res.status(404).json({ message: "Event no encontrado" });
+      if (rows.length === 0) return res.status(404).json({ message: "Event not found" });
       res.json(rows[0]);
     });
   } catch (error) {
@@ -53,7 +54,7 @@ eventosController.getEventById = (req, res) => {
   }
 };
 
-eventosController.createEvent = (req, res) => {
+eventsController.createEvent = (req, res) => {
   try {
     const { descripcion, fecha, observaciones } = req.body;
     
@@ -64,14 +65,14 @@ eventosController.createEvent = (req, res) => {
 
     mysqlConnection.query(sql, [descripcion, fecha, observaciones || null], (err, result) => {
       if (err) return res.status(500).json(err);
-      res.json({ id: result.insertId, status: "Event creado" });
+      res.json({ id: result.insertId, status: "Event created" });
     });
   } catch (error) {
     res.status(500).json(error);
   }
 };
 
-eventosController.updateEvent = (req, res) => {
+eventsController.updateEvent = (req, res) => {
   try {
     const { id } = req.params;
     const { descripcion, fecha, observaciones, finalizado } = req.body;
@@ -84,11 +85,241 @@ eventosController.updateEvent = (req, res) => {
 
     mysqlConnection.query(sql, [descripcion, fecha, observaciones || null, finalizado || 0, id], (err) => {
       if (err) return res.status(500).json(err);
-      res.json({ status: "Event actualizado" });
+      res.json({ status: "Event updated" });
     });
   } catch (error) {
     res.status(500).json(error);
   }
 };
 
-module.exports = eventosController;
+eventsController.getMovementsByEvent = (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const sql = `
+      SELECT 
+        em.id,
+        em.evento_id,
+        em.concepto,
+        em.monto,
+        DATE_FORMAT(em.fecha, '%d-%m-%Y') AS fecha,
+        em.observaciones,
+        COUNT(md.id) AS cantidad_detalles,
+        COALESCE(SUM(CASE WHEN md.tipo = 'INGRESO' THEN md.monto ELSE 0 END), 0) AS total_ingresos,
+        COALESCE(SUM(CASE WHEN md.tipo = 'EGRESO' THEN md.monto ELSE 0 END), 0) AS total_egresos
+      FROM evento_movimiento em
+      LEFT JOIN movimiento_detalle md ON em.id = md.movimiento_id
+      WHERE em.evento_id = ?
+      GROUP BY em.id
+      ORDER BY em.fecha DESC, em.id DESC
+    `;
+
+    mysqlConnection.query(sql, [id], (err, results) => {
+      if (err) return res.status(500).json(err);
+      res.json(results);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.createMovement = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { concepto, monto, fecha, observaciones, detalle } = req.body;
+
+    const sqlMovement = `
+      INSERT INTO evento_movimiento (evento_id, concepto, monto, fecha, observaciones)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    mysqlConnection.query(
+      sqlMovement,
+      [id, concepto, monto, fecha, observaciones || null],
+      (err, result) => {
+        if (err) return res.status(500).json(err);
+        
+        const movementId = result.insertId;
+
+        if (detalle) {
+          const sqlDetail = `
+            INSERT INTO movimiento_detalle (movimiento_id, tipo, concepto, monto, medio_pago, pagado, fecha_pago, fecha, observaciones)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          mysqlConnection.query(
+            sqlDetail,
+            [
+              movementId,
+              detalle.tipo,
+              detalle.concepto,
+              detalle.monto,
+              detalle.medio_pago || 'EFECTIVO',
+              detalle.tipo === 'INGRESO' ? 1 : (detalle.pagado || 0),
+              detalle.tipo === 'INGRESO' ? detalle.fecha : detalle.fecha_pago,
+              detalle.fecha,
+              detalle.observaciones || null
+            ],
+            (err2) => {
+              if (err2) return res.status(500).json(err2);
+              res.json({ id: movementId, status: "Movement created with detail" });
+            }
+          );
+        } else {
+          const sqlDetail = `
+            INSERT INTO movimiento_detalle (movimiento_id, tipo, concepto, monto, medio_pago, pagado, fecha, observaciones)
+            VALUES (?, 'EGRESO', ?, ?, 'EFECTIVO', 0, ?, ?)
+          `;
+
+          mysqlConnection.query(
+            sqlDetail,
+            [movementId, concepto, monto, fecha, observaciones || null],
+            (err2) => {
+              if (err2) return res.status(500).json(err2);
+              res.json({ id: movementId, status: "Movement created with default detail" });
+            }
+          );
+        }
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.updateMovement = (req, res) => {
+  try {
+    const { movementId } = req.params;
+    const { concepto, monto, fecha, observaciones } = req.body;
+
+    const sql = `
+      UPDATE evento_movimiento 
+      SET concepto = ?, monto = ?, fecha = ?, observaciones = ?
+      WHERE id = ?
+    `;
+
+    mysqlConnection.query(
+      sql,
+      [concepto, monto, fecha, observaciones || null, movementId],
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "Movement updated" });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.deleteMovement = (req, res) => {
+  try {
+    const { movementId } = req.params;
+    const sql = "DELETE FROM evento_movimiento WHERE id = ?";
+
+    mysqlConnection.query(sql, [movementId], (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ status: "Movement deleted" });
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.getDetailsByMovement = (req, res) => {
+  try {
+    const { movementId } = req.params;
+    
+    const sql = `
+      SELECT 
+        id,
+        movimiento_id,
+        tipo,
+        concepto,
+        monto,
+        medio_pago,
+        pagado,
+        DATE_FORMAT(fecha_pago, '%d-%m-%Y') AS fecha_pago,
+        DATE_FORMAT(fecha, '%d-%m-%Y') AS fecha,
+        observaciones
+      FROM movimiento_detalle
+      WHERE movimiento_id = ?
+      ORDER BY fecha DESC, id DESC
+    `;
+
+    mysqlConnection.query(sql, [movementId], (err, results) => {
+      if (err) return res.status(500).json(err);
+      res.json(results);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.createDetail = (req, res) => {
+  try {
+    const { movementId } = req.params;
+    const { tipo, concepto, monto, medio_pago, pagado, fecha_pago, fecha, observaciones } = req.body;
+
+    const sql = `
+      INSERT INTO movimiento_detalle (movimiento_id, tipo, concepto, monto, medio_pago, pagado, fecha_pago, fecha, observaciones)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const isPagado = tipo === 'INGRESO' ? 1 : (pagado || 0);
+    const realFechaPago = tipo === 'INGRESO' ? fecha : (fecha_pago || null);
+
+    mysqlConnection.query(
+      sql,
+      [movementId, tipo, concepto, monto, medio_pago || 'EFECTIVO', isPagado, realFechaPago, fecha, observaciones || null],
+      (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ id: result.insertId, status: "Detail created" });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.updateDetail = (req, res) => {
+  try {
+    const { detailId } = req.params;
+    const { tipo, concepto, monto, medio_pago, pagado, fecha_pago, fecha, observaciones } = req.body;
+
+    const sql = `
+      UPDATE movimiento_detalle 
+      SET tipo = ?, concepto = ?, monto = ?, medio_pago = ?, pagado = ?, fecha_pago = ?, fecha = ?, observaciones = ?
+      WHERE id = ?
+    `;
+
+    const isPagado = tipo === 'INGRESO' ? 1 : (pagado || 0);
+    const realFechaPago = tipo === 'INGRESO' ? fecha : (fecha_pago || null);
+
+    mysqlConnection.query(
+      sql,
+      [tipo, concepto, monto, medio_pago, isPagado, realFechaPago, fecha, observaciones || null, detailId],
+      (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "Detail updated" });
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+eventsController.deleteDetail = (req, res) => {
+  try {
+    const { detailId } = req.params;
+    const sql = "DELETE FROM movimiento_detalle WHERE id = ?";
+
+    mysqlConnection.query(sql, [detailId], (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ status: "Detail deleted" });
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+module.exports = eventsController;
