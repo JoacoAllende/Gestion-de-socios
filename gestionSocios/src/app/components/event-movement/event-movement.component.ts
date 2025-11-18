@@ -16,7 +16,8 @@ export class EventMovementComponent {
   eventId!: number;
   movementId: number | null = null;
 
-  fields: FormField[] = [
+  fields: FormField[] = [];
+  baseFields: FormField[] = [
     { 
       name: 'concepto', 
       label: 'Concepto', 
@@ -47,6 +48,55 @@ export class EventMovementComponent {
     }
   ];
 
+  creationOnlyFields: FormField[] = [
+    { 
+      name: 'tipo', 
+      label: 'Tipo', 
+      type: 'select', 
+      options: [
+        { value: 'EGRESO', label: 'Egreso' },
+        { value: 'INGRESO', label: 'Ingreso' }
+      ], 
+      value: 'EGRESO',
+      validators: [Validators.required],
+      errorMessages: { required: 'Obligatorio' },
+      row: 2
+    },
+    { 
+      name: 'medio_pago', 
+      label: 'Medio de Pago', 
+      type: 'select', 
+      options: [
+        { value: 'EFECTIVO', label: 'Efectivo' }, 
+        { value: 'TRANSFERENCIA', label: 'Transferencia' },
+        { value: 'CHEQUE', label: 'Cheque' }
+      ], 
+      value: 'EFECTIVO',
+      validators: [Validators.required],
+      errorMessages: { required: 'Obligatorio' },
+      row: 2
+    },
+    { 
+      name: 'pagado', 
+      label: 'Pagado', 
+      type: 'select', 
+      options: [
+        { value: 0, label: 'No' }, 
+        { value: 1, label: 'Sí' }
+      ], 
+      value: 0,
+      row: 3,
+      dependsOn: { field: 'tipo', value: 'EGRESO' }
+    },
+    { 
+      name: 'fecha_pago', 
+      label: 'Fecha de Pago', 
+      type: 'date',
+      row: 3,
+      dependsOn: { field: 'tipo', value: 'EGRESO' }
+    }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private eventsService: EventsService,
@@ -60,11 +110,13 @@ export class EventMovementComponent {
     const movementIdParam = this.route.snapshot.paramMap.get('movementId');
     this.movementId = movementIdParam ? Number(movementIdParam) : null;
 
-    const controls: any = {};
-    this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
-    this.form = this.fb.group(controls);
-
     if (this.movementId) {
+      this.fields = [...this.baseFields];
+
+      const controls: any = {};
+      this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
+      this.form = this.fb.group(controls);
+
       this.eventsService.getMovementsByEvent(this.eventId).subscribe({
         next: movements => {
           const movement = movements.find(m => m.id === this.movementId);
@@ -78,12 +130,25 @@ export class EventMovementComponent {
         },
         error: err => this.toast.show(err.error?.message, 'error')
       });
+    } else {
+      this.fields = [...this.baseFields, ...this.creationOnlyFields];
+
+      const controls: any = {};
+      this.fields.forEach(f => controls[f.name] = [f.value ?? '', f.validators ?? []]);
+      this.form = this.fb.group(controls);
     }
   }
 
   submit(formValue: any) {
     if (this.movementId) {
-      this.eventsService.updateMovement(this.movementId, formValue).subscribe({
+      const movementData = {
+        concepto: formValue.concepto,
+        monto: formValue.monto,
+        fecha: formValue.fecha,
+        observaciones: formValue.observaciones
+      };
+
+      this.eventsService.updateMovement(this.movementId, movementData).subscribe({
         next: (res) => {
           this.toast.show(res.status, 'success');
           this.router.navigate([`/evento/${this.eventId}/movimientos`]);
@@ -91,7 +156,23 @@ export class EventMovementComponent {
         error: err => this.toast.show(err.error?.sqlMessage, 'error')
       });
     } else {
-      this.eventsService.createMovement(this.eventId, formValue).subscribe({
+      const movementData = {
+        concepto: formValue.concepto,
+        monto: formValue.monto,
+        fecha: formValue.fecha,
+        observaciones: formValue.observaciones,
+        detalle: {
+          tipo: formValue.tipo,
+          concepto: formValue.concepto,
+          monto: formValue.monto,
+          medio_pago: formValue.medio_pago,
+          pagado: formValue.pagado,
+          fecha_pago: formValue.fecha_pago,
+          observaciones: formValue.observaciones
+        }
+      };
+
+      this.eventsService.createMovement(this.eventId, movementData).subscribe({
         next: (res) => {
           this.toast.show(res.status, 'success');
           this.router.navigate([`/evento/${this.eventId}/movimientos`]);
