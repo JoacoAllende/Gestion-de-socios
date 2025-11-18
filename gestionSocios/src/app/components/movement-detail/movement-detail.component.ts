@@ -104,12 +104,10 @@ export class MovementDetailComponent {
     this.form = this.fb.group(controls);
 
     if (this.detailId) {
-      // Cargar detalle para editar
       this.eventsService.getDetailsByMovement(this.movementId).subscribe({
         next: details => {
           const detail = details.find(d => d.id === this.detailId);
           if (detail) {
-            // Convertir fechas
             if (detail.fecha) {
               const [day, month, year] = detail.fecha.split('-');
               detail.fecha = `${year}-${month}-${day}`;
@@ -127,10 +125,8 @@ export class MovementDetailComponent {
   }
 
   submit(formValue: any) {
-    // Limpiar campos que no deberían enviarse según dependsOn
     const dataToSend = { ...formValue };
 
-    // Si es INGRESO, remover pagado y fecha_pago (no se muestran)
     if (formValue.tipo === 'INGRESO') {
       delete dataToSend.pagado;
       delete dataToSend.fecha_pago;
