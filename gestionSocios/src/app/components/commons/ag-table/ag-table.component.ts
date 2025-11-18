@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   AllCommunityModule,
-  ColDef, ColGroupDef, GridApi, GridReadyEvent, ModuleRegistry
+  ColDef, ColGroupDef, GridApi, GridReadyEvent, ModuleRegistry,
+  RowStyle
 } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_ES } from './ag-grid-locale.es';
@@ -27,6 +28,7 @@ export class AgTableComponent {
     width: '100%',
     height: 'calc(100% - 2rem)'
   };
+  @Input() getRowStyle?: (params: any) => RowStyle | undefined;
 
   @Output() gridReadyEvent = new EventEmitter<GridReadyEvent>();
 
