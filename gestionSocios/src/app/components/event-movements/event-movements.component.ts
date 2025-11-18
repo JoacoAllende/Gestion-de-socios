@@ -25,6 +25,15 @@ export class EventMovementsComponent {
 
   defaultColDef: ColDef = { flex: 1, resizable: true };
 
+  getRowStyle = (params: any) => {
+    const montoCubierto = params.data.total_ingresos + params.data.egresos_pagados;
+
+    if (params.data.total_egresos > 0 && montoCubierto < params.data.monto) {
+      return { backgroundColor: '#ffe6e6' };
+    }
+    return undefined;
+  };
+
   colDefs: (ColDef | ColGroupDef)[] = [
     {
       field: 'concepto',
@@ -45,15 +54,6 @@ export class EventMovementsComponent {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       minWidth: 120
-    },
-    {
-      field: 'monto',
-      headerName: 'Monto',
-      sortable: true,
-      filter: 'agNumberColumnFilter',
-      floatingFilter: true,
-      valueFormatter: (params) => `$ ${params.value?.toLocaleString('es-AR') || 0}`,
-      minWidth: 150
     },
     {
       field: 'total_ingresos',
@@ -131,6 +131,6 @@ export class EventMovementsComponent {
   }
 
   public goBack = () => {
-    this.router.navigate(['/eventos']);
+    this.router.navigate([`/eventos`]);
   }
 }
