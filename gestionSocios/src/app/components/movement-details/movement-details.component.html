@@ -1,0 +1,11 @@
+<div class="header">
+  <h2>Detalles del movimiento</h2>
+  <div class="buttons-wrapper">
+    <app-button [text]="'← Volver'" [onClick]="goBack"></app-button>
+    <app-button [text]="'Nuevo Detalle'" [onClick]="createDetail">
+    </app-button>
+  </div>
+</div>
+
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle">
+</app-ag-table>
