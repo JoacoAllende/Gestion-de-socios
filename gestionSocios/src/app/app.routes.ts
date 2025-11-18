@@ -17,6 +17,7 @@ import { EventComponent } from './components/event/event.component';
 import { EventMovementsComponent } from './components/event-movements/event-movements.component';
 import { EventMovementComponent } from './components/event-movement/event-movement.component';
 import { MovementDetailsComponent } from './components/movement-details/movement-details.component';
+import { MovementDetailComponent } from './components/movement-detail/movement-detail.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
@@ -34,6 +35,8 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'movimiento-caja', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
     { path: 'movimiento-caja/:id', component: DailyBoxMovementComponent, canActivate: [AuthGuard] },
+    { path: 'movimiento/:movementId/detalle', component: MovementDetailComponent, canActivate: [AuthGuard] },
+    { path: 'movimiento/:movementId/detalle/:detailId', component: MovementDetailComponent, canActivate: [AuthGuard] },
     { path: 'movimiento/:movementId/detalles', component: MovementDetailsComponent, canActivate: [AuthGuard] },
     { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'resumenes', component: SummaryComponent, canActivate: [AuthGuard] },
