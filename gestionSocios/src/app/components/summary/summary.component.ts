@@ -1,36 +1,42 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { CardComponent } from '../commons/card/card.component';
 import { StatisticsService } from '../../services/statistics.service';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 
 @Component({
   selector: 'app-summary',
   standalone: true,
-  imports: [CommonModule, CardComponent],
+  imports: [CommonModule, CardComponent, MonthSelectorComponent],
   templateUrl: './summary.component.html',
   styleUrl: './summary.component.scss'
 })
 export class SummaryComponent implements OnInit {
   summary: any = null;
+  mes: number = new Date().getMonth() + 1;
+  anio: number = new Date().getFullYear();
 
   constructor(
     private statisticsService: StatisticsService,
     private toast: ToastService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
-    const mes = this.route.snapshot.paramMap.get('mes');
-    const anio = this.route.snapshot.paramMap.get('anio');
+    const mesParam = this.route.snapshot.paramMap.get('mes');
+    const anioParam = this.route.snapshot.paramMap.get('anio');
 
-    if (!mes || !anio) {
-      this.toast.show('Mes y año no proporcionados', 'error');
-      return;
-    }
+    this.mes = mesParam ? Number(mesParam) : new Date().getMonth() + 1;
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
 
-    this.statisticsService.getIncomeByMembershipCard(Number(mes), Number(anio)).subscribe({
+    this.loadData();
+  }
+
+  loadData() {
+    this.statisticsService.getIncomeByMembershipCard(this.mes, this.anio).subscribe({
       next: (res) => {
         this.summary = res;
       },
@@ -38,6 +44,13 @@ export class SummaryComponent implements OnInit {
         this.toast.show(err.error?.message, 'error');
       }
     });
+  }
+
+  onMonthChange = (event: { mes: number; anio: number }) => {
+    this.mes = event.mes;
+    this.anio = event.anio;
+    this.router.navigate(['/resumenes', this.mes, this.anio]);
+    this.loadData();
   }
 
   formatCurrency(value: number): string {
