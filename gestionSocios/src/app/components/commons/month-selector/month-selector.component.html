@@ -1,0 +1,9 @@
+<div class="month-selector">
+  <app-button text="«" [onClick]="prevYear"></app-button>
+  <app-button text="‹" [onClick]="prevMonth"></app-button>
+  
+  <span class="current-date">{{ getMonthName(mes) }} {{ anio }}</span>
+  
+  <app-button text="›" [onClick]="nextMonth"></app-button>
+  <app-button text="»" [onClick]="nextYear"></app-button>
+</div>
