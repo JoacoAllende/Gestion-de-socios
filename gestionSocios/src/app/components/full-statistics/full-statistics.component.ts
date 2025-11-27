@@ -44,6 +44,32 @@ export class FullStatisticsComponent implements OnInit {
           filter: 'agTextColumnFilter',
           floatingFilter: true
         },
+        {
+          field: 'ultimo_pago',
+          headerName: 'Último Pago',
+          pinned: 'left',
+          width: 120,
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true,
+          cellRenderer: (params: ICellRendererParams) => {
+            if (params.node?.rowPinned) return '';
+            if (!params.value) return '⚠️ Sin pagos';
+            
+            const [anio, mes] = params.value.split('-').map(Number);
+            const mesesNombre = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 
+                                 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const atraso = this.calcularMesesAtraso(params.value);
+            
+            if (atraso <= 0) {
+              return `✅ ${mesesNombre[mes - 1]} ${anio}`;
+            } else if (atraso <= 2) {
+              return `⚠️ ${mesesNombre[mes - 1]} ${anio}`;
+            } else {
+              return `❌ ${mesesNombre[mes - 1]} ${anio}`;
+            }
+          }
+        },
       ]
     },
     {
@@ -135,7 +161,6 @@ export class FullStatisticsComponent implements OnInit {
         return params.value;
       }
     }));
-
   }
 
   ngOnInit() {
@@ -170,7 +195,7 @@ export class FullStatisticsComponent implements OnInit {
       if (!node.data) return;
       rowCount++;
       Object.keys(node.data).forEach(key => {
-        if (['nombre', 'nro_socio', 'dni'].includes(key)) return;
+        if (['nombre', 'nro_socio', 'dni', 'ultimo_pago'].includes(key)) return;
         let v = node.data[key];
         if (v === -1) v = 0;
         if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
@@ -178,6 +203,15 @@ export class FullStatisticsComponent implements OnInit {
     });
     totals['nombre'] = `Totales (${rowCount})`;
     this.pinnedBottomRowData = [totals];
+  }
+
+  calcularMesesAtraso(ultimoPago: string): number {
+    const [anio, mes] = ultimoPago.split('-').map(Number);
+    const ahora = new Date();
+    const mesActual = ahora.getMonth() + 1;
+    const anioActual = ahora.getFullYear();
+    
+    return (anioActual - anio) * 12 + (mesActual - mes);
   }
 
   exportCsv() {

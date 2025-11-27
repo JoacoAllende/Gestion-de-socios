@@ -156,7 +156,14 @@ membershipController.getMemberships = async (req, res, next) => {
         MAX(CASE WHEN a.nombre = 'Paleta'  THEN 1 ELSE 0 END) AS paleta,
         MAX(CASE WHEN a.nombre = 'Basquet' THEN 1 ELSE 0 END) AS basquet,
         MAX(CASE WHEN p.mes = 12 THEN p.monto ELSE 0 END) AS monto,
-        ${cases}
+        ${cases},
+        (
+          SELECT CONCAT(up.anio, '-', LPAD(up.mes, 2, '0'))
+          FROM pago up 
+          WHERE up.socio_id = s.nro_socio AND up.pagado = TRUE 
+          ORDER BY up.anio DESC, up.mes DESC 
+          LIMIT 1
+        ) AS ultimo_pago
     FROM socio s
     LEFT JOIN categoria_futbol cf ON s.categoria_futbol_id = cf.id
     LEFT JOIN categoria_basquet cb ON s.categoria_basquet_id = cb.id
