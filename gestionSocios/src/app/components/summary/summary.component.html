@@ -1,3 +1,8 @@
+<app-month-selector 
+  [mes]="mes" 
+  [anio]="anio" 
+  (change)="onMonthChange($event)">
+</app-month-selector>
 <div class="container" *ngIf="summary">
   <app-card 
     [title]="'Resumen ' + getMonthName(summary.mes) + ' ' + summary.anio"

@@ -64,7 +64,11 @@ export class DynamicMenuComponent {
           },
           {
             label: 'Resúmenes',
-            action: () => this.router.navigate(['/resumenes/10/2025']),
+            action: () => {
+              const mes = new Date().getMonth() + 1;
+              const anio = new Date().getFullYear();
+              this.router.navigate(['/resumenes', mes, anio]);
+            },
           }
         ],
       }
