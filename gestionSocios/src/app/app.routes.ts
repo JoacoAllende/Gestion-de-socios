@@ -18,10 +18,12 @@ import { EventMovementsComponent } from './components/event-movements/event-move
 import { EventMovementComponent } from './components/event-movement/event-movement.component';
 import { MovementDetailsComponent } from './components/movement-details/movement-details.component';
 import { MovementDetailComponent } from './components/movement-detail/movement-detail.component';
+import { ConfigurationComponent } from './components/configuration/configuration/configuration.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones', component: ConfigurationComponent, canActivate: [AuthGuard] },
     { path: 'empleado', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
