@@ -46,3 +46,12 @@ CREATE TABLE `movimiento_detalle` (
   KEY `movimiento_id` (`movimiento_id`),
   CONSTRAINT `movimiento_detalle_ibfk_1` FOREIGN KEY (`movimiento_id`) REFERENCES `evento_movimiento` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE valor_socio_base (
+    id INT PRIMARY KEY DEFAULT 1,
+    valor DECIMAL(10,2) NOT NULL,
+    CHECK (id = 1)  -- Asegura que solo haya un registro
+);
+
+-- Insertar el valor inicial
+INSERT INTO valor_socio_base (id, valor) VALUES (1, 8500.00);
