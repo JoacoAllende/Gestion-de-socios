@@ -71,7 +71,11 @@ export class DynamicMenuComponent {
             },
           }
         ],
-      }
+      },
+      { 
+        label: 'Configuraciones', 
+        action: () => this.router.navigate(['/configuraciones'])
+      },
     ];
   }
 
