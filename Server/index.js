@@ -21,6 +21,7 @@ app.use(cors({}))
 // Routes
 
 app.use(compression());
+app.use(require('./routes/configuration.routes'));
 app.use(require('./routes/daily-box.routes'));
 app.use(require('./routes/employees.routes'));
 app.use(require('./routes/events.routes'));
