@@ -19,11 +19,17 @@ import { EventMovementComponent } from './components/event-movement/event-moveme
 import { MovementDetailsComponent } from './components/movement-details/movement-details.component';
 import { MovementDetailComponent } from './components/movement-detail/movement-detail.component';
 import { ConfigurationComponent } from './components/configuration/configuration/configuration.component';
+import { ActivityValuesComponent } from './components/configuration/activity-values/activity-values.component';
+import { DiscountsComponent } from './components/configuration/discounts/discounts.component';
+import { BaseMemberValueComponent } from './components/configuration/base-member-value/base-member-value.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'pagos', pathMatch: 'full' },
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones', component: ConfigurationComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones/valores-actividad', component: ActivityValuesComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones/valor-socio-base', component: BaseMemberValueComponent, canActivate: [AuthGuard] },
     { path: 'empleado', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
