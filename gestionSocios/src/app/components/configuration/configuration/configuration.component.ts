@@ -71,14 +71,14 @@ export class ConfigurationComponent implements OnInit {
   }
 
   editActivityValues() {
-    this.router.navigate(['/configuracion/valores-actividad']);
+    this.router.navigate(['/configuraciones/valores-actividad']);
   }
 
   editDiscounts() {
-    this.router.navigate(['/configuracion/descuentos']);
+    this.router.navigate(['/configuraciones/descuentos']);
   }
 
   editBaseMemberValue() {
-    this.router.navigate(['/configuracion/valor-socio-base']);
+    this.router.navigate(['/configuraciones/valor-socio-base']);
   }
 }
