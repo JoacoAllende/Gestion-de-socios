@@ -576,4 +576,38 @@ membershipController.getMembershipStateByDni = async (req, res, next) => {
   }
 };
 
+membershipController.getMembersUpToDate = async (req, res, next) => {
+  try {
+    const query = `
+      SELECT 
+        s.nro_socio,
+        s.nombre,
+        s.dni,
+        s.activo,
+        'Al día' AS estado_pago
+      FROM socio s
+      WHERE s.activo = TRUE
+        AND EXISTS (
+          SELECT 1 FROM pago p
+          WHERE p.socio_id = s.nro_socio
+            AND p.pagado = TRUE
+            AND (
+              (p.anio = YEAR(CURDATE()) AND p.mes = MONTH(CURDATE()))
+              OR (p.anio = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND p.mes = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+              OR (p.anio = YEAR(DATE_SUB(CURDATE(), INTERVAL 2 MONTH)) AND p.mes = MONTH(DATE_SUB(CURDATE(), INTERVAL 2 MONTH)))
+            )
+        )
+      ORDER BY s.nombre ASC
+    `;
+
+    mysqlConnection.query(query, (err, rows) => {
+      if (err) return res.status(500).json(err);
+      
+      res.json(rows);
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = membershipController;
