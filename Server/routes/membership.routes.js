@@ -4,6 +4,7 @@ const router = express.Router();
 const membership = require("../validations/membership.validation");
 
 router.get('/memberships/:anio', ensureToken, membership.validate_getMemberships);
+router.get('/memberships-active', ensureToken, membership.validate_getActiveMemberships);
 router.get('/memberships-discharged', ensureToken, membership.validate_getDischargedMemberships);
 router.get('/memberships-categories/futbol', membership.validate_getFutbolCategories);
 router.get('/memberships-categories/basquet', membership.validate_getBasquetCategories);
