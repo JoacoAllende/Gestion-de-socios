@@ -10,6 +10,7 @@ export class ButtonComponent {
   @Input() onClick: () => void = () => { };
   @Input() disabled: boolean = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() buttonClass: string = 'primary';
 
   handleClick(event?: Event): void {
     if (event) {
