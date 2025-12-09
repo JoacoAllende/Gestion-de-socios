@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, CellRendererSelectorResult, CellClickedEvent } from 'ag-grid-community';
+import { ColDef, ColGroupDef, GridApi, GridReadyEvent, CellRendererSelectorResult, CellClickedEvent } from 'ag-grid-community';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbox-cell.component';
 import { ButtonComponent } from '../commons/button/button.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 import { MembershipService } from '../../services/membership.service';
 import { PaymentsService } from '../../services/payments.service';
 import { ToastService } from '../../services/toast.service';
@@ -11,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-membership-payments',
   standalone: true,
-  imports: [AgTableComponent, ButtonComponent],
+  imports: [AgTableComponent, ButtonComponent, MonthSelectorComponent],
   templateUrl: './membership-payments.component.html',
   styleUrls: ['./membership-payments.component.scss']
 })
@@ -23,7 +24,7 @@ export class MembershipPaymentsComponent implements OnInit {
   pinnedBottomRowData: any[] = [];
   gridStyle = {
     width: '100%',
-    height: 'calc(100% - 2rem - 50px)'
+    height: 'calc(100% - 2rem - 70px)'
   };
 
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
@@ -122,11 +123,21 @@ export class MembershipPaymentsComponent implements OnInit {
           });
           return membership;
         });
+        
+        setTimeout(() => {
+          this.updateVisibleTotals();
+        }, 100);
       },
       error: (err) => {
         this.toast.show(err.error?.message, 'error');
       }
     });
+  }
+
+  onYearChange = (event: { anio: number }) => {
+    this.anio = event.anio;
+    this.router.navigate(['/pagos', this.anio]);
+    this.loadData();
   }
 
   onGridReady(event: GridReadyEvent) {
