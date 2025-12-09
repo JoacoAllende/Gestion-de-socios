@@ -19,6 +19,10 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships/${anio}`, { headers: this.headers });
   }
 
+  getActiveMemberships() {
+    return this.http.get<any[]>(`${this.API_URI}/memberships-active`, { headers: this.headers });
+  }
+
   getDischargedMemberships() {
     return this.http.get<any[]>(`${this.API_URI}/memberships-discharged`, { headers: this.headers });
   }

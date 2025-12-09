@@ -57,7 +57,7 @@ export const routes: Routes = [
     { path: 'socio-estado/:dni', component: MembershipStateComponent},
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio-alta/:id', component: MembershipComponent, canActivate: [AuthGuard] },
-    { path: 'socios/:anio', component: MembershipsComponent, canActivate: [AuthGuard] },
+    { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
     { path: 'sueldos', component: EmployeesComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: `pagos/${currentYear}` }
