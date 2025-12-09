@@ -46,7 +46,7 @@ export const routes: Routes = [
     { path: 'movimiento/:movementId/detalle', component: MovementDetailComponent, canActivate: [AuthGuard] },
     { path: 'movimiento/:movementId/detalle/:detailId', component: MovementDetailComponent, canActivate: [AuthGuard] },
     { path: 'movimiento/:movementId/detalles', component: MovementDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'pagos', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
+    { path: 'pagos/:anio', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
     { path: 'resumenes', component: SummaryComponent, canActivate: [AuthGuard] },
     { path: 'resumenes/:mes/:anio', component: SummaryComponent, canActivate: [AuthGuard] },
     { path: 'socio', component: MembershipComponent, canActivate: [AuthGuard] },
@@ -57,5 +57,5 @@ export const routes: Routes = [
     { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
     { path: 'sueldos', component: EmployeesComponent, canActivate: [AuthGuard] },
-    { path: '**', redirectTo: 'pagos' }
+    { path: '**', redirectTo: 'pagos/:anio' }
 ];

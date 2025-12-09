@@ -6,7 +6,7 @@ import { ButtonComponent } from '../commons/button/button.component';
 import { MembershipService } from '../../services/membership.service';
 import { PaymentsService } from '../../services/payments.service';
 import { ToastService } from '../../services/toast.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-membership-payments',
@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 })
 export class MembershipPaymentsComponent implements OnInit {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
@@ -76,7 +77,13 @@ export class MembershipPaymentsComponent implements OnInit {
   ];
 
 
-  constructor(private membershipService: MembershipService, private paymentsService: PaymentsService, private toast: ToastService, private router: Router) {
+  constructor(
+    private membershipService: MembershipService,
+    private paymentsService: PaymentsService,
+    private toast: ToastService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.procesarPagos = this.procesarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
@@ -99,7 +106,14 @@ export class MembershipPaymentsComponent implements OnInit {
 
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe({
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+
+    this.loadData();
+  }
+
+  loadData() {
+    this.membershipService.getMemberships(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(membership => {
           membership._selectedMonths = {};
@@ -113,7 +127,6 @@ export class MembershipPaymentsComponent implements OnInit {
         this.toast.show(err.error?.message, 'error');
       }
     });
-
   }
 
   onGridReady(event: GridReadyEvent) {
@@ -164,20 +177,12 @@ export class MembershipPaymentsComponent implements OnInit {
     if (seleccionados.length === 0) return;
 
     this.paymentsService.updatePayments(seleccionados).subscribe((res: any) => {
-      this.toast.show(res.status, 'success')
-      this.membershipService.getMemberships().subscribe({
-        next: (data) => {
-          this.rowData = data;
-          this.gridApi?.refreshCells();
-          setTimeout(() => {
-            this.updateVisibleTotals();
-          });
-        },
-        error: (err) => {
-          this.toast.show(err.error?.message, 'error');
-        }
+      this.toast.show(res.status, 'success');
+      this.loadData();
+      this.gridApi?.refreshCells();
+      setTimeout(() => {
+        this.updateVisibleTotals();
       });
-
     });
   }
 }

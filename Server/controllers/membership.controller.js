@@ -116,7 +116,7 @@ membershipController.getMembershipCard = async (req, res, next) => {
 };
 
 membershipController.getMemberships = async (req, res, next) => {
-  const anio = 2025;
+  const { anio } = req.params;
   const meses = [
     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
@@ -228,6 +228,7 @@ membershipController.getDischargedMemberships = async (req, res, next) => {
 
 membershipController.createMembership = (req, res) => {
   try {
+    const { anio } = req.params;
     const {
       nombre,
       dni,
@@ -335,7 +336,7 @@ membershipController.createMembership = (req, res) => {
                           const descuentoPasivaAplicado = !!cuota_pasiva ? dp : 0;
 
                           const montoFinal = !!becado ? -1 : montoBase + valorActividad - descuentoFamiliarAplicado - descuentoPasivaAplicado;
-                          pagoValues.push([finalNroSocio, mes, 2025, montoFinal, !!becado ? true : false]);
+                          pagoValues.push([finalNroSocio, mes, anio, montoFinal, !!becado ? true : false]);
                         }
 
                         if (pagoValues.length === 0) return res.json({ status: 'Socio creado', finalNroSocio });
@@ -367,7 +368,7 @@ membershipController.createMembership = (req, res) => {
 
 membershipController.updateMembership = (req, res) => {
   try {
-    const nroSocio = req.params.nro_socio;
+    const { nro_socio, anio } = req.params;
     const {
       nombre,
       dni,
@@ -421,7 +422,7 @@ membershipController.updateMembership = (req, res) => {
     }
 
     updateSocioQuery += ` WHERE nro_socio = ?`;
-    queryParams.push(nroSocio);
+    queryParams.push(nro_socio);
 
     mysqlConnection.query(updateSocioQuery, queryParams, (err) => {
       if (err) return res.status(500).json(err);
@@ -431,12 +432,12 @@ membershipController.updateMembership = (req, res) => {
       if (paleta) actividades.push(2);
       if (basquet) actividades.push(3);
 
-      mysqlConnection.query(`DELETE FROM socio_actividad WHERE socio_id = ?`, [nroSocio], (err2) => {
+      mysqlConnection.query(`DELETE FROM socio_actividad WHERE socio_id = ?`, [nro_socio], (err2) => {
         if (err2) return res.status(500).json(err2);
 
         const insertarActividades = (callback) => {
           if (actividades.length > 0) {
-            const values = actividades.map(actId => [nroSocio, actId]);
+            const values = actividades.map(actId => [nro_socio, actId]);
             mysqlConnection.query(
               `INSERT INTO socio_actividad (socio_id, actividad_id) VALUES ?`,
               [values],
@@ -452,11 +453,11 @@ membershipController.updateMembership = (req, res) => {
 
           if (baja) {
             mysqlConnection.query(
-              `DELETE FROM pago WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
-              [nroSocio, mes_alta],
+              `DELETE FROM pago WHERE socio_id = ? AND mes >= ? AND anio = ? AND pagado = false`,
+              [nro_socio, mes_alta, anio],
               (err4) => {
                 if (err4) return res.status(500).json(err4);
-                return res.json({ status: 'Socio dado de baja', nroSocio });
+                return res.json({ status: 'Socio dado de baja', nro_socio });
               }
             );
             return;
@@ -473,7 +474,6 @@ membershipController.updateMembership = (req, res) => {
     });
 
     const insertarPagosDesdeAlta = (callback) => {
-      const anio = 2025;
       const meses = Array.from({ length: 12 - (mes_alta - 1) }, (_, i) => mes_alta + i);
 
       const inserts = meses.map(mes => {
@@ -484,7 +484,7 @@ membershipController.updateMembership = (req, res) => {
               WHERE NOT EXISTS (
                 SELECT 1 FROM pago WHERE socio_id = ? AND mes = ? AND anio = ?
               )`,
-            [nroSocio, mes, anio, nroSocio, mes, anio],
+            [nro_socio, mes, anio, nro_socio, mes, anio],
             (err) => {
               if (err) return reject(err);
               resolve();
@@ -499,7 +499,7 @@ membershipController.updateMembership = (req, res) => {
     };
 
     const actualizarPagos = () => {
-      if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nroSocio });
+      if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nro_socio });
 
       mysqlConnection.query(
         'SELECT valor FROM valor_socio_base LIMIT 1',
@@ -532,11 +532,11 @@ membershipController.updateMembership = (req, res) => {
                   mysqlConnection.query(
                     `UPDATE pago
                      SET monto = ?, pagado = ?
-                     WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
-                    [montoFinal, becado ? true : false, nroSocio, mes_alta],
+                     WHERE socio_id = ? AND mes >= ? AND anio = ? AND pagado = false`,
+                    [montoFinal, becado ? true : false, nro_socio, mes_alta, anio],
                     (err6) => {
                       if (err6) return res.status(500).json(err6);
-                      res.json({ status: alta ? 'Socio dado de alta' : 'Socio actualizado', nroSocio });
+                      res.json({ status: alta ? 'Socio dado de alta' : 'Socio actualizado', nro_socio });
                     }
                   );
                 }

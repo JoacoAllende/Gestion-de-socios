@@ -16,6 +16,7 @@ import { loadOptionsForField } from '../../utils/select-field.utils';
 export class MembershipComponent implements OnInit {
   form!: FormGroup;
   socioId: number | null = null;
+  anio: number = new Date().getFullYear();
   isAlta: boolean = false;
 
   fields: FormField[] = [
@@ -119,19 +120,19 @@ export class MembershipComponent implements OnInit {
       if (this.isAlta) {
         formValue = { ...formValue, alta: true };
       }
-      this.membershipService.updateMembership(this.socioId, formValue).subscribe({
+      this.membershipService.updateMembership(this.socioId, this.anio, formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/pagos']);
+          this.router.navigate(['/pagos', this.anio]);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
       });
     } else {
-      this.membershipService.createMembership(formValue).subscribe({
+      this.membershipService.createMembership(this.anio, formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/pagos']);
+          this.router.navigate(['/pagos', this.anio]);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
@@ -140,6 +141,6 @@ export class MembershipComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate(['/pagos']);
+    this.router.navigate(['/pagos', this.anio]);
   }
 }
