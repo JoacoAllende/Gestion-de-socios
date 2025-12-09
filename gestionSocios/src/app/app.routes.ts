@@ -23,8 +23,10 @@ import { ActivityValuesComponent } from './components/configuration/activity-val
 import { DiscountsComponent } from './components/configuration/discounts/discounts.component';
 import { BaseMemberValueComponent } from './components/configuration/base-member-value/base-member-value.component';
 
+const currentYear = new Date().getFullYear();
+
 export const routes: Routes = [
-    { path: '', redirectTo: 'pagos', pathMatch: 'full' },
+    { path: '', redirectTo: `pagos/${currentYear}`, pathMatch: 'full' },
     { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones', component: ConfigurationComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
@@ -34,6 +36,7 @@ export const routes: Routes = [
     { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
+    { path: 'estadisticas/:anio', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'evento', component: EventComponent, canActivate: [AuthGuard] },
     { path: 'evento/:id', component: EventComponent, canActivate: [AuthGuard] },
     { path: 'evento/:id/movimiento', component: EventMovementComponent, canActivate: [AuthGuard] },
@@ -54,8 +57,8 @@ export const routes: Routes = [
     { path: 'socio-estado/:dni', component: MembershipStateComponent},
     { path: 'socio/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socio-alta/:id', component: MembershipComponent, canActivate: [AuthGuard] },
-    { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
+    { path: 'socios/:anio', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
     { path: 'sueldos', component: EmployeesComponent, canActivate: [AuthGuard] },
-    { path: '**', redirectTo: 'pagos/:anio' }
+    { path: '**', redirectTo: `pagos/${currentYear}` }
 ];
