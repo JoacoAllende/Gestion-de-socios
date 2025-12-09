@@ -190,6 +190,55 @@ membershipController.getMemberships = async (req, res, next) => {
   });
 };
 
+membershipController.getActiveMemberships = async (req, res, next) => {
+  const query = `
+    SELECT 
+        s.id,
+        s.nro_socio,
+        s.nombre,
+        s.dni,
+        s.direccion,
+        s.fecha_nacimiento,
+        s.activo,
+        s.cuota_activa,
+        s.cuota_pasiva,
+        s.descuento_familiar,
+        s.becado,
+        s.secretaria,
+        DATE_FORMAT(s.fecha_nacimiento, '%d/%m/%Y') AS fecha_nacimiento,
+        s.contacto,
+        cf.nombre AS categoria_futbol,
+        cp.nombre AS categoria_paleta,
+        cb.nombre AS categoria_basquet,
+        fs.nombre AS ficha_socio,
+        MAX(CASE WHEN a.nombre = 'Futbol'  THEN 1 ELSE 0 END) AS futbol,
+        MAX(CASE WHEN a.nombre = 'Paleta'  THEN 1 ELSE 0 END) AS paleta,
+        MAX(CASE WHEN a.nombre = 'Basquet' THEN 1 ELSE 0 END) AS basquet
+    FROM socio s
+    LEFT JOIN categoria_futbol cf ON s.categoria_futbol_id = cf.id
+    LEFT JOIN categoria_basquet cb ON s.categoria_basquet_id = cb.id
+    LEFT JOIN categoria_paleta cp ON s.categoria_paleta_id = cp.id
+    LEFT JOIN ficha_socio fs ON s.ficha_socio_id = fs.id
+    LEFT JOIN socio_actividad sa ON sa.socio_id = s.nro_socio
+    LEFT JOIN actividad a ON a.id = sa.actividad_id
+    WHERE s.activo = TRUE
+    GROUP BY 
+      s.id, s.nro_socio, s.nombre, s.dni, s.direccion, s.fecha_nacimiento, s.activo,
+      s.cuota_activa, s.cuota_pasiva, s.descuento_familiar, s.becado, s.secretaria,
+      s.categoria_futbol_id, s.categoria_basquet_id, s.categoria_paleta_id, s.ficha_socio_id,
+      cf.nombre, cb.nombre, cp.nombre, fs.nombre
+    ORDER BY s.nombre ASC
+  `;
+
+  mysqlConnection.query(query, (err, rows) => {
+    if (!err) {
+      res.json(rows);
+    } else {
+      res.status(500).json(err);
+    }
+  });
+};
+
 membershipController.getDischargedMemberships = async (req, res, next) => {
   const query = `
     SELECT 

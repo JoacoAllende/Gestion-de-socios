@@ -23,6 +23,10 @@ membershipValidator.validate_getPaletaCategories = (req, res) => {
     membershipController.getPaletaCategories(req, res);
 };
 
+membershipValidator.validate_getActiveMemberships = (req, res) => {
+    verifyTokenAndExecute(req, res, membershipController.getActiveMemberships);
+}
+
 membershipValidator.validate_getMembershipCard = (req, res) => {
     membershipController.getMembershipCard(req, res);
 };
