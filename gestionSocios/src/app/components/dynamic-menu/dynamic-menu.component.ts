@@ -26,8 +26,8 @@ export class DynamicMenuComponent {
 
   constructor(private router: Router) {
     this.items = [
-      { 
-        label: 'Socios', 
+      {
+        label: 'Socios',
         children: [
           {
             label: 'Activos',
@@ -39,27 +39,27 @@ export class DynamicMenuComponent {
           }
         ],
       },
-      { 
-        label: 'Pagos', 
+      {
+        label: 'Pagos',
         action: () => {
           const anio = new Date().getFullYear();
           this.router.navigate(['/pagos', anio]);
         }
       },
-      { 
-        label: 'Caja diaria', 
+      {
+        label: 'Caja diaria',
         action: () => this.router.navigate(['/caja'])
       },
-      { 
-        label: 'Eventos', 
+      {
+        label: 'Eventos',
         action: () => this.router.navigate(['/eventos'])
       },
-      { 
-        label: 'Sueldos', 
+      {
+        label: 'Sueldos',
         action: () => this.router.navigate(['/sueldos'])
       },
-      { 
-        label: 'Estadísticas', 
+      {
+        label: 'Estadísticas',
         children: [
           {
             label: 'Generales',
@@ -75,8 +75,8 @@ export class DynamicMenuComponent {
           }
         ],
       },
-      { 
-        label: 'Configuraciones', 
+      {
+        label: 'Configuraciones',
         action: () => this.router.navigate(['/configuraciones'])
       },
     ];

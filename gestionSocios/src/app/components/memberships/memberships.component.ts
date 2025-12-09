@@ -155,10 +155,7 @@ export class MembershipsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const anioParam = this.route.snapshot.paramMap.get('anio');
-    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
-
-    this.membershipService.getMemberships(this.anio).subscribe({
+    this.membershipService.getActiveMemberships().subscribe({
       next: (data) => {
         this.rowData = data.map(membership => membership);
       },
@@ -166,7 +163,6 @@ export class MembershipsComponent implements OnInit {
         this.toast.show(err.error?.message, 'error');
       }
     });
-
   }
 
   onGridReady(event: GridReadyEvent) {
