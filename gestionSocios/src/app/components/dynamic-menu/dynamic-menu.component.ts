@@ -41,7 +41,10 @@ export class DynamicMenuComponent {
       },
       { 
         label: 'Pagos', 
-        action: () => this.router.navigate(['/pagos'])
+        action: () => {
+          const anio = new Date().getFullYear();
+          this.router.navigate(['/pagos', anio]);
+        }
       },
       { 
         label: 'Caja diaria', 

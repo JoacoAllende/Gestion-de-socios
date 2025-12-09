@@ -15,8 +15,8 @@ export class MembershipService {
     this.headers = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("ACCESS_TOKEN"));
   }
 
-  getMemberships() {
-    return this.http.get<any[]>(`${this.API_URI}/memberships`, { headers: this.headers });
+  getMemberships(anio: number) {
+    return this.http.get<any[]>(`${this.API_URI}/memberships/${anio}`, { headers: this.headers });
   }
 
   getDischargedMemberships() {
@@ -39,16 +39,16 @@ export class MembershipService {
     return this.http.get<any[]>(`${this.API_URI}/memberships-card`, { headers: this.headers });
   }
 
-  createMembership(membershipData: any) {
-    return this.http.post<any>(`${this.API_URI}/membership`, membershipData, { headers: this.headers });
+  createMembership(anio: number, membershipData: any) {
+    return this.http.post<any>(`${this.API_URI}/membership/${anio}`, membershipData, { headers: this.headers });
   }
 
   getMembership(nro_socio: number) {
     return this.http.get<any>(`${this.API_URI}/membership/${nro_socio}`, { headers: this.headers });
   }
 
-  updateMembership(nro_socio: number, membershipData: any) {
-    return this.http.put<any>(`${this.API_URI}/membership/${nro_socio}`, membershipData, { headers: this.headers });
+  updateMembership(nro_socio: number, anio: number, membershipData: any) {
+    return this.http.put<any>(`${this.API_URI}/membership/${nro_socio}/${anio}`, membershipData, { headers: this.headers });
   }
 
   getMembershipStateByDni(dni: number) {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -14,6 +14,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class FullStatisticsComponent implements OnInit {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
@@ -135,7 +136,12 @@ export class FullStatisticsComponent implements OnInit {
     { headerName: 'Pagos', children: [] }
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router, private toast: ToastService) {
+  constructor(
+    private membershipService: MembershipService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toast: ToastService
+  ) {
     const pagosGroup = this.colDefs.find(
       c => (c as ColGroupDef).headerName === 'Pagos'
     ) as ColGroupDef;
@@ -164,7 +170,10 @@ export class FullStatisticsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe({
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+
+    this.membershipService.getMemberships(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(membership => {
           membership._selectedMonths = {};

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, CellClickedEvent } from 'ag-grid-community';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonComponent } from '../commons/button/button.component';
 import { ToastService } from '../../services/toast.service';
 
@@ -15,6 +15,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class MembershipsComponent implements OnInit {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
@@ -146,10 +147,18 @@ export class MembershipsComponent implements OnInit {
     },
   ];
 
-  constructor(private membershipService: MembershipService, private router: Router, private toast: ToastService) { }
+  constructor(
+    private membershipService: MembershipService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toast: ToastService
+  ) { }
 
   ngOnInit() {
-    this.membershipService.getMemberships().subscribe({
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+
+    this.membershipService.getMemberships(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(membership => membership);
       },
