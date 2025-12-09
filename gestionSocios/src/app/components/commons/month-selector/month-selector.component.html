@@ -1,9 +1,18 @@
 <div class="month-selector">
-  <app-button text="«" [onClick]="prevYear"></app-button>
-  <app-button text="‹" [onClick]="prevMonth"></app-button>
-  
-  <span class="current-date">{{ getMonthName(mes) }} {{ anio }}</span>
-  
-  <app-button text="›" [onClick]="nextMonth"></app-button>
-  <app-button text="»" [onClick]="nextYear"></app-button>
+  <app-button [text]="'◀'" [buttonClass]="'secondary'" (click)="prevYear()">
+  </app-button>
+
+  <app-button *ngIf="showMonth" [text]="'◀'" [buttonClass]="'secondary'" (click)="prevMonth()">
+  </app-button>
+
+  <div class="month-display">
+    <span *ngIf="showMonth">{{ getMonthName(mes) }} </span>
+    <span>{{ anio }}</span>
+  </div>
+
+  <app-button *ngIf="showMonth" [text]="'▶'" [buttonClass]="'secondary'" (click)="nextMonth()">
+  </app-button>
+
+  <app-button [text]="'▶'" [buttonClass]="'secondary'" (click)="nextYear()">
+  </app-button>
 </div>

@@ -1,6 +1,7 @@
 <app-month-selector 
   [mes]="mes" 
-  [anio]="anio" 
+  [anio]="anio"
+  [showMonth]="true"
   (change)="onMonthChange($event)">
 </app-month-selector>
 <div class="container" *ngIf="summary">

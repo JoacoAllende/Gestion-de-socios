@@ -46,8 +46,8 @@ export class SummaryComponent implements OnInit {
     });
   }
 
-  onMonthChange = (event: { mes: number; anio: number }) => {
-    this.mes = event.mes;
+  onMonthChange = (event: { mes?: number; anio: number }) => {
+    this.mes = event.mes ?? new Date().getMonth() + 1;
     this.anio = event.anio;
     this.router.navigate(['/resumenes', this.mes, this.anio]);
     this.loadData();
