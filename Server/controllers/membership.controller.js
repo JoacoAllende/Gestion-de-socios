@@ -306,41 +306,50 @@ membershipController.createMembership = (req, res) => {
             const cantidadActividades = actividades.length;
 
             mysqlConnection.query(
-              'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
-              [cantidadActividades],
-              (err3, valorRows) => {
-                if (err3) return res.status(500).json(err3);
+              'SELECT valor FROM valor_socio_base LIMIT 1',
+              (errBase, baseRows) => {
+                if (errBase) return res.status(500).json(errBase);
 
-                const valorActividad = valorRows[0]?.valor || 0;
+                const valorBase = baseRows[0]?.valor || 0;
 
                 mysqlConnection.query(
-                  `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
-                  (err4, descuentoRows) => {
-                    if (err4) return res.status(500).json(err4);
+                  'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
+                  [cantidadActividades],
+                  (err3, valorRows) => {
+                    if (err3) return res.status(500).json(err3);
 
-                    const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
-                    const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
+                    const valorActividad = valorRows[0]?.valor || 0;
 
-                    const pagoValues = [];
-                    for (let mes = mes_alta; mes <= 12; mes++) {
-                      const montoBase = (!!cuota_activa || !!cuota_pasiva) ? 8500 : 0;
-                      const descuentoFamiliarAplicado = !!descuento_familiar ? df : 0;
-                      const descuentoPasivaAplicado = !!cuota_pasiva ? dp : 0;
+                    mysqlConnection.query(
+                      `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
+                      (err4, descuentoRows) => {
+                        if (err4) return res.status(500).json(err4);
 
-                      const montoFinal = !!becado ? -1 : montoBase + valorActividad - descuentoFamiliarAplicado - descuentoPasivaAplicado;
-                      pagoValues.push([finalNroSocio, mes, 2025, montoFinal, !!becado ? true : false]);
-                    }
+                        const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
+                        const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
 
-                    if (pagoValues.length === 0) return res.json({ status: 'Socio creado', finalNroSocio });
+                        const pagoValues = [];
+                        for (let mes = mes_alta; mes <= 12; mes++) {
+                          const montoBase = (!!cuota_activa || !!cuota_pasiva) ? valorBase : 0;
+                          const descuentoFamiliarAplicado = !!descuento_familiar ? df : 0;
+                          const descuentoPasivaAplicado = !!cuota_pasiva ? dp : 0;
 
-                    const pagoQuery = `
-                      INSERT INTO pago (socio_id, mes, anio, monto, pagado)
-                      VALUES ?`;
+                          const montoFinal = !!becado ? -1 : montoBase + valorActividad - descuentoFamiliarAplicado - descuentoPasivaAplicado;
+                          pagoValues.push([finalNroSocio, mes, 2025, montoFinal, !!becado ? true : false]);
+                        }
 
-                    mysqlConnection.query(pagoQuery, [pagoValues], (err5) => {
-                      if (err5) return res.status(500).json(err5);
-                      res.json({ status: 'Socio creado', finalNroSocio });
-                    });
+                        if (pagoValues.length === 0) return res.json({ status: 'Socio creado', finalNroSocio });
+
+                        const pagoQuery = `
+                          INSERT INTO pago (socio_id, mes, anio, monto, pagado)
+                          VALUES ?`;
+
+                        mysqlConnection.query(pagoQuery, [pagoValues], (err5) => {
+                          if (err5) return res.status(500).json(err5);
+                          res.json({ status: 'Socio creado', finalNroSocio });
+                        });
+                      }
+                    );
                   }
                 );
               }
@@ -493,34 +502,43 @@ membershipController.updateMembership = (req, res) => {
       if (mes_alta < 1 || mes_alta > 12) return res.json({ status: 'Socio actualizado', nroSocio });
 
       mysqlConnection.query(
-        'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
-        [actividades.length],
-        (err4, valorRows) => {
-          if (err4) return res.status(500).json(err4);
+        'SELECT valor FROM valor_socio_base LIMIT 1',
+        (errBase, baseRows) => {
+          if (errBase) return res.status(500).json(errBase);
 
-          const valorActividad = valorRows[0]?.valor || 0;
+          const valorBase = baseRows[0]?.valor || 0;
 
           mysqlConnection.query(
-            `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
-            (err5, descuentoRows) => {
-              if (err5) return res.status(500).json(err5);
+            'SELECT valor FROM valor_actividad WHERE cantidad_actividades = ?',
+            [actividades.length],
+            (err4, valorRows) => {
+              if (err4) return res.status(500).json(err4);
 
-              const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
-              const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
-
-              const montoBase = (!!cuota_activa || !!cuota_pasiva) ? 8500 : 0;
-              const montoFinal = becado
-                ? -1
-                : montoBase + valorActividad - (descuento_familiar ? df : 0) - (cuota_pasiva ? dp : 0);
+              const valorActividad = valorRows[0]?.valor || 0;
 
               mysqlConnection.query(
-                `UPDATE pago
-                 SET monto = ?, pagado = ?
-                 WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
-                [montoFinal, becado ? true : false, nroSocio, mes_alta],
-                (err6) => {
-                  if (err6) return res.status(500).json(err6);
-                  res.json({ status: alta ? 'Socio dado de alta' : 'Socio actualizado', nroSocio });
+                `SELECT tipo, valor FROM configuracion_descuentos WHERE tipo IN ('FAMILIAR','PASIVA')`,
+                (err5, descuentoRows) => {
+                  if (err5) return res.status(500).json(err5);
+
+                  const df = descuentoRows.find(d => d.tipo === 'FAMILIAR')?.valor || 0;
+                  const dp = descuentoRows.find(d => d.tipo === 'PASIVA')?.valor || 0;
+
+                  const montoBase = (!!cuota_activa || !!cuota_pasiva) ? valorBase : 0;
+                  const montoFinal = becado
+                    ? -1
+                    : montoBase + valorActividad - (descuento_familiar ? df : 0) - (cuota_pasiva ? dp : 0);
+
+                  mysqlConnection.query(
+                    `UPDATE pago
+                     SET monto = ?, pagado = ?
+                     WHERE socio_id = ? AND mes >= ? AND anio = 2025 AND pagado = false`,
+                    [montoFinal, becado ? true : false, nroSocio, mes_alta],
+                    (err6) => {
+                      if (err6) return res.status(500).json(err6);
+                      res.json({ status: alta ? 'Socio dado de alta' : 'Socio actualizado', nroSocio });
+                    }
+                  );
                 }
               );
             }
