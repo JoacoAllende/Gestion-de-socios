@@ -14,6 +14,7 @@ import { ToastService } from '../../services/toast.service';
 export class EmployeeComponent {
   form!: FormGroup;
   employeeId: number | null = null;
+  anio: number = new Date().getFullYear();
   isAlta: boolean = false;
 
   fields: FormField[] = [
@@ -56,19 +57,19 @@ export class EmployeeComponent {
       if (this.isAlta) {
         formValue = { ...formValue, alta: true };
       }
-      this.employeesService.updateEmployee(this.employeeId, formValue).subscribe({
+      this.employeesService.updateEmployee(this.employeeId, this.anio, formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/sueldos']);
+          this.router.navigate(['/sueldos', this.anio]);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
       });
     } else {
-      this.employeesService.createEmployee(formValue).subscribe({
+      this.employeesService.createEmployee(this.anio, formValue).subscribe({
         next: (res) => {
           this.form.reset();
-          this.router.navigate(['/sueldos']);
+          this.router.navigate(['/sueldos', this.anio]);
           this.toast.show(res.status, 'success');
         },
         error: err => this.toast.show(err.error.sqlMessage, 'error')
@@ -77,6 +78,6 @@ export class EmployeeComponent {
   }
 
   cancel() {
-    this.router.navigate(['/sueldos']);
+    this.router.navigate(['/sueldos', this.anio]);
   }
 }

@@ -2,25 +2,27 @@ import { Component } from '@angular/core';
 import { CellClickedEvent, CellRendererSelectorResult, ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { EmployeesService } from '../../services/employees.service';
 import { ToastService } from '../../services/toast.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { ButtonComponent } from '../commons/button/button.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbox-cell.component';
 
 @Component({
   selector: 'app-employees',
-  imports: [AgTableComponent, ButtonComponent],
+  imports: [AgTableComponent, ButtonComponent, MonthSelectorComponent],
   templateUrl: './employees.component.html',
   styleUrl: './employees.component.scss'
 })
 export class EmployeesComponent {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
   gridStyle = {
     width: '100%',
-    height: 'calc(100% - 2rem - 50px)'
+    height: 'calc(100% - 2rem - 70px)'
   };
 
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
@@ -42,7 +44,7 @@ export class EmployeesComponent {
           cellClass: 'ag-cell-clickable',
           onCellClicked: (event: CellClickedEvent) => {
             const baseRoute = event.data.activo ? 'empleado' : 'empleado-alta';
-            this.router.navigate([`/${baseRoute}/${event.data.id}`]);
+            this.router.navigate([`/${baseRoute}/${this.anio}/${event.data.id}`]);
           }
         },
         {
@@ -70,7 +72,12 @@ export class EmployeesComponent {
   ];
 
 
-  constructor(private employeesService: EmployeesService, private toast: ToastService, private router: Router) {
+  constructor(
+    private employeesService: EmployeesService,
+    private toast: ToastService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.procesarPagos = this.procesarPagos.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
@@ -94,7 +101,14 @@ export class EmployeesComponent {
 
 
   ngOnInit() {
-    this.employeesService.getEmployees().subscribe({
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+
+    this.loadData();
+  }
+
+  loadData() {
+    this.employeesService.getEmployees(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(employee => {
           employee._selectedMonths = {};
@@ -103,12 +117,21 @@ export class EmployeesComponent {
           });
           return employee;
         });
+
+        setTimeout(() => {
+          this.updateVisibleTotals();
+        }, 100);
       },
       error: (err) => {
         this.toast.show(err.error?.message, 'error');
       }
     });
+  }
 
+  onYearChange = (event: { anio: number }) => {
+    this.anio = event.anio;
+    this.router.navigate(['/sueldos', this.anio]);
+    this.loadData();
   }
 
   onGridReady(event: GridReadyEvent) {
@@ -147,7 +170,7 @@ export class EmployeesComponent {
   }
 
   public createEmployee = () => {
-    this.router.navigate(['/empleado']);
+    this.router.navigate(['/empleado', this.anio]);
   }
 
   public procesarPagos() {
@@ -163,20 +186,12 @@ export class EmployeesComponent {
     if (seleccionados.length === 0) return;
 
     this.employeesService.updatePayments(seleccionados).subscribe((res: any) => {
-      this.toast.show(res.status, 'success')
-      this.employeesService.getEmployees().subscribe({
-        next: (data) => {
-          this.rowData = data;
-          this.gridApi?.refreshCells();
-          setTimeout(() => {
-            this.updateVisibleTotals();
-          });
-        },
-        error: (err) => {
-          this.toast.show(err.error?.message, 'error');
-        }
+      this.toast.show(res.status, 'success');
+      this.loadData();
+      this.gridApi?.refreshCells();
+      setTimeout(() => {
+        this.updateVisibleTotals();
       });
-
     });
   }
 }

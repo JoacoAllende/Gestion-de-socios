@@ -15,20 +15,20 @@ export class EmployeesService {
     this.headers = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("ACCESS_TOKEN"));
   }
 
-  getEmployees() {
-    return this.http.get<any[]>(`${this.API_URI}/employees`, { headers: this.headers });
+  getEmployees(anio: number) {
+    return this.http.get<any[]>(`${this.API_URI}/employees/${anio}`, { headers: this.headers });
   }
 
   getEmployeeById(id: number) {
     return this.http.get<any[]>(`${this.API_URI}/employee/${id}`, { headers: this.headers });
   }
 
-  createEmployee(employeeData: any) {
-    return this.http.post<any>(`${this.API_URI}/employee`, employeeData, { headers: this.headers });
+  createEmployee(anio: number, employeeData: any) {
+    return this.http.post<any>(`${this.API_URI}/employee/${anio}`, employeeData, { headers: this.headers });
   }
 
-  updateEmployee(id: number, employeeData: any) {
-    return this.http.put<any>(`${this.API_URI}/employee/${id}`, employeeData, { headers: this.headers });
+  updateEmployee(id: number, anio: number, employeeData: any) {
+    return this.http.put<any>(`${this.API_URI}/employee/${id}/${anio}`, employeeData, { headers: this.headers });
   }
 
   updatePayments(paymentsData: any) {
