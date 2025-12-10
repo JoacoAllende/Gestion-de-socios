@@ -48,7 +48,10 @@ export class DynamicMenuComponent {
       },
       {
         label: 'Caja diaria',
-        action: () => this.router.navigate(['/caja'])
+        action: () => {
+          const anio = new Date().getFullYear();
+          this.router.navigate(['/caja', anio]);
+        }
       },
       {
         label: 'Eventos',
