@@ -3,10 +3,10 @@ const router = express.Router();
 
 const employees = require("../validations/employees.validation");
 
-router.get('/employees', ensureToken, employees.validate_getEmployees);
+router.get('/employees/:anio', ensureToken, employees.validate_getEmployees);
 router.get('/employee/:id', ensureToken, employees.validate_getEmployeeById);
-router.post('/employee', ensureToken, employees.validate_createEmployee);
-router.put('/employee/:id', ensureToken, employees.validate_updateEmployee);
+router.post('/employee/:anio', ensureToken, employees.validate_createEmployee);
+router.put('/employee/:id/:anio', ensureToken, employees.validate_updateEmployee);
 router.put('/employee-salary', ensureToken, employees.validate_loadSalary);
 
 function ensureToken(req, res, next) {
