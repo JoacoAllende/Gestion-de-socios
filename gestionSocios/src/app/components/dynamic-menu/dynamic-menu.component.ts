@@ -69,7 +69,10 @@ export class DynamicMenuComponent {
         children: [
           {
             label: 'Generales',
-            action: () => this.router.navigate(['/estadisticas']),
+            action: () => {
+              const anio = new Date().getFullYear();
+              this.router.navigate(['/estadisticas', anio]);
+            },
           },
           {
             label: 'Resúmenes',

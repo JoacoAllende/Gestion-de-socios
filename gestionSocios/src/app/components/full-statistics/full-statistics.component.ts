@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 import { MembershipService } from '../../services/membership.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
@@ -8,7 +9,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-full-statistics',
   standalone: true,
-  imports: [AgTableComponent],
+  imports: [AgTableComponent, MonthSelectorComponent],
   templateUrl: './full-statistics.component.html',
   styleUrls: ['./full-statistics.component.scss']
 })
@@ -18,6 +19,10 @@ export class FullStatisticsComponent implements OnInit {
 
   rowData: any[] = [];
   pinnedBottomRowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 70px)'
+  };
 
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -173,6 +178,10 @@ export class FullStatisticsComponent implements OnInit {
     const anioParam = this.route.snapshot.paramMap.get('anio');
     this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
 
+    this.loadData();
+  }
+
+  loadData() {
     this.membershipService.getMemberships(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(membership => {
@@ -182,11 +191,21 @@ export class FullStatisticsComponent implements OnInit {
           });
           return membership;
         });
+
+        setTimeout(() => {
+          this.updateVisibleTotals();
+        }, 100);
       },
       error: (err) => {
         this.toast.show(err.error?.message, 'error');
       }
     });
+  }
+
+  onYearChange = (event: { anio: number }) => {
+    this.anio = event.anio;
+    this.router.navigate(['/estadisticas', this.anio]);
+    this.loadData();
   }
 
   onGridReady(event: GridReadyEvent) {
