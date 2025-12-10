@@ -3,7 +3,7 @@ const mysqlConnection = require('../database');
 
 employeeController.getEmployees = async (req, res) => {
   try {
-    const anio = 2025;
+    const { anio } = req.params;
     const meses = [
       'enero','febrero','marzo','abril','mayo','junio',
       'julio','agosto','septiembre','octubre','noviembre','diciembre'
@@ -73,8 +73,8 @@ employeeController.getEmployeeById = (req, res) => {
 
 employeeController.createEmployee = (req, res) => {
   try {
+    const { anio } = req.params;
     const { nombre, monto, detalles, mes_alta } = req.body;
-    const anio = 2025;
 
     if (!nombre || !monto || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
@@ -120,9 +120,8 @@ employeeController.createEmployee = (req, res) => {
 
 employeeController.updateEmployee = (req, res) => {
   try {
-    const { id } = req.params;
+    const { id, anio } = req.params;
     const { nombre, monto, detalles, mes_alta, baja, alta } = req.body;
-    const anio = 2025;
 
     if (!id || !nombre || !monto || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
