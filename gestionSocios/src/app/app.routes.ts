@@ -35,7 +35,6 @@ export const routes: Routes = [
     { path: 'empleado/:anio', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado/:anio/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'empleado-alta/:anio/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
-    { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas/:anio', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'evento', component: EventComponent, canActivate: [AuthGuard] },
     { path: 'evento/:id', component: EventComponent, canActivate: [AuthGuard] },
