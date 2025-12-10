@@ -1,5 +1,8 @@
 <div class="buttons-wrapper">
+  <app-month-selector [anio]="anio" [showMonth]="false" (change)="onYearChange($event)">
+  </app-month-selector>
   <app-button [text]="'Nuevo Movimiento'" [onClick]="createMovement">
   </app-button>
 </div>
-<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"></app-ag-table>
+<app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef"
+  [gridStyle]="gridStyle"></app-ag-table>

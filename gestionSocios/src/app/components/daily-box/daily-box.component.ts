@@ -1,24 +1,26 @@
 import { Component } from '@angular/core';
 import { CellClickedEvent, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { DailyBoxService } from '../../services/daily-box.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { ButtonComponent } from '../commons/button/button.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 
 @Component({
   selector: 'app-daily-box',
-  imports: [AgTableComponent, ButtonComponent],
+  imports: [AgTableComponent, ButtonComponent, MonthSelectorComponent],
   templateUrl: './daily-box.component.html',
   styleUrl: './daily-box.component.scss'
 })
 export class DailyBoxComponent {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
   gridStyle = {
     width: '100%',
-    height: 'calc(100% - 2rem - 50px)'
+    height: 'calc(100% - 2rem - 70px)'
   };
 
   defaultColDef: ColDef = { flex: 1, resizable: true };
@@ -78,10 +80,22 @@ export class DailyBoxComponent {
     },
   ];
 
-  constructor(private dailyBoxService: DailyBoxService, private router: Router, private toast: ToastService) { }
+  constructor(
+    private dailyBoxService: DailyBoxService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toast: ToastService
+  ) { }
 
   ngOnInit() {
-    this.dailyBoxService.getDailyBox().subscribe({
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+
+    this.loadData();
+  }
+
+  loadData() {
+    this.dailyBoxService.getDailyBox(this.anio).subscribe({
       next: (data) => {
         this.rowData = data.map(movement => movement);
       },
@@ -89,7 +103,12 @@ export class DailyBoxComponent {
         this.toast.show(err.error?.message, 'error');
       }
     });
+  }
 
+  onYearChange = (event: { anio: number }) => {
+    this.anio = event.anio;
+    this.router.navigate(['/caja', this.anio]);
+    this.loadData();
   }
 
   public createMovement = () => {

@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
 
 export const routes: Routes = [
     { path: '', redirectTo: `pagos/${currentYear}`, pathMatch: 'full' },
-    { path: 'caja', component: DailyBoxComponent, canActivate: [AuthGuard] },
+    { path: 'caja/:anio', component: DailyBoxComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones', component: ConfigurationComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valores-actividad', component: ActivityValuesComponent, canActivate: [AuthGuard] },

@@ -3,6 +3,8 @@ const mysqlConnection = require('../database');
 
 dailyBoxController.getDailyBox = (req, res) => {
   try {
+    const { anio } = req.params;
+    
     const sql = `
       SELECT 
         id,
@@ -27,12 +29,11 @@ dailyBoxController.getDailyBox = (req, res) => {
           ELSE 0
         END AS monto_transferencia
       FROM caja_diaria
-      WHERE YEAR(fecha) = 2025
+      WHERE YEAR(fecha) = ?
       ORDER BY id DESC
     `;
 
-
-    mysqlConnection.query(sql, (err, results) => {
+    mysqlConnection.query(sql, [anio], (err, results) => {
       if (err) {
         return res.status(500).json(err);
       }

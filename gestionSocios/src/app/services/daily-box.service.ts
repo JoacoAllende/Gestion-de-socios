@@ -15,12 +15,12 @@ export class DailyBoxService {
     this.headers = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("ACCESS_TOKEN"));
   }
 
-  getDailyBox() {
-    return this.http.get<any[]>(`${this.API_URI}/daily-box`, { headers: this.headers });
+  getDailyBox(anio: number) {
+    return this.http.get<any[]>(`${this.API_URI}/daily-box/${anio}`, { headers: this.headers });
   }
 
   getMovementById(id: number) {
-    return this.http.get<any>(`${this.API_URI}/daily-box/${id}`, { headers: this.headers });
+    return this.http.get<any>(`${this.API_URI}/daily-box-movement/${id}`, { headers: this.headers });
   }
 
   createMovement(movement: any) {

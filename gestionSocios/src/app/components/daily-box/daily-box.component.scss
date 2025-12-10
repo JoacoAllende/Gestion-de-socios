@@ -3,4 +3,11 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+    align-items: center;
+}
+
+::ng-deep app-month-selector {
+  margin: 0 auto;
+  display: block;
+  width: fit-content;
 }
