@@ -56,7 +56,10 @@ export class DynamicMenuComponent {
       },
       {
         label: 'Sueldos',
-        action: () => this.router.navigate(['/sueldos'])
+        action: () => {
+          const anio = new Date().getFullYear();
+          this.router.navigate(['/sueldos', anio]);
+        }
       },
       {
         label: 'Estadísticas',

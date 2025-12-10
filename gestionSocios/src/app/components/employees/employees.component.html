@@ -1,4 +1,6 @@
 <div class="buttons-wrapper">
+  <app-month-selector [anio]="anio" [showMonth]="false" (change)="onYearChange($event)">
+  </app-month-selector>
   <app-button [disabled]="!haySeleccion()" [text]="'Cargar sueldo'" [onClick]="procesarPagos">
   </app-button>
   <app-button [text]="'Nuevo empleado'" [onClick]="createEmployee">

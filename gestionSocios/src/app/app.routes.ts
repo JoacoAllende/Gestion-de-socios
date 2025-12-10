@@ -32,9 +32,9 @@ export const routes: Routes = [
     { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valores-actividad', component: ActivityValuesComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valor-socio-base', component: BaseMemberValueComponent, canActivate: [AuthGuard] },
-    { path: 'empleado', component: EmployeeComponent, canActivate: [AuthGuard] },
-    { path: 'empleado/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
-    { path: 'empleado-alta/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
+    { path: 'empleado/:anio', component: EmployeeComponent, canActivate: [AuthGuard] },
+    { path: 'empleado/:anio/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
+    { path: 'empleado-alta/:anio/:id', component: EmployeeComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'estadisticas/:anio', component: FullStatisticsComponent, canActivate: [AuthGuard] },
     { path: 'evento', component: EventComponent, canActivate: [AuthGuard] },
@@ -59,6 +59,6 @@ export const routes: Routes = [
     { path: 'socio-alta/:id', component: MembershipComponent, canActivate: [AuthGuard] },
     { path: 'socios', component: MembershipsComponent, canActivate: [AuthGuard] },
     { path: 'socios-bajas', component: DischargedMembershipsComponent, canActivate: [AuthGuard] },
-    { path: 'sueldos', component: EmployeesComponent, canActivate: [AuthGuard] },
+    { path: 'sueldos/:anio', component: EmployeesComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: `pagos/${currentYear}` }
 ];
