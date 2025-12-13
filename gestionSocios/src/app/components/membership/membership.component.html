@@ -1,1 +1,10 @@
-<app-dynamic-form [formTitle]="'Socio'" [fields]="fields" [form]="form" (submitted)="submit($event)" (cancelled)="cancel()"></app-dynamic-form>
+<div class="form-container">
+    <div class="year-selector-container">
+        <app-month-selector [anio]="anio" [showMonth]="false" (change)="onYearChange($event)">
+        </app-month-selector>
+    </div>
+
+    <app-dynamic-form [formTitle]="socioId ? (isAlta ? 'Dar de Alta Socio' : 'Editar Socio') : 'Nuevo Socio'"
+        [fields]="fields" [form]="form" (submitted)="submit($event)" (cancelled)="cancel()">
+    </app-dynamic-form>
+</div>
