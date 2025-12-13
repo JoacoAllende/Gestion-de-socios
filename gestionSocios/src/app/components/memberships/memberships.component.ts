@@ -195,7 +195,7 @@ export class MembershipsComponent implements OnInit {
   }
 
   public createMembership = () => {
-    this.router.navigate(['/socio']);
+    this.router.navigate(['/socio', this.anio]);
   }
 
   private boolRenderer(params: ICellRendererParams) {

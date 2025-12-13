@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../commons/dynamic-form/dynamic-form.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
 import { MembershipService } from '../../services/membership.service';
 import { ToastService } from '../../services/toast.service';
 import { loadOptionsForField } from '../../utils/select-field.utils';
@@ -10,8 +11,9 @@ import { loadOptionsForField } from '../../utils/select-field.utils';
 @Component({
   selector: 'app-membership',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DynamicFormComponent],
-  templateUrl: './membership.component.html'
+  imports: [CommonModule, ReactiveFormsModule, DynamicFormComponent, MonthSelectorComponent],
+  templateUrl: './membership.component.html',
+  styleUrls: ['./membership.component.scss']
 })
 export class MembershipComponent implements OnInit {
   form!: FormGroup;
@@ -48,9 +50,13 @@ export class MembershipComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    const anioParam = this.route.snapshot.paramMap.get('anio');
     const idParam = this.route.snapshot.paramMap.get('id');
+    
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
     this.socioId = idParam ? Number(idParam) : null;
-    this.isAlta = this.router.url.startsWith('/socio-alta');
+    this.isAlta = this.router.url.includes('/socio-alta');
+    
     if (!this.isAlta && this.socioId) {
       this.fields.push({ name: 'baja', label: 'Dar de baja', type: 'checkbox' });
     }
@@ -76,6 +82,16 @@ export class MembershipComponent implements OnInit {
         next: socio => this.form.patchValue(socio),
         error: err => this.toast.show(err.error.message, 'error')
       });
+    }
+  }
+
+  onYearChange = (event: { anio: number }) => {
+    this.anio = event.anio;
+    if (this.socioId) {
+      const route = this.isAlta ? 'socio-alta' : 'socio';
+      this.router.navigate([`/${route}`, this.anio, this.socioId]);
+    } else {
+      this.router.navigate(['/socio', this.anio]);
     }
   }
 
