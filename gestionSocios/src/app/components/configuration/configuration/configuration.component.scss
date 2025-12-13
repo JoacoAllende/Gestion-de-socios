@@ -4,10 +4,15 @@
   max-width: max-content;
 }
 
-.cards {
-  display: flex;
-  gap: 32px;
-  align-items: center;
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .page-title {
@@ -47,6 +52,14 @@
   &.icon-ficha {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
+
+  &.icon-warning {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  }
+
+  &.icon-secondary {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  }
 }
 
 .config-details {
@@ -79,5 +92,11 @@
       color: #667eea;
       font-size: 1.1rem;
     }
+  }
+
+  .description {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
   }
 }

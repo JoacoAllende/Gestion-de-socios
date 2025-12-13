@@ -1,21 +1,17 @@
 <div class="container">
   <h1 class="page-title">Configuración del Sistema</h1>
 
-  <div class="cards">
-    <app-card 
-      [title]="'Valores por Actividad'"
-      [cardClass]="'card-general clickable'"
-      (click)="editActivityValues()">
-      
+  <div class="cards-row">
+    <app-card [title]="'Valores por Actividad'" [cardClass]="'card-general clickable'" (click)="editActivityValues()">
       <div class="config-info">
         <div class="config-header">
           <div class="icon icon-general">🏃</div>
         </div>
-        
+
         <div class="config-details">
           <div class="detail-row" *ngFor="let item of activityValues">
             <span class="label">
-              {{ item.cantidad_actividades }} 
+              {{ item.cantidad_actividades }}
               {{ item.cantidad_actividades === 1 ? 'Actividad' : 'Actividades' }}:
             </span>
             <span class="value highlight">{{ formatCurrency(item.valor) }}</span>
@@ -23,17 +19,13 @@
         </div>
       </div>
     </app-card>
-  
-    <app-card 
-      [title]="'Descuentos'"
-      [cardClass]="'card-ficha clickable'"
-      (click)="editDiscounts()">
-      
+
+    <app-card [title]="'Descuentos'" [cardClass]="'card-ficha clickable'" (click)="editDiscounts()">
       <div class="config-info">
         <div class="config-header">
           <div class="icon icon-ficha">💸</div>
         </div>
-        
+
         <div class="config-details">
           <div class="detail-row" *ngFor="let item of discounts">
             <span class="label">{{ item.tipo === 'FAMILIAR' ? 'Descuento Familiar' : 'Cuota Pasiva' }}:</span>
@@ -42,22 +34,48 @@
         </div>
       </div>
     </app-card>
-  
-    <app-card 
-      *ngIf="baseMemberValue"
-      [title]="'Valor Socio Base'"
-      [cardClass]="'card-general clickable'"
+
+    <app-card *ngIf="baseMemberValue" [title]="'Valor Socio Base'" [cardClass]="'card-general clickable'"
       (click)="editBaseMemberValue()">
-      
       <div class="config-info">
         <div class="config-header">
           <div class="icon icon-general">👤</div>
         </div>
-        
+
         <div class="config-details">
           <div class="detail-row">
             <span class="label">Valor Base:</span>
             <span class="value highlight">{{ formatCurrency(baseMemberValue.valor) }}</span>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="cards-row">
+    <app-card [title]="'Inicializar Nuevo Año'" [cardClass]="'card-warning clickable'" (click)="goToInitializeYear()">
+      <div class="config-info">
+        <div class="config-header">
+          <div class="icon icon-warning">📅</div>
+        </div>
+
+        <div class="config-details">
+          <div class="detail-row">
+            <span class="description">Crear pagos para todos los socios activos en un año nuevo</span>
+          </div>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card [title]="'Recalcular Pagos'" [cardClass]="'card-secondary clickable'" (click)="goToRecalculatePayments()">
+      <div class="config-info">
+        <div class="config-header">
+          <div class="icon icon-secondary">🔄</div>
+        </div>
+
+        <div class="config-details">
+          <div class="detail-row">
+            <span class="description">Actualizar montos de pagos no pagados desde un mes específico</span>
           </div>
         </div>
       </div>
