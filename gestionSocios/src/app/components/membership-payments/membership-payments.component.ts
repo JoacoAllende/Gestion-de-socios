@@ -123,7 +123,7 @@ export class MembershipPaymentsComponent implements OnInit {
           });
           return membership;
         });
-        
+
         setTimeout(() => {
           this.updateVisibleTotals();
         }, 100);
@@ -187,7 +187,7 @@ export class MembershipPaymentsComponent implements OnInit {
       .filter(r => Object.keys(r.meses).length > 0);
     if (seleccionados.length === 0) return;
 
-    this.paymentsService.updatePayments(seleccionados).subscribe((res: any) => {
+    this.paymentsService.updatePayments(this.anio, seleccionados).subscribe((res: any) => {
       this.toast.show(res.status, 'success');
       this.loadData();
       this.gridApi?.refreshCells();

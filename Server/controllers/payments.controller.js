@@ -3,6 +3,7 @@ const mysqlConnection = require('../database');
 
 paymentsController.updatePayments = (req, res) => {
   try {
+    const { anio } = req.params;
     const { pagos = [] } = req.body;
 
     const mesesMap = {
@@ -28,8 +29,8 @@ paymentsController.updatePayments = (req, res) => {
         mysqlConnection.query(
           `UPDATE pago
            SET pagado = ?, efectivo = ?, fecha_pago = ?
-           WHERE socio_id = ? AND anio = 2025 AND mes = ?`,
-          [pagado, efectivo, fechaPago, socioId, mesNum],
+           WHERE socio_id = ? AND anio = ? AND mes = ?`,
+          [pagado, efectivo, fechaPago, socioId, anio, mesNum],
           (err) => {
             if (err && !errorOccurred) {
               errorOccurred = true;
