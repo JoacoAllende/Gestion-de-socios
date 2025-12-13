@@ -15,9 +15,9 @@ export class PaymentsService {
     this.headers = new HttpHeaders().set("Authorization", "Bearer " + localStorage.getItem("ACCESS_TOKEN"));
   }
 
-  updatePayments(paymentsData: any) {
+  updatePayments(anio: number, paymentsData: any) {
     const payload = { pagos: paymentsData };
-    return this.http.put(`${this.API_URI}/payments`, payload, { headers: this.headers });
+    return this.http.put(`${this.API_URI}/payments/${anio}`, payload, { headers: this.headers });
   }
 
   initializeYear(anio: number) {
