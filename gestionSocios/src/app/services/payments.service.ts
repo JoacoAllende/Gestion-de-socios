@@ -19,4 +19,12 @@ export class PaymentsService {
     const payload = { pagos: paymentsData };
     return this.http.put(`${this.API_URI}/payments`, payload, { headers: this.headers });
   }
+
+  initializeYear(anio: number) {
+    return this.http.post<any>(`${this.API_URI}/payments/initialize-year/${anio}`, {}, { headers: this.headers });
+  }
+
+  recalculatePayments(anio: number, mes_desde: number) {
+    return this.http.put<any>(`${this.API_URI}/payments/recalculate`, { anio, mes_desde }, { headers: this.headers });
+  }
 }

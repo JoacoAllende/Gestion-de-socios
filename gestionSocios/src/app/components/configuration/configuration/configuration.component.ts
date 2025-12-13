@@ -81,4 +81,12 @@ export class ConfigurationComponent implements OnInit {
   editBaseMemberValue() {
     this.router.navigate(['/configuraciones/valor-socio-base']);
   }
+
+  goToInitializeYear() {
+    this.router.navigate(['/configuraciones/inicializar-anio']);
+  }
+
+  goToRecalculatePayments() {
+    this.router.navigate(['/configuraciones/recalcular-pagos']);
+  }
 }
