@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../../commons/dynamic-form/dynamic-form.component';
 import { PaymentsService } from '../../../services/payments.service';
 import { ToastService } from '../../../services/toast.service';
+import { SpinnerService } from '../../../services/spinner.service';
 
 @Component({
   selector: 'app-recalculate-payments',
@@ -55,6 +56,7 @@ export class RecalculatePaymentsComponent implements OnInit {
     private paymentsService: PaymentsService,
     private router: Router,
     private toast: ToastService,
+    private spinner: SpinnerService
   ) { }
 
   ngOnInit() {
@@ -78,13 +80,17 @@ export class RecalculatePaymentsComponent implements OnInit {
       return;
     }
 
+    this.spinner.show();
+
     this.paymentsService.recalculatePayments(anio, mes_desde).subscribe({
       next: (res) => {
+        this.spinner.hide();
         this.form.reset();
         this.router.navigate(['/configuraciones']);
         this.toast.show(`${res.status}\nSocios actualizados: ${res.socios_actualizados}\nPagos actualizados: ${res.pagos_actualizados}`, 'success');
       },
       error: err => {
+        this.spinner.hide();
         this.toast.show(err.error.error || err.error.message, 'error');
       }
     });

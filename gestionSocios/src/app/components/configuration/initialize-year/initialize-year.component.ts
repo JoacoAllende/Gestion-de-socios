@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { DynamicFormComponent, FormField } from '../../commons/dynamic-form/dynamic-form.component';
 import { PaymentsService } from '../../../services/payments.service';
 import { ToastService } from '../../../services/toast.service';
+import { SpinnerService } from '../../../services/spinner.service';
 
 @Component({
   selector: 'app-initialize-year',
@@ -16,12 +17,12 @@ export class InitializeYearComponent implements OnInit {
   form!: FormGroup;
 
   fields: FormField[] = [
-    { 
-      name: 'anio', 
-      label: 'Año a inicializar', 
-      type: 'number', 
-      validators: [Validators.required, Validators.min(2020), Validators.max(2100)], 
-      errorMessages: { 
+    {
+      name: 'anio',
+      label: 'Año a inicializar',
+      type: 'number',
+      validators: [Validators.required, Validators.min(2020), Validators.max(2100)],
+      errorMessages: {
         required: 'Obligatorio',
         min: 'El año debe ser mayor a 2019',
         max: 'El año debe ser menor a 2101'
@@ -34,6 +35,7 @@ export class InitializeYearComponent implements OnInit {
     private paymentsService: PaymentsService,
     private router: Router,
     private toast: ToastService,
+    private spinner: SpinnerService,
   ) { }
 
   ngOnInit() {
@@ -51,13 +53,17 @@ export class InitializeYearComponent implements OnInit {
       return;
     }
 
+    this.spinner.show();
+
     this.paymentsService.initializeYear(anio).subscribe({
       next: (res) => {
+        this.spinner.hide();
         this.form.reset();
         this.router.navigate(['/configuraciones']);
         this.toast.show(`${res.status}\nSocios procesados: ${res.socios_procesados}\nPagos creados: ${res.pagos_creados}`, 'success');
       },
       error: err => {
+        this.spinner.hide();
         this.toast.show(err.error.error || err.error.message, 'error');
       }
     });
