@@ -82,11 +82,15 @@ export class ConfigurationComponent implements OnInit {
     this.router.navigate(['/configuraciones/valor-socio-base']);
   }
 
-  goToInitializeYear() {
+  goToInitializeYearMembers() {
     this.router.navigate(['/configuraciones/inicializar-anio']);
   }
 
-  goToRecalculatePayments() {
+  goToRecalculatePaymentsMembers() {
     this.router.navigate(['/configuraciones/recalcular-pagos']);
+  }
+
+  goToInitializeYearEmployees() {
+    this.router.navigate(['/configuraciones/inicializar-anio-empleados']);
   }
 }

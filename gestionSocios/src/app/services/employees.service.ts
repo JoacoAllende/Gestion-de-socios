@@ -31,8 +31,12 @@ export class EmployeesService {
     return this.http.put<any>(`${this.API_URI}/employee/${id}/${anio}`, employeeData, { headers: this.headers });
   }
 
-  updatePayments(paymentsData: any) {
-    const payload = { salaries: paymentsData };
-    return this.http.put(`${this.API_URI}/employee-salary`, payload, { headers: this.headers });
+  updatePayments(anio: number, paymentsData: any) {
+    const payload = { pagos: paymentsData };
+    return this.http.put(`${this.API_URI}/employees/payments/${anio}`, payload, { headers: this.headers });
+  }
+
+  initializeYear(anio: number) {
+    return this.http.post<any>(`${this.API_URI}/employees/initialize-year/${anio}`, {}, { headers: this.headers });
   }
 }

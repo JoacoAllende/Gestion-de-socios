@@ -185,7 +185,7 @@ export class EmployeesComponent {
       .filter(r => Object.keys(r.meses).length > 0);
     if (seleccionados.length === 0) return;
 
-    this.employeesService.updatePayments(seleccionados).subscribe((res: any) => {
+    this.employeesService.updatePayments(this.anio, seleccionados).subscribe((res: any) => {
       this.toast.show(res.status, 'success');
       this.loadData();
       this.gridApi?.refreshCells();

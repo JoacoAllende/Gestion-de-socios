@@ -19,8 +19,12 @@ employeesValidator.validate_updateEmployee = (req, res) => {
     verifyTokenAndExecute(req, res, employeesController.updateEmployee);
 }
 
-employeesValidator.validate_loadSalary = (req, res) => {
-    verifyTokenAndExecute(req, res, employeesController.loadSalary);
+employeesValidator.validate_updatePayments = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.updatePayments);
+}
+
+employeesValidator.validate_initializeYear = (req, res) => {
+    verifyTokenAndExecute(req, res, employeesController.initializeYear);
 }
 
 function verifyTokenAndExecute(req, res, nextFn) {
