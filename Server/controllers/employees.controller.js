@@ -95,7 +95,7 @@ employeeController.createEmployee = (req, res) => {
 
         const sueldoValues = [];
         for (let mes = mes_alta; mes <= 12; mes++) {
-          sueldoValues.push([empleadoId, anio, mes, false]);
+          sueldoValues.push([empleadoId, anio, mes, monto, false]);
         }
 
         if (sueldoValues.length === 0) {
@@ -103,7 +103,7 @@ employeeController.createEmployee = (req, res) => {
         }
 
         const sueldoQuery = `
-          INSERT INTO sueldo (empleado_id, anio, mes, pagado)
+          INSERT INTO sueldo (empleado_id, anio, mes, monto_mes, pagado)
           VALUES ?
         `;
 
@@ -205,33 +205,24 @@ employeeController.updateEmployee = (req, res) => {
   }
 };
 
-employeeController.loadSalary = (req, res) => {
+employeeController.updatePayments = (req, res) => {
   try {
-    const { salaries } = req.body;
-    const anio = 2025;
+    const { anio } = req.params;
+    const { pagos } = req.body;
 
-    if (!Array.isArray(salaries) || salaries.length === 0) {
+    if (!Array.isArray(pagos) || pagos.length === 0) {
       return res.status(400).json({ error: 'No se recibieron datos para actualizar' });
     }
 
     const mesesMap = {
-      'enero': 1,
-      'febrero': 2,
-      'marzo': 3,
-      'abril': 4,
-      'mayo': 5,
-      'junio': 6,
-      'julio': 7,
-      'agosto': 8,
-      'septiembre': 9,
-      'octubre': 10,
-      'noviembre': 11,
-      'diciembre': 12
+      'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4,
+      'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8,
+      'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12
     };
 
     const queries = [];
 
-    salaries.forEach(emp => {
+    pagos.forEach(emp => {
       const { employeeId, meses } = emp;
       if (!employeeId || !meses) return;
 
@@ -262,5 +253,59 @@ employeeController.loadSalary = (req, res) => {
   }
 };
 
+employeeController.initializeYear = (req, res) => {
+  try {
+    const { anio } = req.params;
+
+    mysqlConnection.query(
+      'SELECT COUNT(*) as count FROM sueldo WHERE anio = ?',
+      [anio],
+      (errCheck, checkRows) => {
+        if (errCheck) return res.status(500).json(errCheck);
+
+        if (checkRows[0].count > 0) {
+          return res.status(400).json({ 
+            error: `Ya existen ${checkRows[0].count} sueldos registrados para el año ${anio}. No se puede inicializar.` 
+          });
+        }
+
+        mysqlConnection.query(
+          'SELECT id, monto_base FROM empleado WHERE activo = TRUE',
+          (errEmpleados, empleadosRows) => {
+            if (errEmpleados) return res.status(500).json(errEmpleados);
+
+            if (empleadosRows.length === 0) {
+              return res.status(400).json({ error: 'No hay empleados activos para inicializar' });
+            }
+
+            const sueldoValues = [];
+            empleadosRows.forEach(empleado => {
+              for (let mes = 1; mes <= 12; mes++) {
+                sueldoValues.push([empleado.id, anio, mes, empleado.monto_base, false]);
+              }
+            });
+
+            const insertQuery = `
+              INSERT INTO sueldo (empleado_id, anio, mes, monto_mes, pagado)
+              VALUES ?
+            `;
+
+            mysqlConnection.query(insertQuery, [sueldoValues], (errInsert) => {
+              if (errInsert) return res.status(500).json(errInsert);
+              
+              res.json({ 
+                status: `Año ${anio} inicializado exitosamente`,
+                empleados_procesados: empleadosRows.length,
+                sueldos_creados: sueldoValues.length
+              });
+            });
+          }
+        );
+      }
+    );
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
 module.exports = employeeController;

@@ -24,6 +24,7 @@ import { DiscountsComponent } from './components/configuration/discounts/discoun
 import { BaseMemberValueComponent } from './components/configuration/base-member-value/base-member-value.component';
 import { InitializeYearComponent } from './components/configuration/initialize-year/initialize-year.component';
 import { RecalculatePaymentsComponent } from './components/configuration/recalculate-payments/recalculate-payments.component';
+import { InitializeYearEmployeesComponent } from './components/configuration/initialize-year-employees/initialize-year-employees.component';
 
 const currentYear = new Date().getFullYear();
 
@@ -33,6 +34,7 @@ export const routes: Routes = [
     { path: 'configuraciones', component: ConfigurationComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/inicializar-anio', component: InitializeYearComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones/inicializar-anio-empleados', component: InitializeYearEmployeesComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/recalcular-pagos', component: RecalculatePaymentsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valores-actividad', component: ActivityValuesComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valor-socio-base', component: BaseMemberValueComponent, canActivate: [AuthGuard] },

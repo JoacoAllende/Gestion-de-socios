@@ -53,7 +53,7 @@
   </div>
 
   <div class="cards-row">
-    <app-card [title]="'Inicializar Nuevo Año'" [cardClass]="'card-warning clickable'" (click)="goToInitializeYear()">
+    <app-card [title]="'Inicializar Año - Socios'" [cardClass]="'card-warning clickable'" (click)="goToInitializeYearMembers()">
       <div class="config-info">
         <div class="config-header">
           <div class="icon icon-warning">📅</div>
@@ -67,7 +67,7 @@
       </div>
     </app-card>
 
-    <app-card [title]="'Recalcular Pagos'" [cardClass]="'card-secondary clickable'" (click)="goToRecalculatePayments()">
+    <app-card [title]="'Recalcular Pagos - Socios'" [cardClass]="'card-secondary clickable'" (click)="goToRecalculatePaymentsMembers()">
       <div class="config-info">
         <div class="config-header">
           <div class="icon icon-secondary">🔄</div>
@@ -76,6 +76,20 @@
         <div class="config-details">
           <div class="detail-row">
             <span class="description">Actualizar montos de pagos no pagados desde un mes específico</span>
+          </div>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card [title]="'Inicializar Año - Empleados'" [cardClass]="'card-warning clickable'" (click)="goToInitializeYearEmployees()">
+      <div class="config-info">
+        <div class="config-header">
+          <div class="icon icon-warning">💼</div>
+        </div>
+
+        <div class="config-details">
+          <div class="detail-row">
+            <span class="description">Crear sueldos para todos los empleados activos en un año nuevo</span>
           </div>
         </div>
       </div>
