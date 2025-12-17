@@ -25,6 +25,7 @@ import { BaseMemberValueComponent } from './components/configuration/base-member
 import { InitializeYearComponent } from './components/configuration/initialize-year/initialize-year.component';
 import { RecalculatePaymentsComponent } from './components/configuration/recalculate-payments/recalculate-payments.component';
 import { InitializeYearEmployeesComponent } from './components/configuration/initialize-year-employees/initialize-year-employees.component';
+import { ReceiptComponent } from './components/receipt/receipt.component';
 
 const currentYear = new Date().getFullYear();
 
@@ -55,6 +56,7 @@ export const routes: Routes = [
     { path: 'movimiento/:movementId/detalle/:detailId', component: MovementDetailComponent, canActivate: [AuthGuard] },
     { path: 'movimiento/:movementId/detalles', component: MovementDetailsComponent, canActivate: [AuthGuard] },
     { path: 'pagos/:anio', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
+    { path: 'recibo', component: ReceiptComponent, canActivate: [AuthGuard] },
     { path: 'resumenes', component: SummaryComponent, canActivate: [AuthGuard] },
     { path: 'resumenes/:mes/:anio', component: SummaryComponent, canActivate: [AuthGuard] },
     { path: 'socio-estado', component: MembershipStateComponent},
