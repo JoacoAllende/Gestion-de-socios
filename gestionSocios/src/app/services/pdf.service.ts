@@ -70,20 +70,15 @@ export class PdfService {
     doc.text('BME. MITRE 1026/34/42', 105, 42, { align: 'center' });
     doc.text('(7150) AYACUCHO - BS. AS.', 105, 47, { align: 'center' });
 
-    doc.setFontSize(10);
-    doc.text(`Fecha: ${fechaActual}`, 155, 25);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('FUNDADO EN 1918', 105, 57, { align: 'center' });
 
     doc.setLineWidth(0.5);
     doc.line(20, 60, 190, 60);
-    
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    
-    const textWidth = doc.getTextWidth('FUNDADO EN 1918');
-    doc.setFillColor(255, 255, 255);
-    doc.rect(105 - (textWidth / 2) - 2, 57, textWidth + 4, 6, 'F');
-    
-    doc.text('FUNDADO EN 1918', 105, 62, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.text(`Fecha: ${fechaActual}`, 190, 68, { align: 'right' });
 
     const montoFormateado = new Intl.NumberFormat('es-AR', {
       style: 'currency',
@@ -97,7 +92,7 @@ export class PdfService {
     const frasePrincipal = `Paguese a ${datos.persona} la cantidad de pesos ${montoFormateado} en razón de ${datos.descripcion}`;
     const lineasFrase = doc.splitTextToSize(frasePrincipal, 170);
     
-    let yPos = 80;
+    let yPos = 85;
     lineasFrase.forEach((linea: string) => {
       doc.text(linea, 20, yPos);
       yPos += 7;
@@ -106,13 +101,6 @@ export class PdfService {
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text(`Son ${montoFormateado}`, 190, yPos + 15, { align: 'right' });
-
-    const yFirma = 220;
-    doc.setLineWidth(0.3);
-    doc.line(120, yFirma, 180, yFirma);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Firma y Aclaración', 150, yFirma + 5, { align: 'center' });
 
     doc.save(`recibo-${datos.persona.replace(/\s+/g, '-')}.pdf`);
   }
