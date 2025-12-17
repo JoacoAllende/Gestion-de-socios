@@ -88,6 +88,10 @@ export class DynamicMenuComponent {
         label: 'Configuraciones',
         action: () => this.router.navigate(['/configuraciones'])
       },
+      {
+        label: 'Nuevo recibo',
+        action: () => this.router.navigate(['/recibo'])
+      },
     ];
   }
 
