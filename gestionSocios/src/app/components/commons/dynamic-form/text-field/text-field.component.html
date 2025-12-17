@@ -1,5 +1,22 @@
 <div [formGroup]="form" class="mb-2">
-  <input [type]="field.isPassword ? 'password' : 'text'" class="form-control" placeholder="{{ field.label }}" [formControlName]="field.name" />
+  <div class="input-wrapper">
+    <input 
+      [type]="inputType" 
+      class="form-control" 
+      placeholder="{{ field.label }}" 
+      [formControlName]="field.name" 
+    />
+    <button
+      *ngIf="field.isPassword"
+      type="button"
+      class="toggle-password"
+      (click)="togglePasswordVisibility()"
+      [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+    >
+      <span *ngIf="!showPassword">👁️</span>
+      <span *ngIf="showPassword">🙈</span>
+    </button>
+  </div>
   <div class="text-danger mt-1" *ngIf="form.controls[field.name].touched && form.controls[field.name].invalid">
     <span *ngFor="let errorKey of getErrorKeys()">
       {{ field.errorMessages?.[errorKey] || 'Campo inválido' }}
