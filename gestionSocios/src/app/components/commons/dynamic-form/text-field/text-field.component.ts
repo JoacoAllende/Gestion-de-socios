@@ -13,12 +13,22 @@ import { FormField } from '../dynamic-form.component';
 export class TextFieldComponent {
   @Input() field!: FormField;
   @Input() form!: FormGroup;
-  @Input() isPassword!: boolean;
+
+  showPassword: boolean = false;
+
+  get inputType(): string {
+    if (this.field.isPassword) {
+      return this.showPassword ? 'text' : 'password';
+    }
+    return 'text';
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   getErrorKeys(): string[] {
     const control = this.form.controls[this.field.name];
     return control && control.errors ? Object.keys(control.errors) : [];
   }
 }
-
-
