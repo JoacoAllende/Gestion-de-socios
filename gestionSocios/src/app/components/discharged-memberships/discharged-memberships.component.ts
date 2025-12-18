@@ -14,6 +14,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class DischargedMembershipsComponent implements OnInit {
   public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
 
@@ -33,7 +34,7 @@ export class DischargedMembershipsComponent implements OnInit {
           floatingFilter: true,
           cellClass: 'ag-cell-clickable',
           onCellClicked: (event: CellClickedEvent) => {
-            this.router.navigate([`/socio-alta/${event.data.nro_socio}`]);
+            this.router.navigate([`/socio-alta/${this.anio}/${event.data.nro_socio}`]);
           }
         },
         {
