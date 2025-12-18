@@ -40,7 +40,7 @@ export class MembershipsComponent implements OnInit {
           floatingFilter: true,
           cellClass: 'ag-cell-clickable',
           onCellClicked: (event: CellClickedEvent) => {
-            this.router.navigate([`/socio/${event.data.nro_socio}`]);
+            this.router.navigate([`/socio/${this.anio}/${event.data.nro_socio}`]);
           }
         },
         {
