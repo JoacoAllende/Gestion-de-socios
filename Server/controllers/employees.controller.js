@@ -76,7 +76,7 @@ employeeController.createEmployee = (req, res) => {
     const { anio } = req.params;
     const { nombre, monto, detalles, mes_alta } = req.body;
 
-    if (!nombre || !monto || !mes_alta) {
+    if (!nombre || monto == null || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
     }
 
@@ -123,7 +123,7 @@ employeeController.updateEmployee = (req, res) => {
     const { id, anio } = req.params;
     const { nombre, monto, detalles, mes_alta, baja, alta } = req.body;
 
-    if (!id || !nombre || !monto || !mes_alta) {
+    if (!id || !nombre || monto == null || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
     }
 
