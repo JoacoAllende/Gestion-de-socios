@@ -3,6 +3,8 @@
   </app-month-selector>
   <app-button [disabled]="!haySeleccion()" [text]="'Cargar pagos'" [onClick]="procesarPagos">
   </app-button>
+  <app-button [text]="'Descargar CSV'" [onClick]="exportCsv">
+  </app-button>
 </div>
 <app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"
   [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">

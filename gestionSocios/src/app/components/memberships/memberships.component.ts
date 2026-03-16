@@ -5,6 +5,7 @@ import { MembershipService } from '../../services/membership.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonComponent } from '../commons/button/button.component';
 import { ToastService } from '../../services/toast.service';
+import { exportGridToCsv } from '../../utils/export-csv.utils';
 
 @Component({
   selector: 'app-membership',
@@ -190,8 +191,8 @@ export class MembershipsComponent implements OnInit {
     this.pinnedBottomRowData = [totals];
   }
 
-  exportCsv() {
-    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+  exportCsv = () => {
+    exportGridToCsv(this.gridApi);
   }
 
   public createMembership = () => {

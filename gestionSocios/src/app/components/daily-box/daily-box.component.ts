@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { CellClickedEvent, ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
+import { CellClickedEvent, ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { DailyBoxService } from '../../services/daily-box.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { ButtonComponent } from '../commons/button/button.component';
 import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
+import { exportGridToCsv } from '../../utils/export-csv.utils';
 
 @Component({
   selector: 'app-daily-box',
@@ -90,7 +91,6 @@ export class DailyBoxComponent {
   ngOnInit() {
     const anioParam = this.route.snapshot.paramMap.get('anio');
     this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
-
     this.loadData();
   }
 
@@ -105,6 +105,10 @@ export class DailyBoxComponent {
     });
   }
 
+  onGridReady = (event: GridReadyEvent) => {
+    this.gridApi = event.api;
+  }
+
   onYearChange = (event: { anio: number }) => {
     this.anio = event.anio;
     this.router.navigate(['/caja', this.anio]);
@@ -115,4 +119,7 @@ export class DailyBoxComponent {
     this.router.navigate(['/movimiento-caja']);
   }
 
+  exportCsv = () => {
+    exportGridToCsv(this.gridApi);
+  }
 }

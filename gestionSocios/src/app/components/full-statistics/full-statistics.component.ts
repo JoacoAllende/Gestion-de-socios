@@ -5,11 +5,13 @@ import { MonthSelectorComponent } from '../commons/month-selector/month-selector
 import { MembershipService } from '../../services/membership.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
+import { exportGridToCsv } from '../../utils/export-csv.utils';
+import { ButtonComponent } from '../commons/button/button.component';
 
 @Component({
   selector: 'app-full-statistics',
   standalone: true,
-  imports: [AgTableComponent, MonthSelectorComponent],
+  imports: [AgTableComponent, MonthSelectorComponent, ButtonComponent],
   templateUrl: './full-statistics.component.html',
   styleUrls: ['./full-statistics.component.scss']
 })
@@ -242,8 +244,8 @@ export class FullStatisticsComponent implements OnInit {
     return (anioActual - anio) * 12 + (mesActual - mes);
   }
 
-  exportCsv() {
-    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+  exportCsv = () => {
+    exportGridToCsv(this.gridApi);
   }
 
   public createMembership = () => {

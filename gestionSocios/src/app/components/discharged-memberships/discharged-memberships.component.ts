@@ -4,11 +4,13 @@ import { AgTableComponent } from '../commons/ag-table/ag-table.component';
 import { MembershipService } from '../../services/membership.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
+import { exportGridToCsv } from '../../utils/export-csv.utils';
+import { ButtonComponent } from '../commons/button/button.component';
 
 @Component({
   selector: 'app-discharged-membership',
   standalone: true,
-  imports: [AgTableComponent],
+  imports: [AgTableComponent, ButtonComponent],
   templateUrl: './discharged-memberships.component.html',
   styleUrls: ['./discharged-memberships.component.scss']
 })
@@ -17,6 +19,10 @@ export class DischargedMembershipsComponent implements OnInit {
   anio: number = new Date().getFullYear();
 
   rowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 50px)'
+  };
 
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 
@@ -148,8 +154,8 @@ export class DischargedMembershipsComponent implements OnInit {
 
   }
 
-  exportCsv() {
-    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+  exportCsv = () => {
+    exportGridToCsv(this.gridApi);
   }
 
   private boolRenderer(params: ICellRendererParams) {

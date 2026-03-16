@@ -8,6 +8,7 @@ import { MembershipService } from '../../services/membership.service';
 import { PaymentsService } from '../../services/payments.service';
 import { ToastService } from '../../services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { exportGridToCsv } from '../../utils/export-csv.utils';
 
 @Component({
   selector: 'app-membership-payments',
@@ -165,8 +166,8 @@ export class MembershipPaymentsComponent implements OnInit {
     this.pinnedBottomRowData = [totals];
   }
 
-  exportCsv() {
-    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+  exportCsv = () => {
+    exportGridToCsv(this.gridApi);
   }
 
   public haySeleccion(): boolean {
