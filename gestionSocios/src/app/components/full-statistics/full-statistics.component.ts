@@ -78,6 +78,22 @@ export class FullStatisticsComponent implements OnInit {
             }
           }
         },
+        {
+          field: 'monto',
+          headerName: 'Monto',
+          pinned: 'left',
+          sortable: true,
+          width: 120,
+          filter: 'agNumberColumnFilter',
+          floatingFilter: true,
+          cellRenderer: (params: ICellRendererParams) => {
+            if (params.node?.rowPinned) {
+              return `$ ${params.value?.toLocaleString('es-AR') || 0}`;
+            }
+            if (params.value === -1) return '$ 0';
+            return params.value || '';
+          }
+        },
       ]
     },
     {
