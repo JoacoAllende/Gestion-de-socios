@@ -56,7 +56,6 @@ statisticsController.getIncomeByMembershipCard = (req, res) => {
         });
       }
 
-      // Segunda consulta: pagos correspondientes al mes (sin importar cuándo se pagaron)
       const sql2 = `
         SELECT 
           fs.id AS ficha_socio_id,
@@ -80,23 +79,23 @@ statisticsController.getIncomeByMembershipCard = (req, res) => {
           });
         }
 
-        const porcentaje = (mesNum === 1 || mesNum === 2) ? 0.20 : 0.16;
+        const porcentaje = 0.16;
 
         const mapaCorrespondientes = Object.fromEntries(
           pagosCorrespondientes.map(p => [p.ficha_socio_id, p])
         );
 
         const detalle = pagosDelMes.map(row => {
-          const isAlejandra = row.ficha_socio_id === 1;
+          const aplicaPorcentaje = [1, 4].includes(parseInt(row.ficha_socio_id));
 
           let totalEfectivo = parseFloat(row.total_efectivo || 0);
           let totalTransferencia = parseFloat(row.total_transferencia || 0);
-          let salidaEfectivo = 0;
-          let salidaTransferencia = 0;
+          let salida = 0;
 
-          if (isAlejandra) {
-            salidaEfectivo = totalEfectivo * porcentaje;
-            salidaTransferencia = totalTransferencia * porcentaje;
+          if (aplicaPorcentaje) {
+            const salidaEfectivo = totalEfectivo * porcentaje;
+            const salidaTransferencia = totalTransferencia * porcentaje;
+            salida = salidaEfectivo + salidaTransferencia;
             totalEfectivo -= salidaEfectivo;
             totalTransferencia -= salidaTransferencia;
           }
@@ -107,13 +106,13 @@ statisticsController.getIncomeByMembershipCard = (req, res) => {
             : 0;
 
           return {
+            ficha_socio_id: row.ficha_socio_id,
             ficha_socio: row.ficha_socio,
             cantidad_socios: parseInt(row.cantidad_socios || 0),
             total_efectivo: parseFloat(totalEfectivo.toFixed(2)),
             total_transferencia: parseFloat(totalTransferencia.toFixed(2)),
             total_ingresado: parseFloat((totalEfectivo + totalTransferencia).toFixed(2)),
-            salida_efectivo: parseFloat(salidaEfectivo.toFixed(2)),
-            salida_transferencia: parseFloat(salidaTransferencia.toFixed(2)),
+            salida: parseFloat(salida.toFixed(2)),
             cantidad_pagos: parseInt(row.cantidad_pagos || 0),
 
             total_correspondiente_mes: parseFloat(row.total_correspondiente_mes || 0),
@@ -122,6 +121,17 @@ statisticsController.getIncomeByMembershipCard = (req, res) => {
 
             total_correspondiente_sin_importar_fecha: parseFloat(totalCorrespondiente.toFixed(2))
           };
+        });
+
+        const ordenCustom = [1, 4];
+        detalle.sort((a, b) => {
+          const indexA = ordenCustom.indexOf(a.ficha_socio_id);
+          const indexB = ordenCustom.indexOf(b.ficha_socio_id);
+          
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return a.ficha_socio.localeCompare(b.ficha_socio);
         });
 
         const sum = (key) => detalle.reduce((a, b) => a + (b[key] || 0), 0);
@@ -180,8 +190,7 @@ statisticsController.getIncomeByMembershipCard = (req, res) => {
                 total_correspondiente_otros: parseFloat(sum('total_correspondiente_otros').toFixed(2)),
                 total_correspondiente_sin_importar_fecha: parseFloat(sum('total_correspondiente_sin_importar_fecha').toFixed(2)),
 
-                total_salida_efectivo: parseFloat(sum('salida_efectivo').toFixed(2)),
-                total_salida_transferencia: parseFloat(sum('salida_transferencia').toFixed(2)),
+                total_salida: parseFloat(sum('salida').toFixed(2)),
 
                 total_socios: parseInt(sum('cantidad_socios')),
                 total_socios_pagaron_mes,

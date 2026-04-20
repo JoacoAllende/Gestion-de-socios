@@ -68,4 +68,8 @@ export class SummaryComponent implements OnInit {
     ];
     return meses[mes - 1] || '';
   }
+
+  tieneSalidas(detalle: any): boolean {
+    return detalle.salida && detalle.salida > 0;
+  }
 }

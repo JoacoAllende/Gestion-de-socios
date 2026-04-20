@@ -1,146 +1,138 @@
 @use '../../../styles/variables' as *;
 
 .container {
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    gap: $spacing * 2;
-    padding: $spacing * 2;
-    margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing * 2;
+  padding: $spacing * 2;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 :host ::ng-deep {
+  app-card {
+    width: 100%;
+    
+    .card {
+      width: 100%;
+      max-width: none !important;
+      box-sizing: border-box;
+    }
+  }
 
-    app-card {
-        display: flex;
+  .card-general {
+    border-top: 4px solid #2196F3;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  }
 
-        .card {
-            width: 100%;
-            height: 100%;
-        }
+  .card-ficha {
+    border-top: 4px solid #4CAF50;
+  }
+
+  .card-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing * 3;
+    width: 100%;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing;
+    min-width: 0;
+  }
+
+  .column-header {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing;
+    margin-bottom: $spacing;
+  }
+
+  .column-title {
+    margin: 0;
+    font-size: $font-size-base * 1.1;
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: $font-size-base * 1.5;
+    font-weight: bold;
+    flex-shrink: 0;
+
+    &.icon-general {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
     }
 
-    .card-general {
-        border-top: 4px solid #2196F3;
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    &.icon-ficha {
+      background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+  }
+
+  .column-item {
+    display: flex;
+    flex-direction: column;
+    gap: $half-spacing;
+
+    .label {
+      font-weight: 500;
+      color: #666;
+      font-size: $font-size-base * 0.85;
     }
 
-    .card-ficha {
-        border-top: 4px solid #4CAF50;
-    }
+    .value {
+      font-weight: 600;
+      color: $text-color;
+      font-size: $font-size-base;
 
-    .summary-info,
-    .ficha-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing * 2;
-        width: 100%;
-    }
+      &.highlight {
+        color: #2196F3;
+        font-size: $font-size-base * 1.2;
+      }
 
-    .summary-header {
-        text-align: center;
+      &.salida {
+        color: #f44336;
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  :host ::ng-deep {
+    .card-columns {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: $spacing;
+  }
+
+  :host ::ng-deep {
+    .card-columns {
+      grid-template-columns: 1fr;
     }
 
     .icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        font-size: $font-size-base * 1.8;
-        font-weight: bold;
-        margin-bottom: $spacing;
-
-        &.icon-general {
-            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        &.icon-ficha {
-            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-        }
+      width: 45px;
+      height: 45px;
+      font-size: $font-size-base * 1.3;
     }
 
-    .summary-totals,
-    .ficha-details {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: $spacing;
+    .column-title {
+      font-size: $font-size-base;
     }
-
-    .total-item,
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: $spacing;
-        background: #f8f9fa;
-        border-radius: 8px;
-        transition: background 0.2s ease;
-
-        &:hover {
-            background: #e9ecef;
-        }
-
-        .label {
-            font-weight: 500;
-            color: #666;
-            font-size: $font-size-base * 0.95;
-            margin-right: 0.5rem;
-        }
-
-        .value {
-            font-weight: 600;
-            color: $text-color;
-            font-size: $font-size-base;
-
-            &.highlight {
-                color: #2196F3;
-                font-size: $font-size-base * 1.1;
-            }
-
-            &.salida {
-                color: #f44336;
-            }
-        }
-    }
-
-    .separator {
-        height: 1px;
-        background: #dee2e6;
-        margin: $half-spacing 0;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: $spacing;
-        gap: $spacing;
-    }
-
-    :host ::ng-deep {
-        .icon {
-            width: 50px;
-            height: 50px;
-            font-size: $font-size-base * 1.5;
-        }
-
-        .total-item,
-        .detail-row {
-            padding: $half-spacing;
-
-            .label,
-            .value {
-                font-size: $font-size-base * 0.85;
-            }
-
-            .value.highlight {
-                font-size: $font-size-base * 0.95;
-            }
-        }
-    }
+  }
 }
