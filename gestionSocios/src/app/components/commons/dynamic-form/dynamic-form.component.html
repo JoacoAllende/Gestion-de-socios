@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <h2>{{ formTitle }}</h2>
   <ng-container *ngFor="let row of groupByRow(fields); trackBy: trackByRow">
-    <div class="field-row">
+    <div class="field-row" *ngIf="hasVisibleFields(row)">
       <ng-container *ngFor="let field of row; trackBy: trackByField">
         <ng-container *ngIf="isVisible(field)">
           <ng-container [ngSwitch]="field.type">

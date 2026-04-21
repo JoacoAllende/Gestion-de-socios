@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TextFieldComponent } from './text-field/text-field.component';
@@ -42,13 +42,34 @@ export interface FormField {
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
 })
-export class DynamicFormComponent {
+export class DynamicFormComponent implements OnInit {
   @Input() formTitle: string = '';
   @Input() fields: FormField[] = [];
   @Input() form!: FormGroup;
 
   @Output() submitted = new EventEmitter<any>();
   @Output() cancelled = new EventEmitter<any>();
+
+  ngOnInit() {
+    this.fields.forEach(field => {
+      if (!field.dependsOn) return;
+
+      const parent = this.form.get(field.dependsOn.field);
+      const child = this.form.get(field.name);
+      if (!parent || !child) return;
+
+      const sync = () => {
+        if (parent.value === field.dependsOn!.value) {
+          child.enable({ emitEvent: false });
+        } else {
+          child.disable({ emitEvent: false });
+        }
+      };
+
+      sync();
+      parent.valueChanges.subscribe(sync);
+    });
+  }
 
   groupByRow(fields: FormField[]) {
     const groups: FormField[][] = [];
@@ -109,4 +130,7 @@ export class DynamicFormComponent {
     return field.name;
   }
 
+  hasVisibleFields(row: FormField[]): boolean {
+    return row.some(field => this.isVisible(field));
+  }
 }
