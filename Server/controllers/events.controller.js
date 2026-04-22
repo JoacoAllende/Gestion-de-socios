@@ -65,7 +65,7 @@ eventsController.getEventById = (req, res) => {
 eventsController.createEvent = (req, res) => {
   try {
     const { descripcion, fecha, observaciones } = req.body;
-    
+
     const sql = `
       INSERT INTO evento (descripcion, fecha, observaciones)
       VALUES (?, ?, ?)
@@ -105,7 +105,7 @@ eventsController.updateEvent = (req, res) => {
 eventsController.getMovementsByEvent = (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const sql = `
       SELECT 
         em.id,
@@ -149,7 +149,7 @@ eventsController.createMovement = (req, res) => {
       [id, concepto, monto, fecha, observaciones || null],
       (err, result) => {
         if (err) return res.status(500).json(err);
-        
+
         const movementId = result.insertId;
 
         if (detalle) {
@@ -159,8 +159,8 @@ eventsController.createMovement = (req, res) => {
           `;
 
           const isPagado = detalle.tipo === 'INGRESO' ? 1 : (detalle.pagado || 0);
-          const realFechaPago = (isPagado && detalle.fecha_pago && detalle.fecha_pago !== '') 
-            ? detalle.fecha_pago 
+          const realFechaPago = (isPagado && detalle.fecha_pago && detalle.fecha_pago !== '')
+            ? detalle.fecha_pago
             : null;
 
           mysqlConnection.query(
@@ -229,11 +229,16 @@ eventsController.updateMovement = (req, res) => {
 eventsController.deleteMovement = (req, res) => {
   try {
     const { movementId } = req.params;
-    const sql = "DELETE FROM evento_movimiento WHERE id = ?";
 
-    mysqlConnection.query(sql, [movementId], (err) => {
-      if (err) return res.status(500).json(err);
-      res.json({ status: "Movimiento eliminado" });
+    const sqlDeleteDetails = "DELETE FROM movimiento_detalle WHERE movimiento_id = ?";
+    mysqlConnection.query(sqlDeleteDetails, [movementId], (errDet) => {
+      if (errDet) return res.status(500).json(errDet);
+
+      const sqlDeleteMovement = "DELETE FROM evento_movimiento WHERE id = ?";
+      mysqlConnection.query(sqlDeleteMovement, [movementId], (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ status: "Movimiento eliminado" });
+      });
     });
   } catch (error) {
     res.status(500).json(error);
@@ -245,7 +250,7 @@ eventsController.deleteMovement = (req, res) => {
 eventsController.getDetailsByMovement = (req, res) => {
   try {
     const { movementId } = req.params;
-    
+
     const sql = `
       SELECT 
         md.id,
@@ -284,8 +289,8 @@ eventsController.createDetail = (req, res) => {
     `;
 
     const isPagado = tipo === 'INGRESO' ? 1 : (pagado || 0);
-    const realFechaPago = (isPagado && fecha_pago && fecha_pago !== '') 
-      ? fecha_pago 
+    const realFechaPago = (isPagado && fecha_pago && fecha_pago !== '')
+      ? fecha_pago
       : null;
 
     mysqlConnection.query(
@@ -322,7 +327,7 @@ eventsController.updateDetail = (req, res) => {
       mysqlConnection.query(sqlGet, [detailId], (errGet, rows) => {
         if (errGet) return res.status(500).json(errGet);
         isPagado = rows[0]?.pagado || 0;
-        
+
         proceedUpdate(isPagado);
       });
       return;

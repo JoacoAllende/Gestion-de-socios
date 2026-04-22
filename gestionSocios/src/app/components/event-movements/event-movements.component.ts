@@ -92,6 +92,18 @@ export class EventMovementsComponent {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       minWidth: 300
+    },
+    {
+      headerName: '',
+      field: 'acciones',
+      sortable: false,
+      filter: false,
+      cellRenderer: () => '<span style="cursor: pointer;">🗑️</span>',
+      cellClass: 'ag-cell-clickable',
+      maxWidth: 80,
+      onCellClicked: (event: CellClickedEvent) => {
+        this.confirmDeleteMovement(event.data);
+      }
     }
   ];
 
@@ -105,7 +117,6 @@ export class EventMovementsComponent {
   ngOnInit() {
     this.eventId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Obtener info del evento
     this.eventsService.getEventById(this.eventId).subscribe({
       next: (event) => {
         this.eventDescription = event.descripcion;
@@ -115,13 +126,35 @@ export class EventMovementsComponent {
       }
     });
 
-    // Obtener movimientos
+    this.loadMovements();
+  }
+
+  loadMovements() {
     this.eventsService.getMovementsByEvent(this.eventId).subscribe({
       next: (data) => {
         this.rowData = data;
       },
       error: (err) => {
         this.toast.show(err.error?.message, 'error');
+      }
+    });
+  }
+
+  confirmDeleteMovement(movement: any) {
+    const detalleCount = movement.cantidad_detalles || 0;
+    const mensaje = detalleCount > 0
+      ? `¿Eliminar el movimiento "${movement.concepto}"? Esto también eliminará ${detalleCount} detalle(s) asociado(s).`
+      : `¿Eliminar el movimiento "${movement.concepto}"?`;
+
+    if (!confirm(mensaje)) return;
+
+    this.eventsService.deleteMovement(movement.id).subscribe({
+      next: (res) => {
+        this.toast.show(res.status, 'success');
+        this.loadMovements();
+      },
+      error: (err) => {
+        this.toast.show(err.error?.sqlMessage || err.error?.message, 'error');
       }
     });
   }

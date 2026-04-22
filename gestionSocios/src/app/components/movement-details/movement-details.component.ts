@@ -34,8 +34,8 @@ export class MovementDetailsComponent {
       filter: 'agSetColumnFilter',
       floatingFilter: true,
       cellStyle: (params): any => {
-        return params.value === 'INGRESO' 
-          ? { color: 'green', fontWeight: 'bold' } 
+        return params.value === 'INGRESO'
+          ? { color: 'green', fontWeight: 'bold' }
           : { color: 'red', fontWeight: 'bold' };
       },
       minWidth: 120
@@ -77,8 +77,8 @@ export class MovementDetailsComponent {
       floatingFilter: true,
       valueFormatter: (params) => params.value ? 'Sí' : 'No',
       cellStyle: (params): any => {
-        return params.value 
-          ? { color: 'green', fontWeight: 'normal' } 
+        return params.value
+          ? { color: 'green', fontWeight: 'normal' }
           : { color: 'orange', fontWeight: 'bold' };
       },
       minWidth: 100
@@ -98,6 +98,18 @@ export class MovementDetailsComponent {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       minWidth: 120
+    },
+    {
+      headerName: '',
+      field: 'acciones',
+      sortable: false,
+      filter: false,
+      cellRenderer: () => '<span style="cursor: pointer;">🗑️</span>',
+      cellClass: 'ag-cell-clickable',
+      maxWidth: 80,
+      onCellClicked: (event: CellClickedEvent) => {
+        this.confirmDeleteDetail(event.data);
+      }
     }
   ];
 
@@ -119,11 +131,27 @@ export class MovementDetailsComponent {
         this.rowData = data;
         if (data.length > 0) {
           this.movementConcept = data[0].concepto;
-           this.eventId = data[0].evento_id;
+          this.eventId = data[0].evento_id;
         }
       },
       error: (err) => {
         this.toast.show(err.error?.message, 'error');
+      }
+    });
+  }
+
+  confirmDeleteDetail(detail: any) {
+    const mensaje = `¿Eliminar el detalle "${detail.concepto}" por $${detail.monto?.toLocaleString('es-AR')}? Esto recalculará el monto total del movimiento.`;
+
+    if (!confirm(mensaje)) return;
+
+    this.eventsService.deleteDetail(detail.id).subscribe({
+      next: (res) => {
+        this.toast.show(res.status, 'success');
+        this.loadDetails();
+      },
+      error: (err) => {
+        this.toast.show(err.error?.sqlMessage || err.error?.message, 'error');
       }
     });
   }
