@@ -1,7 +1,5 @@
 const membershipValidator = {};
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET;
-if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
+const { verifyTokenAndExecute } = require('../middleware/auth');
 const membershipController = require('../controllers/membership.controller');
 
 membershipValidator.validate_getMemberships = (req, res) => {
@@ -47,14 +45,5 @@ membershipValidator.validate_updateMembership = (req, res) => {
 membershipValidator.validate_getMembershipStateByDni = (req, res) => {
     membershipController.getMembershipStateByDni(req, res);
 };
-
-function verifyTokenAndExecute(req, res, nextFn) {
-    jwt.verify(req.token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            return res.sendStatus(403);
-        }
-        nextFn(req, res);
-    });
-}
 
 module.exports = membershipValidator;

@@ -1,7 +1,5 @@
 const configurationValidator = {};
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET;
-if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
+const { verifyTokenAndExecute } = require('../middleware/auth');
 const configurationController = require('../controllers/configuration.controller');
 
 configurationValidator.validate_getActivityValues = (req, res) => {
@@ -26,15 +24,6 @@ configurationValidator.validate_getBaseMemberValue = (req, res) => {
 
 configurationValidator.validate_updateBaseMemberValue = (req, res) => {
     verifyTokenAndExecute(req, res, configurationController.updateBaseMemberValue);
-}
-
-function verifyTokenAndExecute(req, res, nextFn) {
-    jwt.verify(req.token, SECRET_KEY, (err, decoded) => {
-        if (err) {
-            return res.sendStatus(403);
-        }
-        nextFn(req, res);
-    });
 }
 
 module.exports = configurationValidator;

@@ -1,22 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { ensureToken } = require('../middleware/auth');
 
 const payments = require("../validations/payments.validation");
 
 router.put('/payments/recalculate', ensureToken, payments.validate_recalculatePayments);
 router.post('/payments/initialize-year/:anio', ensureToken, payments.validate_initializeYear);
 router.put('/payments/:anio', ensureToken, payments.validate_updatePayments);
-
-function ensureToken(req, res, next) {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.sendStatus(403);
-    }
-}
 
 module.exports = router;

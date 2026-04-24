@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { ensureToken } = require('../middleware/auth');
 
 const events = require("../validations/events.validation");
 
@@ -17,17 +18,5 @@ router.get('/movements/:movementId/details', ensureToken, events.validate_getDet
 router.post('/movements/:movementId/details', ensureToken, events.validate_createDetail);
 router.put('/details/:detailId', ensureToken, events.validate_updateDetail);
 router.delete('/details/:detailId', ensureToken, events.validate_deleteDetail);
-
-function ensureToken(req, res, next) {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.sendStatus(403);
-    }
-}
 
 module.exports = router;

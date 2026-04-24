@@ -1,7 +1,5 @@
 const eventsValidator = {};
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET;
-if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
+const { verifyTokenAndExecute } = require('../middleware/auth');
 const eventsController = require('../controllers/events.controller');
 
 eventsValidator.validate_getEvents = (req, res) => {
@@ -50,15 +48,6 @@ eventsValidator.validate_updateDetail = (req, res) => {
 
 eventsValidator.validate_deleteDetail = (req, res) => {
     verifyTokenAndExecute(req, res, eventsController.deleteDetail);
-}
-
-function verifyTokenAndExecute(req, res, nextFn) {
-    jwt.verify(req.token, SECRET_KEY, (err) => {
-        if (err) {
-            return res.sendStatus(403);
-        }
-        nextFn(req, res);
-    });
 }
 
 module.exports = eventsValidator;

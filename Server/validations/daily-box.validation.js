@@ -1,7 +1,5 @@
 const dailyBoxValidator = {};
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET;
-if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
+const { verifyTokenAndExecute } = require('../middleware/auth');
 const dailyBoxController = require('../controllers/daily-box.controller');
 
 dailyBoxValidator.validate_getDailyBox = (req, res) => {
@@ -18,15 +16,6 @@ dailyBoxValidator.validate_addMovement = (req, res) => {
 
 dailyBoxValidator.validate_updateMovement = (req, res) => {
     verifyTokenAndExecute(req, res, dailyBoxController.updateMovement);
-}
-
-function verifyTokenAndExecute(req, res, nextFn) {
-    jwt.verify(req.token, SECRET_KEY, (err) => {
-        if (err) {
-            return res.sendStatus(403);
-        }
-        nextFn(req, res);
-    });
 }
 
 module.exports = dailyBoxValidator;

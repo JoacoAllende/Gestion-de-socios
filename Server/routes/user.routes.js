@@ -1,6 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
+const { ensureToken } = require('../middleware/auth');
 const user = require('../validations/user.validation');
 
 const loginLimiter = rateLimit({
@@ -14,17 +15,5 @@ const loginLimiter = rateLimit({
 
 router.post('/register', ensureToken, user.validate_registerUser);
 router.post('/login', loginLimiter, user.validate_loginUser)
-
-function ensureToken(req, res, next) {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.sendStatus(403);
-    }
-}
 
 module.exports = router;

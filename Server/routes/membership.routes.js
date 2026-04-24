@@ -1,6 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
+const { ensureToken } = require('../middleware/auth');
 
 const membership = require("../validations/membership.validation");
 
@@ -23,17 +24,5 @@ router.get('/membership-state/:dni', publicLimiter, membership.validate_getMembe
 router.get('/membership/:nro_socio', ensureToken, membership.validate_getMembership);
 router.post('/membership/:anio', ensureToken, membership.validate_createMembership);
 router.put('/membership/:nro_socio/:anio', ensureToken, membership.validate_updateMembership);
-
-function ensureToken(req, res, next) {
-    const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        req.token = bearerToken;
-        next();
-    } else {
-        res.sendStatus(403);
-    }
-}
 
 module.exports = router;
