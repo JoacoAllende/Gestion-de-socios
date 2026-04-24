@@ -13,15 +13,15 @@ membershipValidator.validate_getDischargedMemberships = (req, res) => {
 };
 
 membershipValidator.validate_getFutbolCategories = (req, res) => {
-    membershipController.getFutbolCategories(req, res);
+    verifyTokenAndExecute(req, res, membershipController.getFutbolCategories);
 };
 
 membershipValidator.validate_getBasquetCategories = (req, res) => {
-    membershipController.getBasquetCategories(req, res);
+    verifyTokenAndExecute(req, res, membershipController.getBasquetCategories);
 };
 
 membershipValidator.validate_getPaletaCategories = (req, res) => {
-    membershipController.getPaletaCategories(req, res);
+    verifyTokenAndExecute(req, res, membershipController.getPaletaCategories);
 };
 
 membershipValidator.validate_getActiveMemberships = (req, res) => {
@@ -29,7 +29,7 @@ membershipValidator.validate_getActiveMemberships = (req, res) => {
 }
 
 membershipValidator.validate_getMembershipCard = (req, res) => {
-    membershipController.getMembershipCard(req, res);
+    verifyTokenAndExecute(req, res, membershipController.getMembershipCard);
 };
 
 membershipValidator.validate_getMembership = (req, res) => {

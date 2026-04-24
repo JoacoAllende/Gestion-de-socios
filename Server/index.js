@@ -11,6 +11,7 @@ require('./database');
 // Settings
 
 app.set('port', process.env.PORT || 3000);
+app.set('trust proxy', 1);
 
 // Middlewares
 
