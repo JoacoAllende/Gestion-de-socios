@@ -1,16 +1,20 @@
+import os
 import pandas as pd
 import mysql.connector
 import math
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), "Server", ".env"))
 
 # Leer Excel
 file_path = r"C:\Users\joaco\Downloads\Socios 2025.xlsx"
 
 # Conectar a MySQL
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="REMOVED",
-    database="gestion_socios"
+    host=os.environ["DB_HOST"],
+    user=os.environ["DB_USER"],
+    password=os.environ["DB_PASSWORD"],
+    database=os.environ["DB_NAME"]
 )
 cursor = conn.cursor()
 
