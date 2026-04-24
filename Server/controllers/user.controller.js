@@ -1,6 +1,7 @@
 const userCtrl = {};
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET || 'REMOVED';
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
 const bcrypt = require('bcryptjs');
 
 const mysqlConnection = require('../database');

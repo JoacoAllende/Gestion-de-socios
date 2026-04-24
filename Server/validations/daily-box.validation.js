@@ -1,6 +1,7 @@
 const dailyBoxValidator = {};
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET || 'REMOVED';
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
 const dailyBoxController = require('../controllers/daily-box.controller');
 
 dailyBoxValidator.validate_getDailyBox = (req, res) => {

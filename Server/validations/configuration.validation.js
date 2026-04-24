@@ -1,6 +1,7 @@
 const configurationValidator = {};
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET || 'REMOVED';
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) throw new Error('JWT_SECRET no configurado');
 const configurationController = require('../controllers/configuration.controller');
 
 configurationValidator.validate_getActivityValues = (req, res) => {
