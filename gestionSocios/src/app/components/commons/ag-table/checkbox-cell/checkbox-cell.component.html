@@ -1,6 +1,13 @@
-<div>
+<div class="cell">
   <span *ngIf="params.value === null || params.value === undefined">❌</span>
-  <span *ngIf="params.value > 0">{{ params.value }}</span>
+  <span *ngIf="params.value > 0 && !allowUnmark">{{ params.value }}</span>
+
+  <ng-container *ngIf="params.value > 0 && allowUnmark">
+    <span [class.unmarked]="isSelected('no')">{{ params.value }}</span>
+    <input type="checkbox" title="Desmarcar pago"
+           [checked]="!isSelected('no')"
+           (change)="toggleUnmark($event)" />
+  </ng-container>
   <span *ngIf="params.value < 0">0</span>
 
   <ng-container *ngIf="params.value === 0 && mode === 'dual'">

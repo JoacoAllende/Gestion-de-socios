@@ -74,7 +74,8 @@ employeeController.getEmployeeById = (req, res) => {
 employeeController.createEmployee = (req, res) => {
   try {
     const { anio } = req.params;
-    const { nombre, monto, detalles, mes_alta } = req.body;
+    const { nombre, monto, detalles } = req.body;
+    const mes_alta = Number(req.body.mes_alta);
 
     if (!nombre || monto == null || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
@@ -121,7 +122,8 @@ employeeController.createEmployee = (req, res) => {
 employeeController.updateEmployee = (req, res) => {
   try {
     const { id, anio } = req.params;
-    const { nombre, monto, detalles, mes_alta, baja, alta } = req.body;
+    const { nombre, monto, detalles, baja, alta } = req.body;
+    const mes_alta = Number(req.body.mes_alta);
 
     if (!id || !nombre || monto == null || !mes_alta) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
@@ -176,9 +178,11 @@ employeeController.updateEmployee = (req, res) => {
           };
 
           if (sueldoValues.length > 0) {
+            // Los meses que ya existen (pagados antes de la baja) se mantienen
             const insertSueldosQuery = `
               INSERT INTO sueldo (empleado_id, anio, mes, monto_mes, pagado)
               VALUES ?
+              ON DUPLICATE KEY UPDATE id = id
             `;
             mysqlConnection.query(insertSueldosQuery, [sueldoValues], (err2) => {
               if (err2) return res.status(500).json(err2);
@@ -226,16 +230,16 @@ employeeController.updatePayments = (req, res) => {
       const { employeeId, meses } = emp;
       if (!employeeId || !meses) return;
 
-      Object.keys(meses).forEach(mesName => {
+      Object.entries(meses).forEach(([mesName, pagado]) => {
         const mesNum = mesesMap[mesName.toLowerCase()];
-        if (mesNum) {
+        if (mesNum && typeof pagado === 'boolean') {
           queries.push(new Promise((resolve, reject) => {
             const query = `
               UPDATE sueldo
-              SET pagado = TRUE
+              SET pagado = ?
               WHERE empleado_id = ? AND anio = ? AND mes = ?
             `;
-            mysqlConnection.query(query, [employeeId, anio, mesNum], (err) => {
+            mysqlConnection.query(query, [pagado, employeeId, anio, mesNum], (err) => {
               if (err) reject(err);
               else resolve();
             });
@@ -245,7 +249,7 @@ employeeController.updatePayments = (req, res) => {
     });
 
     Promise.all(queries)
-      .then(() => res.json({ status: 'Sueldos cargados' }))
+      .then(() => res.json({ status: 'Sueldos actualizados' }))
       .catch(err => res.status(500).json(err));
 
   } catch (error) {

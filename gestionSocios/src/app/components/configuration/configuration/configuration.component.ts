@@ -93,4 +93,8 @@ export class ConfigurationComponent implements OnInit {
   goToInitializeYearEmployees() {
     this.router.navigate(['/configuraciones/inicializar-anio-empleados']);
   }
+
+  goToInitializeYearSponsors() {
+    this.router.navigate(['/configuraciones/inicializar-anio-publicidades']);
+  }
 }

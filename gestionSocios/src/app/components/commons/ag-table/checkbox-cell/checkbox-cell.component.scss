@@ -1,0 +1,19 @@
+@use '../../../../../styles/variables' as *;
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+
+  input[type="checkbox"] {
+    margin: 0;
+    accent-color: $primary-color;
+    cursor: pointer;
+  }
+}
+
+.unmarked {
+  text-decoration: line-through;
+  color: $primary-color;
+}

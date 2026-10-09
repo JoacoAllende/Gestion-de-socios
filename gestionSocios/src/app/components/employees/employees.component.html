@@ -5,6 +5,8 @@
   </app-button>
   <app-button [text]="'Nuevo empleado'" [onClick]="createEmployee">
   </app-button>
+  <app-button [text]="'Exportar CSV'" [onClick]="exportCsv">
+  </app-button>
 </div>
 <app-ag-table [rowData]="rowData" [colDefs]="colDefs" [defaultColDef]="defaultColDef" [gridStyle]="gridStyle"
   [pinnedBottomRowData]="pinnedBottomRowData" (gridReadyEvent)="onGridReady($event)">

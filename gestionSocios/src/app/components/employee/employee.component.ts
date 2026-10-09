@@ -35,6 +35,8 @@ export class EmployeeComponent {
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
     this.employeeId = idParam ? Number(idParam) : null;
+    const anioParam = this.route.snapshot.paramMap.get('anio');
+    this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
     this.isAlta = this.router.url.startsWith('/empleado-alta');
     if (!this.isAlta && this.employeeId) {
       this.fields.push({ name: 'baja', label: 'Dar de baja', type: 'checkbox' });

@@ -26,6 +26,9 @@ import { InitializeYearComponent } from './components/configuration/initialize-y
 import { RecalculatePaymentsComponent } from './components/configuration/recalculate-payments/recalculate-payments.component';
 import { InitializeYearEmployeesComponent } from './components/configuration/initialize-year-employees/initialize-year-employees.component';
 import { ReceiptComponent } from './components/receipt/receipt.component';
+import { SponsorsComponent } from './components/sponsors/sponsors.component';
+import { SponsorComponent } from './components/sponsor/sponsor.component';
+import { InitializeYearSponsorsComponent } from './components/configuration/initialize-year-sponsors/initialize-year-sponsors.component';
 
 const currentYear = new Date().getFullYear();
 
@@ -36,6 +39,7 @@ export const routes: Routes = [
     { path: 'configuraciones/descuentos', component: DiscountsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/inicializar-anio', component: InitializeYearComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/inicializar-anio-empleados', component: InitializeYearEmployeesComponent, canActivate: [AuthGuard] },
+    { path: 'configuraciones/inicializar-anio-publicidades', component: InitializeYearSponsorsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/recalcular-pagos', component: RecalculatePaymentsComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valores-actividad', component: ActivityValuesComponent, canActivate: [AuthGuard] },
     { path: 'configuraciones/valor-socio-base', component: BaseMemberValueComponent, canActivate: [AuthGuard] },
@@ -56,6 +60,10 @@ export const routes: Routes = [
     { path: 'movimiento/:movementId/detalle/:detailId', component: MovementDetailComponent, canActivate: [AuthGuard] },
     { path: 'movimiento/:movementId/detalles', component: MovementDetailsComponent, canActivate: [AuthGuard] },
     { path: 'pagos/:anio', component: MembershipPaymentsComponent, canActivate: [AuthGuard] },
+    { path: 'publicidad/:tipo/:anio', component: SponsorComponent, canActivate: [AuthGuard] },
+    { path: 'publicidad/:tipo/:anio/:id', component: SponsorComponent, canActivate: [AuthGuard] },
+    { path: 'publicidad-alta/:tipo/:anio/:id', component: SponsorComponent, canActivate: [AuthGuard] },
+    { path: 'publicidades/:tipo/:anio', component: SponsorsComponent, canActivate: [AuthGuard] },
     { path: 'recibo', component: ReceiptComponent, canActivate: [AuthGuard] },
     { path: 'resumenes', component: SummaryComponent, canActivate: [AuthGuard] },
     { path: 'resumenes/:mes/:anio', component: SummaryComponent, canActivate: [AuthGuard] },

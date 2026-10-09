@@ -79,6 +79,7 @@ export class EmployeesComponent {
     private route: ActivatedRoute
   ) {
     this.procesarPagos = this.procesarPagos.bind(this);
+    this.exportCsv = this.exportCsv.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -86,7 +87,7 @@ export class EmployeesComponent {
       sortable: true,
       filter: 'agNumberColumnFilter',
       floatingFilter: true,
-      cellRendererParams: { mode: 'single' },
+      cellRendererParams: { mode: 'single', allowUnmark: true },
       cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
         if (params.node?.rowPinned) {
           return {
@@ -160,7 +161,7 @@ export class EmployeesComponent {
   }
 
   exportCsv() {
-    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true });
+    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true, fileName: `sueldos-${this.anio}.csv` });
   }
 
   public haySeleccion(): boolean {

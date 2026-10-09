@@ -31,6 +31,7 @@ app.use(require('./routes/employees.routes'));
 app.use(require('./routes/events.routes'));
 app.use(require('./routes/membership.routes'));
 app.use(require('./routes/payments.routes'));
+app.use(require('./routes/sponsors.routes'));
 app.use(require('./routes/statistics.routes'));
 app.use(require('./routes/user.routes'));
 

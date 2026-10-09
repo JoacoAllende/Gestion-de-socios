@@ -65,6 +65,25 @@ export class DynamicMenuComponent {
         }
       },
       {
+        label: 'Publicidades',
+        children: [
+          {
+            label: 'Camisetas',
+            action: () => {
+              const anio = new Date().getFullYear();
+              this.router.navigate(['/publicidades', 'camisetas', anio]);
+            },
+          },
+          {
+            label: 'Colectivo',
+            action: () => {
+              const anio = new Date().getFullYear();
+              this.router.navigate(['/publicidades', 'colectivo', anio]);
+            },
+          }
+        ],
+      },
+      {
         label: 'Estadísticas',
         children: [
           {

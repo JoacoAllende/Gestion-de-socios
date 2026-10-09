@@ -1,0 +1,196 @@
+import { Component } from '@angular/core';
+import { CellClickedEvent, CellRendererSelectorResult, ColDef, ColGroupDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { SponsorsService, SponsorType } from '../../services/sponsors.service';
+import { ToastService } from '../../services/toast.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AgTableComponent } from '../commons/ag-table/ag-table.component';
+import { ButtonComponent } from '../commons/button/button.component';
+import { MonthSelectorComponent } from '../commons/month-selector/month-selector.component';
+import { CheckboxCellComponent } from '../commons/ag-table/checkbox-cell/checkbox-cell.component';
+
+@Component({
+  selector: 'app-sponsors',
+  imports: [AgTableComponent, ButtonComponent, MonthSelectorComponent],
+  templateUrl: './sponsors.component.html',
+  styleUrl: './sponsors.component.scss'
+})
+export class SponsorsComponent {
+  public gridApi!: GridApi;
+  anio: number = new Date().getFullYear();
+  tipo: SponsorType = 'camisetas';
+
+  rowData: any[] = [];
+  pinnedBottomRowData: any[] = [];
+  gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 2rem - 70px)'
+  };
+
+  meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+  defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
+
+  colDefs: (ColDef | ColGroupDef)[] = [
+    {
+      headerName: 'Empresa',
+      children: [
+        {
+          field: 'nombre',
+          headerName: 'Nombre',
+          pinned: 'left',
+          sortable: true,
+          filter: 'agTextColumnFilter',
+          floatingFilter: true,
+          cellClass: 'ag-cell-clickable',
+          onCellClicked: (event: CellClickedEvent) => {
+            const baseRoute = event.data.activo ? 'publicidad' : 'publicidad-alta';
+            this.router.navigate([`/${baseRoute}/${this.tipo}/${this.anio}/${event.data.id}`]);
+          }
+        },
+        {
+          field: 'monto',
+          headerName: 'Monto',
+          pinned: 'left',
+          sortable: true,
+          width: 120,
+          tooltipValueGetter: (params) => {
+            return params.data.detalles
+          },
+          cellClass: (params) => params.data?.detalles ? 'has-tooltip' : '',
+          cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
+            if (params.node?.rowPinned) {
+              return {
+                component: (p: any) => `$ ${p.value?.toLocaleString('es-AR') || 0}`,
+              };
+            }
+            return params.value;
+          },
+        },
+      ]
+    },
+    { headerName: 'Cobros', children: [] }
+  ];
+
+
+  constructor(
+    private sponsorsService: SponsorsService,
+    private toast: ToastService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.procesarCobros = this.procesarCobros.bind(this);
+    this.exportCsv = this.exportCsv.bind(this);
+    const cobrosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Cobros') as ColGroupDef;
+    cobrosGroup.children = this.meses.map<ColDef>(mes => ({
+      field: mes,
+      headerName: mes.charAt(0).toUpperCase() + mes.slice(1),
+      sortable: true,
+      filter: 'agNumberColumnFilter',
+      floatingFilter: true,
+      cellRendererParams: { mode: 'single', allowUnmark: true },
+      cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
+        if (params.node?.rowPinned) {
+          return {
+            component: (p: any) => `$ ${p.value?.toLocaleString('es-AR') || 0}`,
+          };
+        }
+        return { component: CheckboxCellComponent };
+      },
+      valueFormatter: (p) => (typeof p.value === 'number' ? p.value : p.value ?? '')
+    }));
+  }
+
+
+  ngOnInit() {
+    // Camisetas y Colectivo usan este mismo componente: escuchar cambios de ruta
+    this.route.paramMap.subscribe(params => {
+      const anioParam = params.get('anio');
+      this.anio = anioParam ? Number(anioParam) : new Date().getFullYear();
+      this.tipo = params.get('tipo') === 'colectivo' ? 'colectivo' : 'camisetas';
+      this.loadData();
+    });
+  }
+
+  get titulo(): string {
+    return this.tipo === 'colectivo' ? 'Colectivo' : 'Camisetas';
+  }
+
+  loadData() {
+    this.sponsorsService.getSponsors(this.tipo, this.anio).subscribe({
+      next: (data) => {
+        this.rowData = data.map(sponsor => {
+          sponsor._selectedMonths = {};
+          return sponsor;
+        });
+
+        setTimeout(() => {
+          this.updateVisibleTotals();
+        }, 100);
+      },
+      error: (err) => {
+        this.toast.show(err.error?.error || err.error?.message, 'error');
+      }
+    });
+  }
+
+  onYearChange = (event: { anio: number }) => {
+    this.router.navigate(['/publicidades', this.tipo, event.anio]);
+  }
+
+  onGridReady(event: GridReadyEvent) {
+    this.gridApi = event.api;
+    this.gridApi.addEventListener('firstDataRendered', () => this.updateVisibleTotals());
+    this.gridApi.addEventListener('filterChanged', () => this.updateVisibleTotals());
+    this.gridApi.addEventListener('sortChanged', () => this.updateVisibleTotals());
+  }
+
+  updateVisibleTotals() {
+    if (!this.gridApi) return;
+    const totals: any = {};
+    let rowCount = 0;
+    this.gridApi.forEachNodeAfterFilterAndSort(node => {
+      if (!node.data) return;
+      rowCount++;
+      Object.keys(node.data).forEach(key => {
+        if (['id', 'nombre'].includes(key)) return;
+        const v = node.data[key];
+        if (typeof v === 'number') totals[key] = (totals[key] || 0) + v;
+      });
+    });
+    totals['nombre'] = `Totales (${rowCount})`;
+    this.pinnedBottomRowData = [totals];
+  }
+
+  exportCsv() {
+    if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true, fileName: `publicidades-${this.tipo}-${this.anio}.csv` });
+  }
+
+  public haySeleccion(): boolean {
+    return this.rowData.some(row =>
+      Object.values(row._selectedMonths ?? {}).some(v => v === true || v === false)
+    );
+  }
+
+  public createSponsor = () => {
+    this.router.navigate(['/publicidad', this.tipo, this.anio]);
+  }
+
+  public procesarCobros() {
+    const seleccionados = this.rowData
+      .map(row => {
+        const meses = row._selectedMonths ?? {};
+        const mesesFiltrados = Object.fromEntries(
+          Object.entries(meses).filter(([_, value]) => value === true || value === false)
+        );
+        return { sponsorId: row.id, meses: mesesFiltrados };
+      })
+      .filter(r => Object.keys(r.meses).length > 0);
+    if (seleccionados.length === 0) return;
+
+    this.sponsorsService.updatePayments(this.anio, seleccionados).subscribe((res: any) => {
+      this.toast.show(res.status, 'success');
+      this.loadData();
+    });
+  }
+}

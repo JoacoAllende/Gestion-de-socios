@@ -6,29 +6,37 @@ import { ICellRendererParams } from 'ag-grid-community';
 interface CustomRendererParams extends ICellRendererParams {
   cellRendererParams?: {
     mode?: 'dual' | 'single';
+    allowUnmark?: boolean;
   };
   mode?: 'dual' | 'single';
+  allowUnmark?: boolean;
 }
 
 @Component({
   selector: 'app-checkbox-cell',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './checkbox-cell.component.html'
+  templateUrl: './checkbox-cell.component.html',
+  styleUrl: './checkbox-cell.component.scss'
 })
 export class CheckboxCellComponent implements ICellRendererAngularComp {
   public params!: CustomRendererParams;
   public mode: 'dual' | 'single' = 'dual';
+  public allowUnmark = false;
 
   agInit(params: CustomRendererParams): void {
-    this.params = params;
-    this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
+    this.setParams(params);
   }
 
   refresh(params: CustomRendererParams): boolean {
+    this.setParams(params);
+    return true;
+  }
+
+  private setParams(params: CustomRendererParams) {
     this.params = params;
     this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
-    return true;
+    this.allowUnmark = params.allowUnmark ?? params.cellRendererParams?.allowUnmark ?? false;
   }
 
   isSelected(option: 'yes' | 'no'): boolean {
@@ -68,6 +76,20 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
       row._selectedMonths[monthKey] = true;
     } else {
       delete row._selectedMonths[monthKey];
+    }
+  }
+
+  toggleUnmark(event: any) {
+    const row = this.params.data;
+    const monthKey = this.params.colDef?.field as string;
+    if (!monthKey) return;
+
+    if (!row._selectedMonths) row._selectedMonths = {};
+
+    if (event.target.checked) {
+      delete row._selectedMonths[monthKey];
+    } else {
+      row._selectedMonths[monthKey] = false;
     }
   }
 }
