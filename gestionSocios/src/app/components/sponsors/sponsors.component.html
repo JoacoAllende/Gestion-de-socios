@@ -6,6 +6,8 @@
   </app-button>
   <app-button [text]="'Nueva publicidad'" [onClick]="createSponsor">
   </app-button>
+  <app-button [text]="modoDesmarcar ? 'Ocultar desmarcar' : 'Desmarcar cobros'" [onClick]="toggleModoDesmarcar">
+  </app-button>
   <app-button [text]="'Exportar CSV'" [onClick]="exportCsv">
   </app-button>
 </div>

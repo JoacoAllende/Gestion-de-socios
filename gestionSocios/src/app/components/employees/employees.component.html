@@ -5,6 +5,8 @@
   </app-button>
   <app-button [text]="'Nuevo empleado'" [onClick]="createEmployee">
   </app-button>
+  <app-button [text]="modoDesmarcar ? 'Ocultar desmarcar' : 'Desmarcar pagos'" [onClick]="toggleModoDesmarcar">
+  </app-button>
   <app-button [text]="'Exportar CSV'" [onClick]="exportCsv">
   </app-button>
 </div>

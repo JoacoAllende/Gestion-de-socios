@@ -6,10 +6,10 @@ import { ICellRendererParams } from 'ag-grid-community';
 interface CustomRendererParams extends ICellRendererParams {
   cellRendererParams?: {
     mode?: 'dual' | 'single';
-    allowUnmark?: boolean;
+    allowUnmark?: boolean | (() => boolean);
   };
   mode?: 'dual' | 'single';
-  allowUnmark?: boolean;
+  allowUnmark?: boolean | (() => boolean);
 }
 
 @Component({
@@ -22,7 +22,11 @@ interface CustomRendererParams extends ICellRendererParams {
 export class CheckboxCellComponent implements ICellRendererAngularComp {
   public params!: CustomRendererParams;
   public mode: 'dual' | 'single' = 'dual';
-  public allowUnmark = false;
+  private unmarkSource: boolean | (() => boolean) = false;
+
+  get allowUnmark(): boolean {
+    return typeof this.unmarkSource === 'function' ? this.unmarkSource() : this.unmarkSource;
+  }
 
   agInit(params: CustomRendererParams): void {
     this.setParams(params);
@@ -36,7 +40,7 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
   private setParams(params: CustomRendererParams) {
     this.params = params;
     this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
-    this.allowUnmark = params.allowUnmark ?? params.cellRendererParams?.allowUnmark ?? false;
+    this.unmarkSource = params.allowUnmark ?? params.cellRendererParams?.allowUnmark ?? false;
   }
 
   isSelected(option: 'yes' | 'no'): boolean {

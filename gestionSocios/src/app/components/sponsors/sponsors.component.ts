@@ -29,6 +29,8 @@ export class SponsorsComponent {
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
+  modoDesmarcar = false;
+
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 
   colDefs: (ColDef | ColGroupDef)[] = [
@@ -81,6 +83,7 @@ export class SponsorsComponent {
   ) {
     this.procesarCobros = this.procesarCobros.bind(this);
     this.exportCsv = this.exportCsv.bind(this);
+    this.toggleModoDesmarcar = this.toggleModoDesmarcar.bind(this);
     const cobrosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Cobros') as ColGroupDef;
     cobrosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -88,7 +91,7 @@ export class SponsorsComponent {
       sortable: true,
       filter: 'agNumberColumnFilter',
       floatingFilter: true,
-      cellRendererParams: { mode: 'single', allowUnmark: true },
+      cellRendererParams: { mode: 'single', allowUnmark: () => this.modoDesmarcar },
       cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
         if (params.node?.rowPinned) {
           return {
@@ -164,6 +167,18 @@ export class SponsorsComponent {
 
   exportCsv() {
     if (this.gridApi) this.gridApi.exportDataAsCsv({ allColumns: true, fileName: `publicidades-${this.tipo}-${this.anio}.csv` });
+  }
+
+  toggleModoDesmarcar() {
+    this.modoDesmarcar = !this.modoDesmarcar;
+    if (!this.modoDesmarcar) {
+      this.rowData.forEach(row => {
+        Object.keys(row._selectedMonths ?? {}).forEach(mes => {
+          if (row._selectedMonths[mes] === false) delete row._selectedMonths[mes];
+        });
+      });
+    }
+    this.gridApi?.refreshCells({ force: true });
   }
 
   public haySeleccion(): boolean {
