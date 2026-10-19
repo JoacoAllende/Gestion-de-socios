@@ -18,4 +18,8 @@ dailyBoxValidator.validate_updateMovement = (req, res) => {
     verifyTokenAndExecute(req, res, dailyBoxController.updateMovement);
 }
 
+dailyBoxValidator.validate_deleteMovement = (req, res) => {
+    verifyTokenAndExecute(req, res, dailyBoxController.deleteMovement);
+}
+
 module.exports = dailyBoxValidator;

@@ -31,6 +31,8 @@ export class MembershipPaymentsComponent implements OnInit {
   meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 
+  modoDesmarcar = false;
+
   defaultColDef: ColDef = { flex: 1, minWidth: 100, resizable: true };
 
   colDefs: (ColDef | ColGroupDef)[] = [
@@ -87,6 +89,7 @@ export class MembershipPaymentsComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.procesarPagos = this.procesarPagos.bind(this);
+    this.toggleModoDesmarcar = this.toggleModoDesmarcar.bind(this);
     const pagosGroup = this.colDefs.find(c => (c as ColGroupDef).headerName === 'Pagos') as ColGroupDef;
     pagosGroup.children = this.meses.map<ColDef>(mes => ({
       field: mes,
@@ -94,6 +97,7 @@ export class MembershipPaymentsComponent implements OnInit {
       sortable: true,
       filter: 'agNumberColumnFilter',
       floatingFilter: true,
+      cellRendererParams: { mode: 'dual', allowUnmark: () => this.modoDesmarcar, unmarkValue: 'desmarcar' },
       cellRendererSelector: (params): CellRendererSelectorResult | undefined => {
         if (params.node?.rowPinned) {
           return {
@@ -170,9 +174,21 @@ export class MembershipPaymentsComponent implements OnInit {
     exportGridToCsv(this.gridApi);
   }
 
+  toggleModoDesmarcar() {
+    this.modoDesmarcar = !this.modoDesmarcar;
+    if (!this.modoDesmarcar) {
+      this.rowData.forEach(row => {
+        Object.keys(row._selectedMonths ?? {}).forEach(mes => {
+          if (row._selectedMonths[mes] === 'desmarcar') delete row._selectedMonths[mes];
+        });
+      });
+    }
+    this.gridApi?.refreshCells({ force: true });
+  }
+
   public haySeleccion(): boolean {
     return this.rowData.some(row =>
-      Object.values(row._selectedMonths ?? {}).some(v => v === true || v === false)
+      Object.values(row._selectedMonths ?? {}).some(v => v === true || v === false || v === 'desmarcar')
     );
   }
 
@@ -181,7 +197,7 @@ export class MembershipPaymentsComponent implements OnInit {
       .map(row => {
         const meses = row._selectedMonths ?? {};
         const mesesFiltrados = Object.fromEntries(
-          Object.entries(meses).filter(([_, value]) => value === true || value === false)
+          Object.entries(meses).filter(([_, value]) => value === true || value === false || value === 'desmarcar')
         );
         return { socioId: row.nro_socio, meses: mesesFiltrados };
       })

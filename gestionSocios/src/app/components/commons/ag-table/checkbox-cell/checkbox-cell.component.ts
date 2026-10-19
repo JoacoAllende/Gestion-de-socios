@@ -7,9 +7,11 @@ interface CustomRendererParams extends ICellRendererParams {
   cellRendererParams?: {
     mode?: 'dual' | 'single';
     allowUnmark?: boolean | (() => boolean);
+    unmarkValue?: boolean | string;
   };
   mode?: 'dual' | 'single';
   allowUnmark?: boolean | (() => boolean);
+  unmarkValue?: boolean | string;
 }
 
 @Component({
@@ -23,6 +25,8 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
   public params!: CustomRendererParams;
   public mode: 'dual' | 'single' = 'dual';
   private unmarkSource: boolean | (() => boolean) = false;
+  // Valor que marca un pago a desmarcar. En modo dual false ya significa "transferencia".
+  private unmarkValue: boolean | string = false;
 
   get allowUnmark(): boolean {
     return typeof this.unmarkSource === 'function' ? this.unmarkSource() : this.unmarkSource;
@@ -41,6 +45,13 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
     this.params = params;
     this.mode = params.mode || params.cellRendererParams?.mode || 'dual';
     this.unmarkSource = params.allowUnmark ?? params.cellRendererParams?.allowUnmark ?? false;
+    this.unmarkValue = params.unmarkValue ?? params.cellRendererParams?.unmarkValue ?? false;
+  }
+
+  isUnmarked(): boolean {
+    const monthKey = this.params.colDef?.field as string;
+    if (!monthKey) return false;
+    return (this.params.data._selectedMonths ?? {})[monthKey] === this.unmarkValue;
   }
 
   isSelected(option: 'yes' | 'no'): boolean {
@@ -93,7 +104,7 @@ export class CheckboxCellComponent implements ICellRendererAngularComp {
     if (event.target.checked) {
       delete row._selectedMonths[monthKey];
     } else {
-      row._selectedMonths[monthKey] = false;
+      row._selectedMonths[monthKey] = this.unmarkValue;
     }
   }
 }

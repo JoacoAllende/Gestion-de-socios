@@ -79,6 +79,18 @@ export class DailyBoxComponent {
       headerName: 'Saldo',
       valueFormatter: (params) => `$ ${params.value?.toLocaleString('es-AR') || 0}`
     },
+    {
+      headerName: '',
+      field: 'acciones',
+      sortable: false,
+      filter: false,
+      cellRenderer: () => '<span style="cursor: pointer;">🗑️</span>',
+      cellClass: 'ag-cell-clickable',
+      maxWidth: 80,
+      onCellClicked: (event: CellClickedEvent) => {
+        this.confirmDeleteMovement(event.data);
+      }
+    },
   ];
 
   constructor(
@@ -113,6 +125,20 @@ export class DailyBoxComponent {
     this.anio = event.anio;
     this.router.navigate(['/caja', this.anio]);
     this.loadData();
+  }
+
+  confirmDeleteMovement(movement: any) {
+    if (!confirm(`¿Eliminar el movimiento "${movement.concepto}"? Se recalculará el saldo de los movimientos posteriores.`)) return;
+
+    this.dailyBoxService.deleteMovement(movement.id).subscribe({
+      next: (res) => {
+        this.toast.show(res.status, 'success');
+        this.loadData();
+      },
+      error: (err) => {
+        this.toast.show(err.error?.sqlMessage || err.error?.message, 'error');
+      }
+    });
   }
 
   public createMovement = () => {

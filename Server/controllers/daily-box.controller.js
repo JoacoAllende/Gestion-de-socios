@@ -151,4 +151,41 @@ dailyBoxController.updateMovement = (req, res) => {
   }
 };
 
+dailyBoxController.deleteMovement = (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const getSql = "SELECT * FROM caja_diaria WHERE id = ?";
+
+    mysqlConnection.query(getSql, [id], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      if (rows.length === 0) return res.status(404).json({ message: "Movimiento no encontrado" });
+
+      const old = rows[0];
+
+      let impacto = 0;
+      if (old.medio_pago === "EFECTIVO") {
+        impacto = old.tipo === "INGRESO" ? +old.monto : -old.monto;
+      }
+
+      mysqlConnection.query("DELETE FROM caja_diaria WHERE id = ?", [id], (err) => {
+        if (err) return res.status(500).json(err);
+
+        const adjustSql = `
+          UPDATE caja_diaria
+          SET saldo = saldo - ?
+          WHERE id > ?
+        `;
+
+        mysqlConnection.query(adjustSql, [impacto, id], (err2) => {
+          if (err2) return res.status(500).json(err2);
+          res.json({ status: "Movimiento eliminado" });
+        });
+      });
+    });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 module.exports = dailyBoxController;

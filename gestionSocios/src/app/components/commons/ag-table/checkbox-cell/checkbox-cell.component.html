@@ -3,9 +3,9 @@
   <span *ngIf="params.value > 0 && !allowUnmark">{{ params.value }}</span>
 
   <ng-container *ngIf="params.value > 0 && allowUnmark">
-    <span [class.unmarked]="isSelected('no')">{{ params.value }}</span>
+    <span [class.unmarked]="isUnmarked()">{{ params.value }}</span>
     <input type="checkbox" title="Desmarcar pago"
-           [checked]="!isSelected('no')"
+           [checked]="!isUnmarked()"
            (change)="toggleUnmark($event)" />
   </ng-container>
   <span *ngIf="params.value < 0">0</span>

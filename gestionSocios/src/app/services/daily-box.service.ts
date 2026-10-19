@@ -30,4 +30,8 @@ export class DailyBoxService {
   updateMovement(id: number, movement: any) {
     return this.http.put<any>(`${this.API_URI}/daily-box/${id}`, movement, { headers: this.headers });
   }
+
+  deleteMovement(id: number) {
+    return this.http.delete<any>(`${this.API_URI}/daily-box/${id}`, { headers: this.headers });
+  }
 }

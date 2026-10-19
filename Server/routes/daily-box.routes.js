@@ -8,5 +8,6 @@ router.get('/daily-box/:anio', ensureToken, dailyBox.validate_getDailyBox);
 router.get('/daily-box-movement/:id', ensureToken, dailyBox.validate_getMovementById);
 router.post('/daily-box', ensureToken, dailyBox.validate_addMovement);
 router.put('/daily-box/:id', ensureToken, dailyBox.validate_updateMovement);
+router.delete('/daily-box/:id', ensureToken, dailyBox.validate_deleteMovement);
 
 module.exports = router;

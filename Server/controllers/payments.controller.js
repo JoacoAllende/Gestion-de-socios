@@ -20,9 +20,10 @@ paymentsController.updatePayments = (req, res) => {
         const mesNum = mesesMap[mesName];
         if (!mesNum) return;
 
-        const pagado = true;
+        const desmarcar = valor === 'desmarcar';
+        const pagado = !desmarcar;
         const efectivo = valor === true;
-        const fechaPago = new Date();
+        const fechaPago = desmarcar ? null : new Date();
 
         pending++;
 
