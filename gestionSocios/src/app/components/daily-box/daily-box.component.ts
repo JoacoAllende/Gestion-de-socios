@@ -24,7 +24,7 @@ export class DailyBoxComponent {
     height: 'calc(100% - 2rem - 70px)'
   };
 
-  defaultColDef: ColDef = { flex: 1, resizable: true };
+  defaultColDef: ColDef = { resizable: true, wrapHeaderText: true, autoHeaderHeight: true };
 
   colDefs: (ColDef | ColGroupDef)[] = [
     {
@@ -33,7 +33,7 @@ export class DailyBoxComponent {
       sortable: true,
       filter: 'agTextColumnFilter',
       floatingFilter: true,
-      minWidth: 50
+      width: 105
     },
     {
       field: 'concepto',
@@ -42,13 +42,15 @@ export class DailyBoxComponent {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
       cellClass: 'ag-cell-clickable',
-      minWidth: 800,
+      flex: 1,
+      minWidth: 250,
       onCellClicked: (event: CellClickedEvent) => {
         this.router.navigate([`/movimiento-caja/${event.data.id}`]);
       }
     },
     {
       field: 'monto_ingreso',
+      width: 125,
       headerName: 'Ingreso efectivo',
       sortable: true,
       filter: 'agNumberColumnFilter',
@@ -58,6 +60,7 @@ export class DailyBoxComponent {
     },
     {
       field: 'monto_egreso',
+      width: 125,
       headerName: 'Egreso efectivo',
       sortable: true,
       filter: 'agNumberColumnFilter',
@@ -67,6 +70,7 @@ export class DailyBoxComponent {
     },
     {
       field: 'monto_transferencia',
+      width: 125,
       headerName: 'Banco',
       sortable: true,
       filter: 'agNumberColumnFilter',
@@ -77,6 +81,7 @@ export class DailyBoxComponent {
     {
       field: 'saldo',
       headerName: 'Saldo',
+      width: 130,
       valueFormatter: (params) => `$ ${params.value?.toLocaleString('es-AR') || 0}`
     },
     {
@@ -86,7 +91,8 @@ export class DailyBoxComponent {
       filter: false,
       cellRenderer: () => '<span style="cursor: pointer;">🗑️</span>',
       cellClass: 'ag-cell-clickable',
-      maxWidth: 80,
+      width: 40,
+      cellStyle: { paddingLeft: '0', paddingRight: '0', textAlign: 'center' },
       onCellClicked: (event: CellClickedEvent) => {
         this.confirmDeleteMovement(event.data);
       }
